@@ -236,60 +236,60 @@ def create_deck():
     add_card(s4, Inches(0.8), Inches(1.8), Inches(5.6), Inches(2.4),
              "🏛️ Central Ministries (MoRD, MoRTH, Railways)",
              [
-                 "Pan-India macro decision support & corridor progress radar.",
-                 "Inter-ministerial budget sanction & PFMS escrow monitoring.",
-                 "Parliamentary Question (PQ) generator & Cabinet briefings."
+                 "Pan-India national decision support covering all 28 States & 8 Union Territories.",
+                 "Inter-ministerial budget sanction, union grant releases & PFMS escrow monitoring.",
+                 "Parliamentary Question (PQ) generator & Union Cabinet briefings."
              ], title_color=SAFFRON)
 
     add_card(s4, Inches(6.8), Inches(1.8), Inches(5.7), Inches(2.4),
-             "🏢 State Nodal Departments (TN & AP Land Admin)",
+             "🏢 State Nodal Departments (All 28 State Governments)",
              [
-                 "State Gazette notification issuance & e-Gazette integration.",
-                 "Integration with State Land Registries (Tamil Nilam / Webland 1B).",
-                 "District CALA performance ranking & bottleneck escalation."
+                 "State Gazette notification issuance & e-Gazette integration across all States.",
+                 "Integrated with State Land Registries: UP Bhulekh, MahaBhumi, Bhoomi (KA), Tamil Nilam (TN), Webland (AP), AnyRoR (GJ), BanglarBhumi (WB), Dharitree (AS).",
+                 "Statewide CALA cycle time tracking & statutory bottleneck escalation."
              ], title_color=GOLD)
 
     add_card(s4, Inches(0.8), Inches(4.5), Inches(5.6), Inches(2.4),
-             "⚖️ District Administration (Collector / CALA)",
+             "⚖️ District Administration (Collector / CALA across India)",
              [
-                 "Quasi-judicial Section 15 citizen objection hearings & speaking orders.",
+                 "Quasi-judicial Section 15 citizen objection hearings & speaking orders in all districts.",
                  "Award formulation under Sec 23 with mandatory 100% solatium calculation.",
                  "e-Office Green-Noting scrutinies & Cryptographic e-Sign approvals."
              ], title_color=EMERALD)
 
     add_card(s4, Inches(6.8), Inches(4.5), Inches(5.7), Inches(2.4),
-             "📐 Field Surveyor & Project Implementing Agency (NHAI/RVNL)",
+             "📐 Field Surveyor & Project Implementing Agencies (NHAI/RVNL/DFCCIL)",
              [
-                 "On-ground Joint Measurement Survey (JMS) with DGPS geo-tagging.",
-                 "Live mobile plot boundary demarcation with instant acre/cent calculations.",
+                 "On-ground Joint Measurement Survey (JMS) with DGPS geo-tagging nationwide.",
+                 "Mobile plot boundary demarcation with instant acre/cent/hectare calculations.",
                  "Physical possession certificate issuance and drone orthophoto verification."
              ], title_color=RGBColor(56, 189, 248))
 
     # ==========================================
-    # SLIDE 5: Sub-Meter Cadastral GIS Engine (TN & AP Corridors)
+    # SLIDE 5: Pan-India Cadastral GIS Engine (All Zones)
     # ==========================================
     s5 = prs.slides.add_slide(blank_slide_layout)
     set_slide_background(s5)
-    add_header(s5, "High-Precision Cadastral GIS Engine (TN & AP Corridors)")
+    add_header(s5, "High-Precision Cadastral GIS Engine (Pan-India Coverage)")
 
     add_card(s5, Inches(0.8), Inches(1.8), Inches(5.6), Inches(5.0),
-             "🌾 Tamil Nadu: Chennai Peripheral Ring Road (CPRR)",
+             "🇮🇳 Pan-India National Multi-Zone Corridors",
              [
-                 "Location: Sriperumbudur & Tiruvallur Industrial Corridor.",
-                 "Cadastral Accuracy: Sub-meter farm boundary polygons with real Survey/Patta numbers (e.g., Survey 142/1A, 142/1B, 143/2).",
-                 "Land Classifications: Nanja (Wet Agricultural), Punja (Dry Agricultural), Natham (Habitation).",
-                 "Alignment Buffer: 60-meter Expressway Right-of-Way (RoW) buffer corridor showing exact plot cuts.",
-                 "Interactive Patta Inspector: One-click extraction of land holding, guideline value (₹650/sq.ft), 100% Solatium, and PFMS DBT reference."
+                 "Northern Zone (UP/NCR): Ganga Expressway & Noida International Airport Jewar (Khasra #842/1, UP Bhulekh records).",
+                 "Western Zone (MH/GJ): Mumbai-Nagpur Samruddhi & NE-4 Package 17 (7/12 Gat #142) + Dholera SIR Activation Zone (AnyRoR Block #312).",
+                 "Southern Zone (TN/AP/KA): Chennai Peripheral Ring Road (Patta #842) + Amaravati Seed Axis (Webland #204) + Bengaluru STRR NH-948A (Bhoomi RTC #58).",
+                 "Eastern & NE Zone (WB/AS): Eastern Freight Corridor Dankuni (Dag #412) + Guwahati Ring Road Bypass (Dharitree Dag #105).",
+                 "State Land Registry Adapters: Built-in schema mapping for 28 state land records."
              ], title_color=SAFFRON)
 
     add_card(s5, Inches(6.8), Inches(1.8), Inches(5.7), Inches(5.0),
-             "🚜 Andhra Pradesh: Amaravati Capital Seed Axis",
+             "🛰️ Sub-Meter Cadastral Mapping Capabilities",
              [
-                 "Location: Guntur & Krishna Floodplain (Thullur / Mandadam / Velagapudi).",
-                 "Cadastral Accuracy: Real Webland 1B Khata & Sy numbers (204/1, 204/2, 205/A) linked to AP Meeseva/Bhoomi records.",
-                 "Soil Classifications: Jaribu (Rich Alluvial Krishna Black Cotton) & Metta (Dry Uplands).",
-                 "Special Land Pooling & RFCTLARR Dual Model handling.",
-                 "Mobile Surveyor DGPS Tool: Click-to-demarcate boundaries on satellite basemaps with real-time Cents / Acres / Hectares computation."
+                 "36 States & Union Territories: Interactive national heatmap and zoom-to-cadastre hubs for every State & UT.",
+                 "True Parcel Boundary Polygons: Multi-point GeoJSON geometries reflecting real farm holdings instead of basic pins.",
+                 "60-Meter Statutory Right-of-Way: Real-time expressway alignment overlay highlighting exact acquired slices.",
+                 "Mobile Surveyor DGPS Tool: Click-to-demarcate boundaries on satellite imagery with live Cent / Acre / Hectare calculations.",
+                 "Dynamic Tenure Inspector: Displays state-specific legal terminology (Patta, Khatauni, RTC, 7/12, Dag, Khatian)."
              ], title_color=GOLD)
 
     # ==========================================

@@ -241,13 +241,62 @@
     <div style="position:relative; overflow:hidden; height:calc(100vh - 60px);">
       <div id="map"></div>
 
-      <!-- Regional Corridor Switcher -->
-      <div class="quick-scope-banner">
-        <span style="color:#a8b4cc;font-size:11px;font-weight:700;">PROTOTYPE CORRIDOR:</span>
-        <button class="corridor-btn active" id="btnCorridorTN" onclick="switchCorridor('TN')">🌊 Tamil Nadu (CPRR Sriperumbudur)</button>
-        <button class="corridor-btn" id="btnCorridorAP" onclick="switchCorridor('AP')">🌾 Andhra Pradesh (Amaravati Axis)</button>
-        <button class="corridor-btn" id="btnCorridorMH" onclick="switchCorridor('MH')">⚡ Maharashtra (NE-4 P17)</button>
-        <button class="corridor-btn" id="btnCorridorNational" onclick="switchCorridor('national')">🇮🇳 Pan-India (22 Projects)</button>
+      <!-- Pan-India Corridor & State Switcher -->
+      <div class="quick-scope-banner" style="max-width:94vw;overflow-x:auto;white-space:nowrap;scrollbar-width:none;">
+        <span style="color:#ff9900;font-size:11px;font-weight:800;display:inline-flex;align-items:center;gap:4px;">
+          <span>🇮🇳</span> PAN-INDIA ZONES:
+        </span>
+        <select id="mapStateSelect" onchange="zoomToState(this.value)" style="background:#0a0e1a;border:1px solid rgba(255,153,0,0.5);color:#f0f4ff;padding:4px 10px;border-radius:14px;font-size:11px;font-weight:700;cursor:pointer;outline:none;font-family:'Inter',sans-serif;">
+          <option value="national">🇮🇳 Pan-India Overview (36 States &amp; UTs)</option>
+          <optgroup label="Southern Zone">
+            <option value="TN">🌊 Tamil Nadu (CPRR Sriperumbudur)</option>
+            <option value="AP">🌾 Andhra Pradesh (Amaravati Axis)</option>
+            <option value="KA">🏙️ Karnataka (Bengaluru STRR)</option>
+            <option value="TS">🏛️ Telangana (Regional Ring Road)</option>
+            <option value="KL">🌴 Kerala (NH-66 Coastal Corridor)</option>
+          </optgroup>
+          <optgroup label="Northern Zone">
+            <option value="UP">🚜 Uttar Pradesh (Ganga Exp &amp; Jewar)</option>
+            <option value="HR">🛣️ Haryana (KMP / Dwarka Exp)</option>
+            <option value="PB">🌾 Punjab (Amritsar-Katra Corridor)</option>
+            <option value="DL">🏛️ Delhi-NCR (Urban Extension Road)</option>
+            <option value="JK">🏔️ Jammu &amp; Kashmir</option>
+            <option value="UK">⛰️ Uttarakhand</option>
+          </optgroup>
+          <optgroup label="Western Zone">
+            <option value="MH">⚡ Maharashtra (NE-4 / Samruddhi)</option>
+            <option value="GJ">🏭 Gujarat (Dholera SIR Expressway)</option>
+            <option value="RJ">🏜️ Rajasthan (Delhi-Mumbai Corridor)</option>
+            <option value="GA">🏖️ Goa (NH-66 Expansion)</option>
+          </optgroup>
+          <optgroup label="Eastern &amp; Central Zone">
+            <option value="WB">🌾 West Bengal (Kolkata Freight)</option>
+            <option value="OD">⚓ Odisha (Bhubaneswar Coastal)</option>
+            <option value="BR">🚂 Bihar (Patna Ring Road)</option>
+            <option value="JH">⛏️ Jharkhand (Industrial Corridor)</option>
+            <option value="MP">🌲 Madhya Pradesh (Ratlam Corridor)</option>
+            <option value="CG">🏭 Chhattisgarh</option>
+          </optgroup>
+          <optgroup label="North-Eastern Zone">
+            <option value="AS">🌿 Assam (Guwahati Ring Road)</option>
+            <option value="TR">🎋 Tripura</option>
+            <option value="ML">🌧️ Meghalaya</option>
+            <option value="MN">🏞️ Manipur</option>
+            <option value="NL">🏔️ Nagaland</option>
+            <option value="MZ">🌄 Mizoram</option>
+            <option value="AR">🗻 Arunachal Pradesh</option>
+            <option value="SK">❄️ Sikkim</option>
+          </optgroup>
+        </select>
+        <button class="corridor-btn" id="btnCorridorNational" onclick="switchCorridor('national')">🇮🇳 All India (36 States &amp; UTs)</button>
+        <button class="corridor-btn active" id="btnCorridorTN" onclick="switchCorridor('TN')">🌊 Tamil Nadu (CPRR)</button>
+        <button class="corridor-btn" id="btnCorridorAP" onclick="switchCorridor('AP')">🌾 Andhra Pradesh (Amaravati)</button>
+        <button class="corridor-btn" id="btnCorridorUP" onclick="switchCorridor('UP')">🚜 Uttar Pradesh (Ganga Exp &amp; Jewar)</button>
+        <button class="corridor-btn" id="btnCorridorKA" onclick="switchCorridor('KA')">🏙️ Karnataka (Bengaluru STRR)</button>
+        <button class="corridor-btn" id="btnCorridorMH" onclick="switchCorridor('MH')">⚡ Maharashtra (NE-4 / Samruddhi)</button>
+        <button class="corridor-btn" id="btnCorridorGJ" onclick="switchCorridor('GJ')">🏭 Gujarat (Dholera SIR)</button>
+        <button class="corridor-btn" id="btnCorridorWB" onclick="switchCorridor('WB')">🌾 West Bengal (Kolkata Freight)</button>
+        <button class="corridor-btn" id="btnCorridorAS" onclick="switchCorridor('AS')">🌿 Assam &amp; NE (Guwahati)</button>
       </div>
 
       <!-- Search Bar -->
@@ -432,45 +481,102 @@ function loadCorridorData(region) {
   let alignment = null;
 
   if (region === 'TN') {
-    parcels = TN_CADASTRAL_PARCELS;
-    alignment = TN_EXPRESSWAY_ALIGNMENT;
+    parcels = typeof TN_CADASTRAL_PARCELS !== 'undefined' ? TN_CADASTRAL_PARCELS : [];
+    alignment = typeof TN_EXPRESSWAY_ALIGNMENT !== 'undefined' ? TN_EXPRESSWAY_ALIGNMENT : null;
     map.flyTo([12.9950, 79.9550], 15, { duration: 1.2 });
     document.getElementById('statCorridorName').textContent = 'Tamil Nadu (CPRR Sriperumbudur)';
-    document.getElementById('statParcelsInView').textContent = '7 Patta Parcels';
+    document.getElementById('statParcelsInView').textContent = `${parcels.length} Patta Parcels`;
     document.getElementById('statAreaInView').textContent = '12.6 Ha (31.1 Acres)';
     document.getElementById('statCompInView').textContent = '₹22.47 Cr';
     document.getElementById('gisHeaderTitle').textContent = 'Cadastral GIS: Tamil Nadu Corridor (CPRR Package 2)';
-    document.getElementById('lblParcels').textContent = 'Tamil Nadu Patta Parcels (7)';
+    document.getElementById('lblParcels').textContent = `Tamil Nadu Patta Parcels (${parcels.length})`;
     document.getElementById('lblRow').textContent = 'CPRR 60m Expressway Alignment';
   } else if (region === 'AP') {
-    parcels = AP_CADASTRAL_PARCELS;
-    alignment = AP_EXPRESSWAY_ALIGNMENT;
+    parcels = typeof AP_CADASTRAL_PARCELS !== 'undefined' ? AP_CADASTRAL_PARCELS : [];
+    alignment = typeof AP_EXPRESSWAY_ALIGNMENT !== 'undefined' ? AP_EXPRESSWAY_ALIGNMENT : null;
     map.flyTo([16.5430, 80.5250], 15, { duration: 1.2 });
     document.getElementById('statCorridorName').textContent = 'Andhra Pradesh (Amaravati Axis)';
-    document.getElementById('statParcelsInView').textContent = '5 Khata Parcels';
+    document.getElementById('statParcelsInView').textContent = `${parcels.length} Khata Parcels`;
     document.getElementById('statAreaInView').textContent = '12.75 Ha (31.5 Acres)';
     document.getElementById('statCompInView').textContent = '₹22.78 Cr';
     document.getElementById('gisHeaderTitle').textContent = 'Cadastral GIS: Andhra Pradesh Corridor (Amaravati Seed Core)';
-    document.getElementById('lblParcels').textContent = 'AP Webland 1B Parcels (5)';
+    document.getElementById('lblParcels').textContent = `AP Webland 1B Parcels (${parcels.length})`;
     document.getElementById('lblRow').textContent = 'Amaravati Core Axis 60m RoW';
+  } else if (region === 'UP') {
+    parcels = typeof UP_CADASTRAL_PARCELS !== 'undefined' ? UP_CADASTRAL_PARCELS : [];
+    alignment = typeof UP_EXPRESSWAY_ALIGNMENT !== 'undefined' ? UP_EXPRESSWAY_ALIGNMENT : null;
+    map.flyTo([28.1640, 77.5720], 15, { duration: 1.2 });
+    document.getElementById('statCorridorName').textContent = 'Uttar Pradesh (Ganga Exp & Jewar)';
+    document.getElementById('statParcelsInView').textContent = `${parcels.length} Khasra Parcels`;
+    document.getElementById('statAreaInView').textContent = '4.45 Ha (11.0 Acres)';
+    document.getElementById('statCompInView').textContent = '₹10.22 Cr';
+    document.getElementById('gisHeaderTitle').textContent = 'Cadastral GIS: Uttar Pradesh (Ganga Expressway & Jewar Airport)';
+    document.getElementById('lblParcels').textContent = `UP Bhulekh Khasra Parcels (${parcels.length})`;
+    document.getElementById('lblRow').textContent = 'Ganga Exp & Jewar Link RoW';
+  } else if (region === 'KA') {
+    parcels = typeof KA_CADASTRAL_PARCELS !== 'undefined' ? KA_CADASTRAL_PARCELS : [];
+    alignment = typeof KA_EXPRESSWAY_ALIGNMENT !== 'undefined' ? KA_EXPRESSWAY_ALIGNMENT : null;
+    map.flyTo([13.0840, 77.7890], 15, { duration: 1.2 });
+    document.getElementById('statCorridorName').textContent = 'Karnataka (Bengaluru STRR Hoskote)';
+    document.getElementById('statParcelsInView').textContent = `${parcels.length} RTC Pahani Parcels`;
+    document.getElementById('statAreaInView').textContent = '3.85 Ha (9.5 Acres)';
+    document.getElementById('statCompInView').textContent = '₹7.83 Cr';
+    document.getElementById('gisHeaderTitle').textContent = 'Cadastral GIS: Karnataka (Bengaluru STRR NH-948A)';
+    document.getElementById('lblParcels').textContent = `Bhoomi RTC Parcels (${parcels.length})`;
+    document.getElementById('lblRow').textContent = 'STRR 60m Corridor RoW';
   } else if (region === 'MH') {
-    parcels = MH_CADASTRAL_PARCELS;
-    alignment = MH_EXPRESSWAY_ALIGNMENT;
+    parcels = typeof MH_CADASTRAL_PARCELS !== 'undefined' ? MH_CADASTRAL_PARCELS : [];
+    alignment = typeof MH_EXPRESSWAY_ALIGNMENT !== 'undefined' ? MH_EXPRESSWAY_ALIGNMENT : null;
     map.flyTo([19.9725, 72.9180], 15, { duration: 1.2 });
     document.getElementById('statCorridorName').textContent = 'Maharashtra (NE-4 P17 Palghar)';
-    document.getElementById('statParcelsInView').textContent = '2 Cadastral Plots';
+    document.getElementById('statParcelsInView').textContent = `${parcels.length} Cadastral Plots`;
     document.getElementById('statAreaInView').textContent = '3.8 Ha (9.4 Acres)';
     document.getElementById('statCompInView').textContent = '₹4.44 Cr';
     document.getElementById('gisHeaderTitle').textContent = 'Cadastral GIS: Maharashtra Corridor (Delhi-Mumbai NE-4)';
-    document.getElementById('lblParcels').textContent = 'Maharashtra 7/12 Parcels';
+    document.getElementById('lblParcels').textContent = `Maharashtra 7/12 Parcels (${parcels.length})`;
     document.getElementById('lblRow').textContent = 'NE-4 60m Expressway RoW';
+  } else if (region === 'GJ') {
+    parcels = typeof GJ_CADASTRAL_PARCELS !== 'undefined' ? GJ_CADASTRAL_PARCELS : [];
+    alignment = typeof GJ_EXPRESSWAY_ALIGNMENT !== 'undefined' ? GJ_EXPRESSWAY_ALIGNMENT : null;
+    map.flyTo([22.2430, 72.1915], 15, { duration: 1.2 });
+    document.getElementById('statCorridorName').textContent = 'Gujarat (Dholera SIR Activation Zone)';
+    document.getElementById('statParcelsInView').textContent = `${parcels.length} AnyRoR Plots`;
+    document.getElementById('statAreaInView').textContent = '3.2 Ha (7.9 Acres)';
+    document.getElementById('statCompInView').textContent = '₹3.57 Cr';
+    document.getElementById('gisHeaderTitle').textContent = 'Cadastral GIS: Gujarat (Dholera SIR & Ahmedabad Expressway)';
+    document.getElementById('lblParcels').textContent = `Gujarat AnyRoR 7/12 Parcels (${parcels.length})`;
+    document.getElementById('lblRow').textContent = 'Dholera Expressway 60m RoW';
+  } else if (region === 'WB') {
+    parcels = typeof WB_CADASTRAL_PARCELS !== 'undefined' ? WB_CADASTRAL_PARCELS : [];
+    alignment = typeof WB_EXPRESSWAY_ALIGNMENT !== 'undefined' ? WB_EXPRESSWAY_ALIGNMENT : null;
+    map.flyTo([22.6830, 88.2880], 15, { duration: 1.2 });
+    document.getElementById('statCorridorName').textContent = 'West Bengal (Dankuni Freight Corridor)';
+    document.getElementById('statParcelsInView').textContent = `${parcels.length} Dag Plots`;
+    document.getElementById('statAreaInView').textContent = '1.85 Ha (4.6 Acres)';
+    document.getElementById('statCompInView').textContent = '₹2.76 Cr';
+    document.getElementById('gisHeaderTitle').textContent = 'Cadastral GIS: West Bengal (Eastern Dedicated Freight Corridor)';
+    document.getElementById('lblParcels').textContent = `BanglarBhumi Dag Parcels (${parcels.length})`;
+    document.getElementById('lblRow').textContent = 'EDFC Corridor Alignment';
+  } else if (region === 'AS') {
+    parcels = typeof AS_CADASTRAL_PARCELS !== 'undefined' ? AS_CADASTRAL_PARCELS : [];
+    alignment = typeof AS_EXPRESSWAY_ALIGNMENT !== 'undefined' ? AS_EXPRESSWAY_ALIGNMENT : null;
+    map.flyTo([26.1230, 91.6215], 15, { duration: 1.2 });
+    document.getElementById('statCorridorName').textContent = 'Assam (Guwahati Ring Road Bypass)';
+    document.getElementById('statParcelsInView').textContent = `${parcels.length} Myadi Dag Parcels`;
+    document.getElementById('statAreaInView').textContent = '1.50 Ha (3.7 Acres)';
+    document.getElementById('statCompInView').textContent = '₹1.53 Cr';
+    document.getElementById('gisHeaderTitle').textContent = 'Cadastral GIS: Assam & North-East (Guwahati Ring Road)';
+    document.getElementById('lblParcels').textContent = `Dharitree Myadi Parcels (${parcels.length})`;
+    document.getElementById('lblRow').textContent = 'Guwahati Ring Road RoW';
   } else if (region === 'national') {
-    map.flyTo([21.5937, 78.9629], 5, { duration: 1.2 });
-    document.getElementById('statCorridorName').textContent = 'Pan-India National Overview';
-    document.getElementById('statParcelsInView').textContent = '22 Flagship Megaprojects';
+    map.flyTo([22.5937, 78.9629], 5, { duration: 1.2 });
+    document.getElementById('statCorridorName').textContent = 'Pan-India National Overview (36 States & UTs)';
+    document.getElementById('statParcelsInView').textContent = '2,847 Active Projects';
     document.getElementById('statAreaInView').textContent = '3,42,891 Ha';
     document.getElementById('statCompInView').textContent = '₹1,24,673 Cr';
-    document.getElementById('gisHeaderTitle').textContent = 'National Land Acquisition Overview (Pan-India)';
+    document.getElementById('gisHeaderTitle').textContent = 'National Land Acquisition & Management System: Pan-India Overview';
+    document.getElementById('lblParcels').textContent = 'All State Cadastral Registries';
+    document.getElementById('lblRow').textContent = 'National Corridor Alignments';
     renderNationalMegaprojects();
     return;
   }
@@ -496,16 +602,16 @@ function loadCorridorData(region) {
     polygon.bindPopup(`
       <div style="font-family:'Inter',sans-serif;min-width:240px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-          <strong style="font-size:14px;color:#ff9900;">Survey #${p.surveyNo}</strong>
+          <strong style="font-size:14px;color:#ff9900;">${p.surveyNo}</strong>
           <span style="font-size:10px;padding:2px 6px;border-radius:4px;background:${p.statusColor}33;color:${p.statusColor};font-weight:700;">● ${p.statusBadge}</span>
         </div>
-        <div style="font-size:11px;color:#a8b4cc;margin-bottom:8px;">${p.village}, ${p.taluk || p.district}</div>
+        <div style="font-size:11px;color:#a8b4cc;margin-bottom:8px;">${p.village}, ${p.taluk || p.district} (${p.stateName})</div>
         <div style="font-size:12px;color:#f0f4ff;margin-bottom:4px;"><strong>Owner:</strong> ${p.owner}</div>
         <div style="display:flex;justify-content:space-between;font-size:11px;background:rgba(255,255,255,0.06);padding:6px 8px;border-radius:6px;margin-bottom:8px;">
           <div><span style="color:#5a6478;">Acquired:</span> <strong style="color:#22c55e;">${p.acquiredAreaHa} Ha</strong></div>
           <div><span style="color:#5a6478;">Award:</span> <strong style="color:#ff9900;">${p.totalAward.split(' ')[0]}</strong></div>
         </div>
-        <button onclick="showParcelDetails('${p.id}')" style="width:100%;background:#ff9900;border:none;color:#080c18;padding:5px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;">Inspect ${region === 'TN' ? 'Patta' : 'Webland 1B'} Record & Valuation →</button>
+        <button onclick="showParcelDetails('${p.id}')" style="width:100%;background:#ff9900;border:none;color:#080c18;padding:5px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;">Inspect ${p.stateCode === 'TN' ? 'Patta' : p.stateCode === 'AP' ? 'Webland' : p.stateCode === 'UP' ? 'Khatauni' : p.stateCode === 'KA' ? 'RTC Pahani' : 'Record'} & Valuation →</button>
       </div>
     `, { className: 'parcel-popup' });
 
@@ -541,33 +647,48 @@ function loadCorridorData(region) {
   }
 
   // Render GCPs
-  AP_TN_SURVEY_GCPS.forEach(gcp => {
-    if ((region === 'TN' && gcp.id.includes('TN')) || (region === 'AP' && gcp.id.includes('AP'))) {
-      const marker = L.circleMarker([gcp.lat, gcp.lng], {
-        radius: 6, fillColor: '#38bdf8', color: '#ffffff', weight: 2, fillOpacity: 0.9
-      });
-      marker.bindPopup(`
-        <div style="font-family:'Inter',sans-serif;font-size:11px;">
-          <strong style="color:#38bdf8;">📌 DGPS Benchmark: ${gcp.code}</strong><br/>
-          Type: ${gcp.type}<br/>
-          Elev: ${gcp.elev}<br/>
-          Coord: ${gcp.lat.toFixed(5)}°N, ${gcp.lng.toFixed(5)}°E
-        </div>
-      `, { className: 'parcel-popup' });
-      layerGroupGcps.addLayer(marker);
-    }
-  });
+  if (typeof AP_TN_SURVEY_GCPS !== 'undefined') {
+    AP_TN_SURVEY_GCPS.forEach(gcp => {
+      if ((region === 'TN' && gcp.id.includes('TN')) || (region === 'AP' && gcp.id.includes('AP'))) {
+        const marker = L.circleMarker([gcp.lat, gcp.lng], {
+          radius: 6, fillColor: '#38bdf8', color: '#ffffff', weight: 2, fillOpacity: 0.9
+        });
+        marker.bindPopup(`
+          <div style="font-family:'Inter',sans-serif;font-size:11px;">
+            <strong style="color:#38bdf8;">📌 DGPS Benchmark: ${gcp.code}</strong><br/>
+            Type: ${gcp.type}<br/>
+            Elev: ${gcp.elev}<br/>
+            Coord: ${gcp.lat.toFixed(5)}°N, ${gcp.lng.toFixed(5)}°E
+          </div>
+        `, { className: 'parcel-popup' });
+        layerGroupGcps.addLayer(marker);
+      }
+    });
+  }
 }
 
 function renderNationalMegaprojects() {
   layerGroupNational.clearLayers();
-  if (typeof projects !== 'undefined') {
-    projects.forEach(p => {
-      const circle = L.circleMarker([p.lat, p.lng], {
-        radius: 10, fillColor: '#ff9900', color: '#ffffff', weight: 2, fillOpacity: 0.8
+  if (typeof PAN_INDIA_STATES !== 'undefined') {
+    PAN_INDIA_STATES.forEach(st => {
+      const marker = L.circleMarker([st.lat, st.lng], {
+        radius: 12, fillColor: '#ff9900', color: '#ffffff', weight: 2, fillOpacity: 0.85
       });
-      circle.bindPopup(`<strong>${p.name}</strong><br/>${p.district}, ${p.state}<br/>Area: ${p.area} Ha | Progress: ${p.progress}%`);
-      layerGroupNational.addLayer(circle);
+      marker.bindPopup(`
+        <div style="font-family:'Inter',sans-serif;min-width:240px;color:#f0f4ff;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:4px;">
+            <strong style="color:#ff9900;font-size:14px;">${st.name} (${st.code})</strong>
+            <span style="background:rgba(255,153,0,0.2);color:#ff9900;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700;">${st.zone} Zone</span>
+          </div>
+          <div style="font-size:11px;color:#cbd5e1;margin-bottom:4px;"><strong>Capital:</strong> ${st.capital}</div>
+          <div style="font-size:11px;color:#cbd5e1;margin-bottom:4px;"><strong>Active Projects:</strong> <span style="color:#38bdf8;font-weight:700;">${st.projects}</span></div>
+          <div style="font-size:11px;color:#cbd5e1;margin-bottom:4px;"><strong>Land Proposed/Acquired:</strong> ${st.landHa}</div>
+          <div style="font-size:11px;color:#cbd5e1;margin-bottom:4px;"><strong>Compensation Disbursed:</strong> <span style="color:#22c55e;font-weight:700;">${st.compCr}</span></div>
+          <div style="font-size:11px;color:#cbd5e1;margin-bottom:6px;"><strong>State Land Portal:</strong> <span style="color:#f59e0b;">${st.portal}</span></div>
+          <button onclick="zoomToState('${st.code}')" style="width:100%;background:#ff9900;color:#080c18;font-weight:700;border:none;padding:6px;border-radius:6px;cursor:pointer;font-size:11px;">🔍 Zoom to ${st.name} Cadastre &rarr;</button>
+        </div>
+      `, { className: 'parcel-popup' });
+      layerGroupNational.addLayer(marker);
     });
     layerGroupNational.addTo(map);
   }
@@ -576,24 +697,83 @@ function renderNationalMegaprojects() {
 // Switch Corridor Button Handler
 function switchCorridor(region) {
   document.querySelectorAll('.corridor-btn').forEach(b => b.classList.remove('active'));
-  const btnId = region === 'TN' ? 'btnCorridorTN' : region === 'AP' ? 'btnCorridorAP' : region === 'MH' ? 'btnCorridorMH' : 'btnCorridorNational';
+  const btnId = region === 'TN' ? 'btnCorridorTN' : region === 'AP' ? 'btnCorridorAP' : region === 'UP' ? 'btnCorridorUP' : region === 'KA' ? 'btnCorridorKA' : region === 'MH' ? 'btnCorridorMH' : region === 'GJ' ? 'btnCorridorGJ' : region === 'WB' ? 'btnCorridorWB' : region === 'AS' ? 'btnCorridorAS' : 'btnCorridorNational';
   const el = document.getElementById(btnId);
   if (el) el.classList.add('active');
+  const sel = document.getElementById('mapStateSelect');
+  if (sel) sel.value = region;
   loadCorridorData(region);
+}
+
+function zoomToState(code) {
+  if (code === 'national') {
+    switchCorridor('national');
+    return;
+  }
+  const hasCorridor = ['TN', 'AP', 'UP', 'KA', 'MH', 'GJ', 'WB', 'AS'].includes(code);
+  if (hasCorridor) {
+    switchCorridor(code);
+  } else if (typeof PAN_INDIA_STATES !== 'undefined') {
+    const st = PAN_INDIA_STATES.find(s => s.code === code);
+    if (st) {
+      map.flyTo([st.lat, st.lng], st.zoom, { duration: 1.2 });
+      document.getElementById('statCorridorName').textContent = `${st.name} (${st.zone} Zone)`;
+      document.getElementById('statParcelsInView').textContent = `${st.projects} Active Projects`;
+      document.getElementById('statAreaInView').textContent = st.landHa;
+      document.getElementById('statCompInView').textContent = st.compCr;
+      document.getElementById('gisHeaderTitle').textContent = `Cadastral GIS: ${st.name} • Registry: ${st.portal}`;
+      document.getElementById('lblParcels').textContent = `${st.name} Land Parcels`;
+      document.getElementById('lblRow').textContent = `${st.name} Linear Corridors`;
+    }
+  }
 }
 
 // ===== PARCEL DETAIL INSPECTOR =====
 function showParcelDetails(parcelId) {
-  let allParcels = [...TN_CADASTRAL_PARCELS, ...AP_CADASTRAL_PARCELS, ...MH_CADASTRAL_PARCELS];
+  let allParcels = typeof ALL_INDIA_CADASTRAL_PARCELS !== 'undefined' ? ALL_INDIA_CADASTRAL_PARCELS : [...TN_CADASTRAL_PARCELS, ...AP_CADASTRAL_PARCELS, ...MH_CADASTRAL_PARCELS];
   const p = allParcels.find(item => item.id === parcelId);
   if (!p) return;
 
-  const isTN = p.stateCode === 'TN';
-  const isAP = p.stateCode === 'AP';
-  const recordName = isTN ? 'Tamil Nadu Patta / Chitta Extract' : isAP ? 'Andhra Pradesh Webland 1B Adangal' : 'Maharashtra 7/12 Land Extract';
+  let recordName = "State Land Record of Rights (RoR)";
+  let tenureKey = "Land Tenure: Digital Record of Rights";
+  let pattaKey = "Patta / Khata Number";
+
+  if (p.stateCode === 'TN') {
+    recordName = 'Tamil Nadu Tamil Nilam Patta / Chitta Extract';
+    tenureKey = 'Land Tenure: Patta Passbook Record (Tamil Nilam)';
+    pattaKey = 'Patta Number';
+  } else if (p.stateCode === 'AP') {
+    recordName = 'Andhra Pradesh Webland 1B Adangal Record';
+    tenureKey = 'Land Tenure: Webland 1B Khatabedar Record';
+    pattaKey = 'Khata Number';
+  } else if (p.stateCode === 'UP') {
+    recordName = 'Uttar Pradesh UP Bhulekh Khatauni Extract';
+    tenureKey = 'Land Tenure: UP Revenue Code Khatauni (UP Bhulekh)';
+    pattaKey = 'Khatauni Number';
+  } else if (p.stateCode === 'KA') {
+    recordName = 'Karnataka Bhoomi RTC / Pahani Extract';
+    tenureKey = 'Land Tenure: Bhoomi Digital RTC / Pahani Record';
+    pattaKey = 'RTC Pahani Number';
+  } else if (p.stateCode === 'MH') {
+    recordName = 'Maharashtra MahaBhumi 7/12 & 8A Land Extract';
+    tenureKey = 'Land Tenure: MahaBhumi 7/12 Gat Record';
+    pattaKey = 'Gat / Khata Number';
+  } else if (p.stateCode === 'GJ') {
+    recordName = 'Gujarat AnyRoR 7/12 & 8A Record';
+    tenureKey = 'Land Tenure: AnyRoR Digital Revenue Record';
+    pattaKey = 'Khata / Block Number';
+  } else if (p.stateCode === 'WB') {
+    recordName = 'West Bengal BanglarBhumi Khatian/Dag Record';
+    tenureKey = 'Land Tenure: BanglarBhumi Khatian Record';
+    pattaKey = 'Khatian Number';
+  } else if (p.stateCode === 'AS') {
+    recordName = 'Assam Dharitree Periodic Myadi Patta';
+    tenureKey = 'Land Tenure: Dharitree ILRMS Revenue Record';
+    pattaKey = 'Periodic Myadi Patta';
+  }
 
   document.getElementById('panelRecordType').textContent = recordName;
-  document.getElementById('panelTitle').textContent = `Survey No. ${p.surveyNo} (${p.stateName})`;
+  document.getElementById('panelTitle').textContent = `${p.surveyNo} (${p.stateName})`;
 
   document.getElementById('panelContent').innerHTML = `
     <!-- Status Badge -->
@@ -605,11 +785,11 @@ function showParcelDetails(parcelId) {
 
     <!-- Title & Land Tenure Details -->
     <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;margin-bottom:14px;">
-      <div style="font-size:10px;color:#ff9900;text-transform:uppercase;font-weight:700;margin-bottom:6px;">${isTN ? 'Land Tenure: Patta Passbook Record' : isAP ? 'Land Tenure: Webland 1B Khatabedar' : 'Record of Rights'}</div>
+      <div style="font-size:10px;color:#ff9900;text-transform:uppercase;font-weight:700;margin-bottom:6px;">${tenureKey}</div>
       <div class="detail-row"><span class="detail-key">Registered Owner</span><span class="detail-val" style="color:#f0f4ff;font-weight:700;">${p.owner}</span></div>
-      <div class="detail-row"><span class="detail-key">${isTN ? 'Patta Number' : isAP ? 'Khata Number' : 'Gat / Khata'}</span><span class="detail-val" style="color:#38bdf8;font-weight:700;">${p.pattaNo}</span></div>
+      <div class="detail-row"><span class="detail-key">${pattaKey}</span><span class="detail-val" style="color:#38bdf8;font-weight:700;">${p.pattaNo}</span></div>
       <div class="detail-row"><span class="detail-key">Aadhaar Linked</span><span class="detail-val" style="color:${p.aadhaarLinked?'#22c55e':'#ef4444'};">${p.aadhaarLinked?'✅ Verified with State Registry':'⚠️ Pending Verification'}</span></div>
-      <div class="detail-row"><span class="detail-key">Village & Taluk</span><span class="detail-val">${p.village}, ${p.taluk}</span></div>
+      <div class="detail-row"><span class="detail-key">Village & Taluk</span><span class="detail-val">${p.village}, ${p.taluk} (${p.district})</span></div>
       <div class="detail-row"><span class="detail-key">Land Classification</span><span class="detail-val" style="color:#ff9900;">${p.landType}</span></div>
       <div class="detail-row"><span class="detail-key">Total Holding</span><span class="detail-val">${p.totalAreaHa} Hectares (${(p.totalAreaHa*2.471).toFixed(1)} Acres)</span></div>
       <div class="detail-row"><span class="detail-key">Acquired Footprint</span><span class="detail-val text-saffron" style="font-weight:700;">${p.acquiredAreaHa} Hectares (${(p.acquiredAreaHa*2.471).toFixed(1)} Acres)</span></div>
@@ -618,7 +798,7 @@ function showParcelDetails(parcelId) {
     <!-- RFCTLARR Act 2013 Statutory Valuation -->
     <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;margin-bottom:14px;">
       <div style="font-size:10px;color:#22c55e;text-transform:uppercase;font-weight:700;margin-bottom:6px;">Section 23 Statutory Award (100% Solatium)</div>
-      <div class="detail-row"><span class="detail-key">${isTN ? 'Guideline Value / Ha' : 'Basic Value / Ha'}</span><span class="detail-val">${p.guidelineValuePerHa}</span></div>
+      <div class="detail-row"><span class="detail-key">State Guideline / Basic Value</span><span class="detail-val">${p.guidelineValuePerHa}</span></div>
       <div class="detail-row"><span class="detail-key">Statutory Multiplier</span><span class="detail-val">${p.multiplier}</span></div>
       <div class="detail-row"><span class="detail-key">Base Market Consideration</span><span class="detail-val">${p.baseComp}</span></div>
       <div class="detail-row"><span class="detail-key">100% Solatium (Sec 30(1))</span><span class="detail-val" style="color:#f59e0b;">+ ${p.solatium}</span></div>
@@ -645,7 +825,7 @@ function showParcelDetails(parcelId) {
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-      <button class="btn btn-saffron btn-sm" onclick="alert('Viewing State Gazette Notification & Revenue Order for Survey #${p.surveyNo}')">📜 State Gazette</button>
+      <button class="btn btn-saffron btn-sm" onclick="alert('Viewing State Gazette Notification & Revenue Order for ${p.surveyNo} (${p.stateName})')">📜 State Gazette</button>
       <button class="btn btn-outline btn-sm" onclick="window.location.href='compensation.html'">💰 DBT Ledger</button>
     </div>
   `;

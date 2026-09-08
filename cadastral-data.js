@@ -623,3 +623,456 @@ function calculatePolygonAreaHa(coords) {
   const sqMeters = area * 110700 * 104600;
   return parseFloat((sqMeters / 10000).toFixed(2));
 }
+
+// =========================================================================
+// 4. PAN-INDIA STATE MASTER DIRECTORY (ALL 28 STATES & 8 UNION TERRITORIES)
+// =========================================================================
+const PAN_INDIA_STATES = [
+  { code: "TN", name: "Tamil Nadu", capital: "Chennai", zone: "South", lat: 11.1271, lng: 78.6569, zoom: 7, projects: 324, landHa: "18,420 Ha", compCr: "₹7,940 Cr", slaBreaches: 1, portal: "Tamil Nilam (e-Patta)", corridorKey: "TN" },
+  { code: "AP", name: "Andhra Pradesh", capital: "Amaravati", zone: "South", lat: 15.9129, lng: 79.7400, zoom: 7, projects: 286, landHa: "16,840 Ha", compCr: "₹6,850 Cr", slaBreaches: 2, portal: "Meebhoomi / Webland 1B", corridorKey: "AP" },
+  { code: "UP", name: "Uttar Pradesh", capital: "Lucknow", zone: "North", lat: 26.8467, lng: 80.9462, zoom: 7, projects: 412, landHa: "38,920 Ha", compCr: "₹18,450 Cr", slaBreaches: 3, portal: "UP Bhulekh (Khasra/Khatauni)", corridorKey: "UP" },
+  { code: "MH", name: "Maharashtra", capital: "Mumbai", zone: "West", lat: 19.7515, lng: 75.7139, zoom: 7, projects: 388, landHa: "31,450 Ha", compCr: "₹15,220 Cr", slaBreaches: 2, portal: "MahaBhumi (7/12 Extract)", corridorKey: "MH" },
+  { code: "KA", name: "Karnataka", capital: "Bengaluru", zone: "South", lat: 15.3173, lng: 75.7139, zoom: 7, projects: 264, landHa: "15,310 Ha", compCr: "₹8,430 Cr", slaBreaches: 1, portal: "Bhoomi (RTC / Pahani)", corridorKey: "KA" },
+  { code: "GJ", name: "Gujarat", capital: "Gandhinagar", zone: "West", lat: 22.2587, lng: 71.1924, zoom: 7, projects: 298, landHa: "22,640 Ha", compCr: "₹11,600 Cr", slaBreaches: 1, portal: "AnyRoR (7/12 & 8A)", corridorKey: "GJ" },
+  { code: "WB", name: "West Bengal", capital: "Kolkata", zone: "East", lat: 22.9868, lng: 87.8550, zoom: 7, projects: 194, landHa: "11,840 Ha", compCr: "₹5,890 Cr", slaBreaches: 4, portal: "BanglarBhumi (Khatian/Dag)", corridorKey: "WB" },
+  { code: "OD", name: "Odisha", capital: "Bhubaneswar", zone: "East", lat: 20.9517, lng: 85.0985, zoom: 7, projects: 178, landHa: "14,210 Ha", compCr: "₹4,950 Cr", slaBreaches: 1, portal: "Bhulekh Odisha (RoR)", corridorKey: "OD" },
+  { code: "MP", name: "Madhya Pradesh", capital: "Bhopal", zone: "Central", lat: 22.9734, lng: 78.6569, zoom: 7, projects: 245, landHa: "26,180 Ha", compCr: "₹9,120 Cr", slaBreaches: 2, portal: "MP Bhulekh", corridorKey: "MP" },
+  { code: "RJ", name: "Rajasthan", capital: "Jaipur", zone: "North", lat: 27.0238, lng: 74.2179, zoom: 7, projects: 231, landHa: "29,450 Ha", compCr: "₹8,760 Cr", slaBreaches: 2, portal: "Apna Khata (Jamabandi)", corridorKey: "RJ" },
+  { code: "BR", name: "Bihar", capital: "Patna", zone: "East", lat: 25.0961, lng: 85.3131, zoom: 7, projects: 168, landHa: "9,820 Ha", compCr: "₹4,320 Cr", slaBreaches: 5, portal: "Bihar Bhumi (Dakhil Kharij)", corridorKey: "BR" },
+  { code: "TS", name: "Telangana", capital: "Hyderabad", zone: "South", lat: 18.1124, lng: 79.0193, zoom: 7, projects: 215, landHa: "12,940 Ha", compCr: "₹6,230 Cr", slaBreaches: 1, portal: "Dharani Portal", corridorKey: "TS" },
+  { code: "KL", name: "Kerala", capital: "Thiruvananthapuram", zone: "South", lat: 10.8505, lng: 76.2711, zoom: 7, projects: 142, landHa: "4,620 Ha", compCr: "₹6,890 Cr", slaBreaches: 3, portal: "e-Rekha (Thandapper)", corridorKey: "KL" },
+  { code: "PB", name: "Punjab", capital: "Chandigarh", zone: "North", lat: 31.1471, lng: 75.3412, zoom: 7, projects: 128, landHa: "11,240 Ha", compCr: "₹6,150 Cr", slaBreaches: 2, portal: "PLRS (Fard Jamabandi)", corridorKey: "PB" },
+  { code: "HR", name: "Haryana", capital: "Chandigarh", zone: "North", lat: 29.0588, lng: 76.0856, zoom: 7, projects: 156, landHa: "14,890 Ha", compCr: "₹9,430 Cr", slaBreaches: 1, portal: "Jamabandi Haryana", corridorKey: "HR" },
+  { code: "AS", name: "Assam", capital: "Dispur", zone: "North-East", lat: 26.2006, lng: 92.9376, zoom: 7, projects: 112, landHa: "8,940 Ha", compCr: "₹3,180 Cr", slaBreaches: 1, portal: "Dharitree (ILRMS)", corridorKey: "AS" },
+  { code: "JH", name: "Jharkhand", capital: "Ranchi", zone: "East", lat: 23.6102, lng: 85.2799, zoom: 7, projects: 134, landHa: "10,450 Ha", compCr: "₹3,920 Cr", slaBreaches: 2, portal: "Jharbhoomi", corridorKey: "JH" },
+  { code: "CG", name: "Chhattisgarh", capital: "Raipur", zone: "Central", lat: 21.2787, lng: 81.8661, zoom: 7, projects: 148, landHa: "13,620 Ha", compCr: "₹4,150 Cr", slaBreaches: 1, portal: "Bhuiyan (Khasra)", corridorKey: "CG" },
+  { code: "UK", name: "Uttarakhand", capital: "Dehradun", zone: "North", lat: 30.0668, lng: 79.0193, zoom: 7, projects: 88, landHa: "3,890 Ha", compCr: "₹2,450 Cr", slaBreaches: 0, portal: "Bhulekh Uttarakhand", corridorKey: "UK" },
+  { code: "HP", name: "Himachal Pradesh", capital: "Shimla", zone: "North", lat: 31.1048, lng: 77.1734, zoom: 7, projects: 76, landHa: "2,940 Ha", compCr: "₹2,180 Cr", slaBreaches: 1, portal: "Himbhoomi", corridorKey: "HP" },
+  { code: "GA", name: "Goa", capital: "Panaji", zone: "West", lat: 15.2993, lng: 74.1240, zoom: 8, projects: 42, landHa: "1,120 Ha", compCr: "₹1,420 Cr", slaBreaches: 0, portal: "Dharani Goa (Form I & XIV)", corridorKey: "GA" },
+  { code: "TR", name: "Tripura", capital: "Agartala", zone: "North-East", lat: 23.9408, lng: 91.9882, zoom: 8, projects: 38, landHa: "1,450 Ha", compCr: "₹620 Cr", slaBreaches: 0, portal: "Jami Tripura", corridorKey: "TR" },
+  { code: "ML", name: "Meghalaya", capital: "Shillong", zone: "North-East", lat: 25.4670, lng: 91.3662, zoom: 8, projects: 34, landHa: "1,280 Ha", compCr: "₹540 Cr", slaBreaches: 0, portal: "Meghalaya Land Records", corridorKey: "ML" },
+  { code: "MN", name: "Manipur", capital: "Imphal", zone: "North-East", lat: 24.6637, lng: 93.9063, zoom: 8, projects: 29, landHa: "980 Ha", compCr: "₹410 Cr", slaBreaches: 1, portal: "Louchapathap", corridorKey: "MN" },
+  { code: "NL", name: "Nagaland", capital: "Kohima", zone: "North-East", lat: 26.1584, lng: 94.5624, zoom: 8, projects: 26, landHa: "840 Ha", compCr: "₹380 Cr", slaBreaches: 0, portal: "Nagaland Land Admin", corridorKey: "NL" },
+  { code: "MZ", name: "Mizoram", capital: "Aizawl", zone: "North-East", lat: 23.1645, lng: 92.9376, zoom: 8, projects: 24, landHa: "760 Ha", compCr: "₹320 Cr", slaBreaches: 0, portal: "Mizoram Land Revenue", corridorKey: "MZ" },
+  { code: "AR", name: "Arunachal Pradesh", capital: "Itanagar", zone: "North-East", lat: 28.2180, lng: 94.7278, zoom: 7, projects: 45, landHa: "2,350 Ha", compCr: "₹1,120 Cr", slaBreaches: 1, portal: "Arunachal Land Portal", corridorKey: "AR" },
+  { code: "SK", name: "Sikkim", capital: "Gangtok", zone: "North-East", lat: 27.5330, lng: 88.5122, zoom: 8, projects: 22, landHa: "620 Ha", compCr: "₹480 Cr", slaBreaches: 0, portal: "Sikkim Land Records", corridorKey: "SK" },
+  // Union Territories
+  { code: "DL", name: "Delhi (NCT)", capital: "New Delhi", zone: "North", lat: 28.6139, lng: 77.2090, zoom: 9, projects: 68, landHa: "2,450 Ha", compCr: "₹7,250 Cr", slaBreaches: 0, portal: "Delhi Bhulekh (Indraprastha)", corridorKey: "DL" },
+  { code: "JK", name: "Jammu & Kashmir", capital: "Srinagar / Jammu", zone: "North", lat: 33.7782, lng: 76.5762, zoom: 7, projects: 84, landHa: "4,820 Ha", compCr: "₹3,450 Cr", slaBreaches: 1, portal: "Apki Zameen Apki Nigrani", corridorKey: "JK" },
+  { code: "LA", name: "Ladakh", capital: "Leh", zone: "North", lat: 34.1526, lng: 77.5771, zoom: 7, projects: 28, landHa: "3,120 Ha", compCr: "₹890 Cr", slaBreaches: 0, portal: "Ladakh Revenue Portal", corridorKey: "LA" },
+  { code: "CH", name: "Chandigarh", capital: "Chandigarh", zone: "North", lat: 30.7333, lng: 76.7794, zoom: 11, projects: 14, landHa: "310 Ha", compCr: "₹920 Cr", slaBreaches: 0, portal: "Chandigarh Land Portal", corridorKey: "CH" },
+  { code: "PY", name: "Puducherry", capital: "Puducherry", zone: "South", lat: 11.9416, lng: 79.8083, zoom: 10, projects: 18, landHa: "420 Ha", compCr: "₹380 Cr", slaBreaches: 0, portal: "Nilamagal Puducherry", corridorKey: "PY" },
+  { code: "AN", name: "Andaman & Nicobar", capital: "Port Blair", zone: "South", lat: 11.7401, lng: 92.6586, zoom: 8, projects: 16, landHa: "540 Ha", compCr: "₹290 Cr", slaBreaches: 0, portal: "A&N Islands Revenue", corridorKey: "AN" },
+  { code: "DN", name: "Dadra, Nagar Haveli & Daman & Diu", capital: "Daman", zone: "West", lat: 20.4283, lng: 72.8397, zoom: 9, projects: 19, landHa: "480 Ha", compCr: "₹450 Cr", slaBreaches: 0, portal: "Daman & Diu Bhulekh", corridorKey: "DN" },
+  { code: "LD", name: "Lakshadweep", capital: "Kavaratti", zone: "South", lat: 10.5667, lng: 72.6417, zoom: 9, projects: 8, landHa: "95 Ha", compCr: "₹110 Cr", slaBreaches: 0, portal: "Lakshadweep Land Desk", corridorKey: "LD" }
+];
+
+// =========================================================================
+// 5. UTTAR PRADESH (UP) CADASTRAL DATASET: GANGA EXPRESSWAY & JEWAR AIRPORT
+// Location: Jewar / Gautam Buddha Nagar & Bulandshahr Corridor, UP
+// Terminology: Khasra No, Khatauni No, Fasli Year, Pukhta Bigha, Gata No
+// =========================================================================
+const UP_CADASTRAL_PARCELS = [
+  {
+    id: "UP-PAR-842-1",
+    stateCode: "UP",
+    stateName: "Uttar Pradesh",
+    district: "Gautam Buddha Nagar",
+    taluk: "Jewar",
+    village: "Ranhera (Noida Airport Corridor)",
+    surveyNo: "Khasra #842/1",
+    pattaNo: "Khatauni #00184",
+    owner: "Chaudhary Virender Singh & Sukhbir Singh",
+    aadhaarLinked: true,
+    totalAreaHa: 2.80,
+    acquiredAreaHa: 2.10,
+    landType: "Irrigated Agricultural (Nahar Sinchit - Tube Well)",
+    status: "possession",
+    stageText: "Section 38 - Physical Possession Handed Over to YEDA / Noida International Airport",
+    statusBadge: "Possession Complete",
+    statusColor: "#22c55e",
+    guidelineValuePerHa: "₹72,00,000",
+    multiplier: "2.0x (Rural Distance Factor)",
+    baseComp: "₹3,02,40,000",
+    solatium: "₹3,02,40,000 (100% Solatium Sec 30(1))",
+    interest: "₹36,28,800 (12% Sec 30(3))",
+    totalAward: "₹6,41,08,800",
+    dbtStatus: "✅ 100% Disbursed via PFMS to PNB Jewar Branch A/c ...7741",
+    dbtDate: "05-Jan-2026",
+    surveyDate: "20-Oct-2024",
+    treesAssessed: "22 Sheesham, 8 Jamun Trees (Valued ₹3,80,000)",
+    structureVal: "Borewell & Tubewell Room (Valued ₹2,10,000)",
+    polygon: [
+      [28.1620, 77.5680],
+      [28.1652, 77.5700],
+      [28.1640, 77.5742],
+      [28.1608, 77.5720]
+    ]
+  },
+  {
+    id: "UP-PAR-843-2",
+    stateCode: "UP",
+    stateName: "Uttar Pradesh",
+    district: "Gautam Buddha Nagar",
+    taluk: "Jewar",
+    village: "Ranhera",
+    surveyNo: "Khasra #843/2",
+    pattaNo: "Khatauni #00185",
+    owner: "Smt. Shanti Devi & Rajesh Kumar Sharma",
+    aadhaarLinked: true,
+    totalAreaHa: 1.65,
+    acquiredAreaHa: 1.25,
+    landType: "Fertile Double-Crop (Do-Fasli Wheat/Paddy)",
+    status: "award",
+    stageText: "Section 23 - Award Declared (PFMS Token Queued)",
+    statusBadge: "Award Declared",
+    statusColor: "#f59e0b",
+    guidelineValuePerHa: "₹72,00,000",
+    multiplier: "2.0x",
+    baseComp: "₹1,80,00,000",
+    solatium: "₹1,80,00,000",
+    interest: "₹21,60,000",
+    totalAward: "₹3,81,60,000",
+    dbtStatus: "⏳ PFMS DBT Batch #UP-JWR-843 Scheduled for Credit",
+    dbtDate: "Expected 14-Sep-2026",
+    surveyDate: "24-Oct-2024",
+    treesAssessed: "12 Guava Trees, 4 Neem Trees",
+    structureVal: "Cattle Shed with Tin Roof",
+    polygon: [
+      [28.1652, 77.5700],
+      [28.1684, 77.5720],
+      [28.1672, 77.5760],
+      [28.1640, 77.5742]
+    ]
+  }
+];
+
+const UP_EXPRESSWAY_ALIGNMENT = {
+  name: "Ganga Expressway & Jewar International Airport Link",
+  widthMeters: 60,
+  centerline: [
+    [28.1580, 77.5640],
+    [28.1630, 77.5700],
+    [28.1670, 77.5750],
+    [28.1710, 77.5800]
+  ],
+  bufferPolygon: [
+    [28.1588, 77.5635],
+    [28.1638, 77.5695],
+    [28.1678, 77.5745],
+    [28.1718, 77.5795],
+    [28.1702, 77.5805],
+    [28.1662, 77.5755],
+    [28.1622, 77.5705],
+    [28.1572, 77.5645]
+  ]
+};
+
+// =========================================================================
+// 6. KARNATAKA (KA) CADASTRAL DATASET: BENGALURU SATELLITE TOWN RING ROAD (STRR)
+// Location: Hoskote & Doddaballapur Corridor, Bengaluru Rural, Karnataka
+// Terminology: Survey No, Hissa No, RTC / Pahani (Bhoomi), Bagayat, Kushki
+// =========================================================================
+const KA_CADASTRAL_PARCELS = [
+  {
+    id: "KA-PAR-58-1",
+    stateCode: "KA",
+    stateName: "Karnataka",
+    district: "Bengaluru Rural",
+    taluk: "Hoskote",
+    village: "Devanahalli Border (Kollur)",
+    surveyNo: "Sy #58/1",
+    pattaNo: "RTC Pahani #882",
+    owner: "B. M. Muniyappa & M. Narayanaswamy",
+    aadhaarLinked: true,
+    totalAreaHa: 2.10,
+    acquiredAreaHa: 1.60,
+    landType: "Bagayat (Irrigated Horticulture - Mulberry/Eucalyptus)",
+    status: "possession",
+    stageText: "Section 38 - Possession Handed Over to NHAI (STRR NH-948A)",
+    statusBadge: "Possession Complete",
+    statusColor: "#22c55e",
+    guidelineValuePerHa: "₹85,00,000",
+    multiplier: "1.5x",
+    baseComp: "₹2,04,00,000",
+    solatium: "₹2,04,00,000 (100% Solatium Sec 30(1))",
+    interest: "₹24,48,000",
+    totalAward: "₹4,32,48,000",
+    dbtStatus: "✅ Paid 100% via K2 IFMIS / PFMS to Canara Bank Hoskote",
+    dbtDate: "18-Jan-2026",
+    surveyDate: "12-Nov-2024",
+    treesAssessed: "45 Mulberry Shrubs, 16 Silver Oak",
+    structureVal: "Drip Irrigation Pump House",
+    polygon: [
+      [13.0820, 77.7850],
+      [13.0850, 77.7870],
+      [13.0840, 77.7915],
+      [13.0810, 77.7895]
+    ]
+  },
+  {
+    id: "KA-PAR-58-2",
+    stateCode: "KA",
+    stateName: "Karnataka",
+    district: "Bengaluru Rural",
+    taluk: "Hoskote",
+    village: "Kollur",
+    surveyNo: "Sy #58/2",
+    pattaNo: "RTC Pahani #883",
+    owner: "C. Venkatesh Reddy & Smt. V. Lakshmi",
+    aadhaarLinked: true,
+    totalAreaHa: 1.75,
+    acquiredAreaHa: 1.30,
+    landType: "Kushki (Dry Agricultural Ragi Land)",
+    status: "award",
+    stageText: "Section 23 - Award Declared by Special DC (LA)",
+    statusBadge: "Award Declared",
+    statusColor: "#f59e0b",
+    guidelineValuePerHa: "₹85,00,000",
+    multiplier: "1.5x",
+    baseComp: "₹1,65,75,000",
+    solatium: "₹1,65,75,000",
+    interest: "₹19,89,000",
+    totalAward: "₹3,51,39,000",
+    dbtStatus: "⏳ Treasury Token Assigned",
+    dbtDate: "Expected 15-Sep-2026",
+    surveyDate: "15-Nov-2024",
+    treesAssessed: "8 Tamarind Trees, 6 Coconut Palms",
+    structureVal: "Nil",
+    polygon: [
+      [13.0850, 77.7870],
+      [13.0880, 77.7890],
+      [13.0870, 77.7935],
+      [13.0840, 77.7915]
+    ]
+  }
+];
+
+const KA_EXPRESSWAY_ALIGNMENT = {
+  name: "Bengaluru Satellite Town Ring Road (STRR NH-948A)",
+  widthMeters: 60,
+  centerline: [
+    [13.0780, 77.7810],
+    [13.0830, 77.7880],
+    [13.0870, 77.7930],
+    [13.0910, 77.7980]
+  ],
+  bufferPolygon: [
+    [13.0788, 77.7805],
+    [13.0838, 77.7875],
+    [13.0878, 77.7925],
+    [13.0918, 77.7975],
+    [13.0902, 77.7985],
+    [13.0862, 77.7935],
+    [13.0822, 77.7885],
+    [13.0772, 77.7815]
+  ]
+};
+
+// =========================================================================
+// 7. GUJARAT (GJ) CADASTRAL DATASET: DHOLERA SIR & EXPRESSWAY
+// Location: Dholera Special Investment Region & Ahmedabad-Dholera Expressway
+// Terminology: Survey / Block No, Khata No, AnyRoR 7/12 & 8A, Jirayat, Bagayat
+// =========================================================================
+const GJ_CADASTRAL_PARCELS = [
+  {
+    id: "GJ-PAR-312-1",
+    stateCode: "GJ",
+    stateName: "Gujarat",
+    district: "Ahmedabad",
+    taluk: "Dholera",
+    village: "Bhimtalav (Dholera SIR Activation Zone)",
+    surveyNo: "Block #312/1",
+    pattaNo: "Khata #412 (AnyRoR)",
+    owner: "Patel Ramanbhai Ishwarbhai & Sons",
+    aadhaarLinked: true,
+    totalAreaHa: 3.20,
+    acquiredAreaHa: 2.50,
+    landType: "Jirayat Class I (Cotton / Cumin Farming)",
+    status: "possession",
+    stageText: "Section 38 - Final Possession to DICDL (Dholera Industrial City)",
+    statusBadge: "Possession Complete",
+    statusColor: "#22c55e",
+    guidelineValuePerHa: "₹45,00,000",
+    multiplier: "1.5x",
+    baseComp: "₹1,68,75,000",
+    solatium: "₹1,68,75,000",
+    interest: "₹20,25,000",
+    totalAward: "₹3,57,75,000",
+    dbtStatus: "✅ Disbursed via PFMS / Gujarat State Treasury to Bank of Baroda",
+    dbtDate: "22-Dec-2025",
+    surveyDate: "10-Oct-2024",
+    treesAssessed: "15 Prosopis, 6 Neem",
+    structureVal: "Farm Tubewell",
+    polygon: [
+      [22.2420, 72.1880],
+      [22.2455, 72.1905],
+      [22.2442, 72.1950],
+      [22.2407, 72.1925]
+    ]
+  }
+];
+
+const GJ_EXPRESSWAY_ALIGNMENT = {
+  name: "Ahmedabad-Dholera Expressway (NE-5) Corridor",
+  widthMeters: 60,
+  centerline: [
+    [22.2380, 72.1840],
+    [22.2430, 72.1910],
+    [22.2470, 72.1970],
+    [22.2510, 72.2030]
+  ],
+  bufferPolygon: [
+    [22.2388, 72.1835],
+    [22.2438, 72.1905],
+    [22.2478, 72.1965],
+    [22.2518, 72.2025],
+    [22.2502, 72.2035],
+    [22.2462, 72.1975],
+    [22.2422, 72.1915],
+    [22.2372, 72.1845]
+  ]
+};
+
+// =========================================================================
+// 8. WEST BENGAL (WB) CADASTRAL DATASET: EASTERN FREIGHT & KOLKATA HIGHWAY
+// Location: Dankuni - Durgapur Industrial Corridor, West Bengal
+// Terminology: Mouza, Khatian No, Dag No, Sali (Agricultural), Bastu (Homestead)
+// =========================================================================
+const WB_CADASTRAL_PARCELS = [
+  {
+    id: "WB-PAR-412-1",
+    stateCode: "WB",
+    stateName: "West Bengal",
+    district: "Hooghly",
+    taluk: "Dankuni",
+    village: "Mouza Chamrail (BanglarBhumi)",
+    surveyNo: "Dag #412",
+    pattaNo: "Khatian #624",
+    owner: "Subhash Chandra Ghosh & Anirban Ghosh",
+    aadhaarLinked: true,
+    totalAreaHa: 1.85,
+    acquiredAreaHa: 1.40,
+    landType: "Sali (Fertile Aman Paddy Agricultural Land)",
+    status: "possession",
+    stageText: "Section 38 - Civil Handover to Dedicated Freight Corridor (DFCCIL)",
+    statusBadge: "Possession Complete",
+    statusColor: "#22c55e",
+    guidelineValuePerHa: "₹62,00,000",
+    multiplier: "1.5x",
+    baseComp: "₹1,30,20,000",
+    solatium: "₹1,30,20,000",
+    interest: "₹15,62,400",
+    totalAward: "₹2,76,02,400",
+    dbtStatus: "✅ Paid 100% via PFMS to UCO Bank Dankuni Branch",
+    dbtDate: "08-Jan-2026",
+    surveyDate: "18-Nov-2024",
+    treesAssessed: "8 Mango, 4 Betel Nut Palms",
+    structureVal: "Concrete Boundary Pillar & Pump",
+    polygon: [
+      [22.6820, 88.2850],
+      [22.6850, 88.2872],
+      [22.6840, 88.2915],
+      [22.6810, 88.2893]
+    ]
+  }
+];
+
+const WB_EXPRESSWAY_ALIGNMENT = {
+  name: "Eastern Dedicated Freight Corridor (EDFC Dankuni Terminal)",
+  widthMeters: 60,
+  centerline: [
+    [22.6780, 88.2810],
+    [22.6830, 88.2880],
+    [22.6870, 88.2930],
+    [22.6910, 88.2980]
+  ],
+  bufferPolygon: [
+    [22.6788, 88.2805],
+    [22.6838, 88.2875],
+    [22.6878, 88.2925],
+    [22.6918, 88.2975],
+    [22.6902, 88.2985],
+    [22.6862, 88.2935],
+    [22.6822, 88.2885],
+    [22.6772, 88.2815]
+  ]
+};
+
+// =========================================================================
+// 9. ASSAM & NORTH-EAST (AS) CADASTRAL DATASET: GUWAHATI RING ROAD
+// Location: Kamrup Metro / Guwahati Bypass & Brahmaputra Corridor
+// Terminology: Mouza, Patta No, Dag No (Dharitree), Myadi Patta, Faringati
+// =========================================================================
+const AS_CADASTRAL_PARCELS = [
+  {
+    id: "AS-PAR-105-1",
+    stateCode: "AS",
+    stateName: "Assam",
+    district: "Kamrup Metro",
+    taluk: "Azara",
+    village: "Dharapur (Guwahati Ring Road)",
+    surveyNo: "Dag #105/1",
+    pattaNo: "Periodic Myadi Patta #312",
+    owner: "Bhaben Kalita & Mukul Hazarika",
+    aadhaarLinked: true,
+    totalAreaHa: 1.50,
+    acquiredAreaHa: 1.15,
+    landType: "Sali Paddy Agricultural / Tea Border",
+    status: "possession",
+    stageText: "Section 38 - Possession Handed to NHIDCL",
+    statusBadge: "Possession Complete",
+    statusColor: "#22c55e",
+    guidelineValuePerHa: "₹42,00,000",
+    multiplier: "1.5x",
+    baseComp: "₹72,45,000",
+    solatium: "₹72,45,000",
+    interest: "₹8,69,400",
+    totalAward: "₹1,53,59,400",
+    dbtStatus: "✅ Paid 100% via PFMS to Assam Gramin Vikash Bank",
+    dbtDate: "14-Feb-2026",
+    surveyDate: "20-Dec-2024",
+    treesAssessed: "12 Areca Nut Palms, 4 Bamboo Clumps",
+    structureVal: "Nil",
+    polygon: [
+      [26.1220, 91.6180],
+      [26.1250, 91.6205],
+      [26.1240, 91.6250],
+      [26.1210, 91.6225]
+    ]
+  }
+];
+
+const AS_EXPRESSWAY_ALIGNMENT = {
+  name: "Guwahati Ring Road & Brahmaputra Link (NHIDCL)",
+  widthMeters: 60,
+  centerline: [
+    [26.1180, 91.6140],
+    [26.1230, 91.6210],
+    [26.1270, 91.6270],
+    [26.1310, 91.6330]
+  ],
+  bufferPolygon: [
+    [26.1188, 91.6135],
+    [26.1238, 91.6205],
+    [26.1278, 91.6265],
+    [26.1318, 91.6325],
+    [26.1302, 91.6335],
+    [26.1262, 91.6275],
+    [26.1222, 91.6215],
+    [26.1172, 91.6145]
+  ]
+};
+
+// Unified Master Collection of all Cadastral Parcels across India
+const ALL_INDIA_CADASTRAL_PARCELS = [
+  ...TN_CADASTRAL_PARCELS,
+  ...AP_CADASTRAL_PARCELS,
+  ...MH_CADASTRAL_PARCELS,
+  ...UP_CADASTRAL_PARCELS,
+  ...KA_CADASTRAL_PARCELS,
+  ...GJ_CADASTRAL_PARCELS,
+  ...WB_CADASTRAL_PARCELS,
+  ...AS_CADASTRAL_PARCELS
+];
+

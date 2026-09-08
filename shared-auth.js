@@ -163,6 +163,114 @@ const NLAMS_ROLES = {
     mapCenter: [16.5430, 80.5250],
     mapZoom: 15,
     description: 'Adjudicates Section 15 objections across Krishna river floodplain villages, resolves Land Pooling Scheme (LPS) vs RFCTLARR disputes, and sanctions DBT via CFMS/PFMS.'
+  },
+
+  state_up: {
+    id: 'state_up',
+    name: 'Shri P. Guruprasad IAS',
+    title: 'Principal Secretary (Revenue & Land Administration)',
+    dept: 'Board of Revenue, Govt of Uttar Pradesh',
+    badge: 'State Govt (Uttar Pradesh)',
+    badgeColor: '#ea580c',
+    avatar: 'PG',
+    scope: 'State of Uttar Pradesh (75 Districts)',
+    jurisdictionLevel: 'Secretariat - Bapu Bhawan, Lucknow',
+    stateCode: 'UP',
+    stats: {
+      projects: '412',
+      landProposed: '38,920 Ha',
+      landAcquired: '27,150 Ha',
+      landAcquiredPct: '69.7%',
+      compDisbursed: '₹18,450 Cr',
+      compTotal: '₹26,800 Cr',
+      pendingApprovals: 14,
+      slaBreaches: 3,
+      disputes: 84
+    },
+    mapCenter: [28.1640, 77.5720],
+    mapZoom: 14,
+    description: 'Directs acquisition for Ganga Expressway, Noida International Airport (Jewar), Gorakhpur Link Expressway, and UP Bhulekh Khasra digital integration.'
+  },
+
+  district_up: {
+    id: 'district_up',
+    name: 'Shri Manish Kumar Verma IAS',
+    title: 'District Magistrate & CALA (Jewar Airport & Ganga Exp)',
+    dept: 'District Collectorate, Gautam Buddha Nagar (Noida)',
+    badge: 'District CALA (Gautam Buddha Nagar, UP)',
+    badgeColor: '#16a34a',
+    avatar: 'MV',
+    scope: 'Jewar Airport Phase II & Ganga Expressway Package 1',
+    jurisdictionLevel: 'Collectorate - Greater Noida, Uttar Pradesh',
+    stateCode: 'UP',
+    stats: {
+      projects: '32',
+      landProposed: '4,150 Ha',
+      landAcquired: '3,210 Ha',
+      landAcquiredPct: '77.3%',
+      compDisbursed: '₹4,890 Cr',
+      compTotal: '₹6,120 Cr',
+      pendingApprovals: 6,
+      slaBreaches: 1,
+      disputes: 12
+    },
+    mapCenter: [28.1640, 77.5720],
+    mapZoom: 15,
+    description: 'Adjudicates Section 15 farmer objections across Ranhera, Dayanatpur and Rohi villages for Jewar Airport, awards 100% solatium, and oversees DBT bank credits.'
+  },
+
+  state_ka: {
+    id: 'state_ka',
+    name: 'Dr. Rajendra Kumar Kataria IAS',
+    title: 'Principal Secretary (Revenue Department)',
+    dept: 'Revenue Department, Govt of Karnataka',
+    badge: 'State Govt (Karnataka)',
+    badgeColor: '#d97706',
+    avatar: 'RK',
+    scope: 'State of Karnataka (31 Districts)',
+    jurisdictionLevel: 'M.S. Building - Vidhana Soudha, Bengaluru',
+    stateCode: 'KA',
+    stats: {
+      projects: '264',
+      landProposed: '15,310 Ha',
+      landAcquired: '11,280 Ha',
+      landAcquiredPct: '73.6%',
+      compDisbursed: '₹8,430 Cr',
+      compTotal: '₹12,100 Cr',
+      pendingApprovals: 8,
+      slaBreaches: 1,
+      disputes: 29
+    },
+    mapCenter: [13.0840, 77.7890],
+    mapZoom: 14,
+    description: 'Coordinates Bengaluru Satellite Town Ring Road (STRR NH-948A), Bengaluru-Chennai Expressway, and integration with Bhoomi RTC/Pahani land database.'
+  },
+
+  state_mh: {
+    id: 'state_mh',
+    name: 'Dr. Nitin Kareer IAS',
+    title: 'Additional Chief Secretary (Revenue)',
+    dept: 'Revenue & Forest Department, Govt of Maharashtra',
+    badge: 'State Govt (Maharashtra)',
+    badgeColor: '#0284c7',
+    avatar: 'NK',
+    scope: 'State of Maharashtra (36 Districts)',
+    jurisdictionLevel: 'Mantralaya - Nariman Point, Mumbai',
+    stateCode: 'MH',
+    stats: {
+      projects: '388',
+      landProposed: '31,450 Ha',
+      landAcquired: '23,190 Ha',
+      landAcquiredPct: '73.7%',
+      compDisbursed: '₹15,220 Cr',
+      compTotal: '₹21,800 Cr',
+      pendingApprovals: 11,
+      slaBreaches: 2,
+      disputes: 64
+    },
+    mapCenter: [19.9725, 72.9180],
+    mapZoom: 14,
+    description: 'Monitors Mumbai-Nagpur Samruddhi Mahamarg, Delhi-Mumbai Expressway Package 17 (Palghar/Thane), and MahaBhumi 7/12 land records.'
   }
 };
 
@@ -178,26 +286,29 @@ function getCurrentRole() {
   if (stored && NLAMS_ROLES[stored]) {
     return NLAMS_ROLES[stored];
   }
-  // Default to Tamil Nadu CALA or Central
-  localStorage.setItem('nlams_current_role', 'district_tn');
-  return NLAMS_ROLES.district_tn;
+  return NLAMS_ROLES.central;
 }
 
 // Switch active role
-function switchRole(roleKey) {
-  if (!NLAMS_ROLES[roleKey]) return;
-  localStorage.setItem('nlams_current_role', roleKey);
-  
-  showRoleToast(NLAMS_ROLES[roleKey]);
-  updateUIPersona(NLAMS_ROLES[roleKey]);
-  
-  if (typeof window.onNLAMSRoleChange === 'function') {
-    window.onNLAMSRoleChange(NLAMS_ROLES[roleKey]);
+function switchRole(roleId) {
+  if (NLAMS_ROLES[roleId]) {
+    localStorage.setItem('nlams_current_role', roleId);
+    const role = NLAMS_ROLES[roleId];
+    updateUIPersona(role);
+    showRoleToast(role);
+    
+    // Trigger custom event for page listeners
+    window.dispatchEvent(new CustomEvent('nlamsRoleChanged', { detail: role }));
+    
+    if (typeof window.onNLAMSRoleChange === 'function') {
+      window.onNLAMSRoleChange(role);
+    }
   }
 }
 
 // Update UI elements across pages
 function updateUIPersona(role) {
+  // Update sidebar elements
   const avatarEl = document.querySelector('.sidebar-user .user-avatar');
   const nameEl = document.querySelector('.sidebar-user .user-name');
   const roleEl = document.querySelector('.sidebar-user .user-role');
@@ -261,12 +372,24 @@ function injectRoleBar() {
       <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);padding:4px 10px;border-radius:8px;">
         <span style="font-size:11px;color:#a8b4cc;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Persona:</span>
         <select id="nlamsRoleSelect" onchange="switchRole(this.value)" style="background:transparent;border:none;color:#f0f4ff;font-size:12px;font-weight:700;cursor:pointer;outline:none;font-family:'Inter',sans-serif;">
-          <option value="district_tn" style="background:#0d1120;color:#f0f4ff;" ${currentRole.id==='district_tn'?'selected':''}>🌊 CALA Tiruvallur (Tamil Nadu - CPRR)</option>
-          <option value="state_tn" style="background:#0d1120;color:#f0f4ff;" ${currentRole.id==='state_tn'?'selected':''}>🏢 State Govt (Tamil Nadu Secretariat)</option>
-          <option value="surveyor_tn" style="background:#0d1120;color:#f0f4ff;" ${currentRole.id==='surveyor_tn'?'selected':''}>📐 Cadastral Surveyor (Sriperumbudur, TN)</option>
-          <option value="district_ap" style="background:#0d1120;color:#f0f4ff;" ${currentRole.id==='district_ap'?'selected':''}>🌾 CALA Guntur (Andhra Pradesh - Amaravati)</option>
-          <option value="state_ap" style="background:#0d1120;color:#f0f4ff;" ${currentRole.id==='state_ap'?'selected':''}>🏢 State Govt (Andhra Pradesh Secretariat)</option>
-          <option value="central" style="background:#0d1120;color:#f0f4ff;" ${currentRole.id==='central'?'selected':''}>🏛️ Central Ministry (DoLR/MoRD New Delhi)</option>
+          <option value="central" style="background:#0d1120;color:#f0f4ff;" ${currentRole.id==='central'?'selected':''}>🏛️ Central Ministry (Pan-India MoRD/DoLR HQ)</option>
+          <optgroup label="Southern Zone">
+            <option value="district_tn" style="background:#0d1120;color:#f0f4ff;" ${currentRole.id==='district_tn'?'selected':''}>🌊 CALA Tiruvallur (Tamil Nadu - CPRR)</option>
+            <option value="state_tn" style="background:#0d1120;color:#f0f4ff;" ${currentRole.id==='state_tn'?'selected':''}>🏢 State Govt (Tamil Nadu Secretariat)</option>
+            <option value="district_ap" style="background:#0d1120;color:#f0f4ff;" ${currentRole.id==='district_ap'?'selected':''}>🌾 CALA Guntur (Andhra Pradesh - Amaravati)</option>
+            <option value="state_ap" style="background:#0d1120;color:#f0f4ff;" ${currentRole.id==='state_ap'?'selected':''}>🏢 State Govt (Andhra Pradesh Secretariat)</option>
+            <option value="state_ka" style="background:#0d1120;color:#f0f4ff;" ${currentRole.id==='state_ka'?'selected':''}>🏙️ State Govt (Karnataka Revenue &amp; Bhoomi)</option>
+          </optgroup>
+          <optgroup label="Northern Zone">
+            <option value="district_up" style="background:#0d1120;color:#f0f4ff;" ${currentRole.id==='district_up'?'selected':''}>🚜 CALA Gautam Buddha Nagar (UP - Jewar &amp; Ganga Exp)</option>
+            <option value="state_up" style="background:#0d1120;color:#f0f4ff;" ${currentRole.id==='state_up'?'selected':''}>🏢 State Govt (Uttar Pradesh Revenue &amp; Bhulekh)</option>
+          </optgroup>
+          <optgroup label="Western Zone">
+            <option value="state_mh" style="background:#0d1120;color:#f0f4ff;" ${currentRole.id==='state_mh'?'selected':''}>⚡ State Govt (Maharashtra Mantralaya)</option>
+          </optgroup>
+          <optgroup label="Field Survey">
+            <option value="surveyor_tn" style="background:#0d1120;color:#f0f4ff;" ${currentRole.id==='surveyor_tn'?'selected':''}>📐 Cadastral Surveyor (Pan-India DGPS Demarcation)</option>
+          </optgroup>
         </select>
       </div>
     `;
