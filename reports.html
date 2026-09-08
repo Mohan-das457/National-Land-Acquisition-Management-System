@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MIS Reports & Analytics – NLAMS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="shared-auth.js"></script>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="sidebar-logo-icon">N</div><div class="sidebar-logo-text"><div class="sidebar-logo-title">NLAMS</div><div class="sidebar-logo-sub">Land Acquisition System</div></div></div>
+    <div class="sidebar-user"><div class="user-avatar">RK</div><div class="user-info"><div class="user-name">Ramesh Kumar IAS</div><div class="user-role">Central Ministry</div></div></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Core</div>
+      <a href="dashboard.html" class="nav-item"><span class="nav-item-icon">📊</span>Dashboard</a>
+      <a href="projects.html" class="nav-item"><span class="nav-item-icon">🏗️</span>Projects<span class="nav-item-badge">2,847</span></a>
+      <a href="gis-map.html" class="nav-item"><span class="nav-item-icon">🗺️</span>GIS Map View</a>
+      <a href="workflow.html" class="nav-item"><span class="nav-item-icon">🔄</span>Workflow & Approvals<span class="nav-item-badge warning">23</span></a>
+      <div class="nav-section-label">Land & Compensation</div>
+      <a href="compensation.html" class="nav-item"><span class="nav-item-icon">💰</span>Compensation Tracker</a>
+      <a href="documents.html" class="nav-item"><span class="nav-item-icon">📁</span>Document Repository</a>
+      <div class="nav-section-label">Analytics</div>
+      <a href="reports.html" class="nav-item active"><span class="nav-item-icon">📈</span>MIS Reports</a>
+    </nav>
+    <div class="sidebar-footer"><div class="sidebar-footer-links"><a href="index.html" class="sidebar-footer-link">← Logout</a><span class="sidebar-footer-link" style="margin-left:auto;">v2.0.1</span></div></div>
+  </aside>
+
+  <main class="main-content">
+    <header class="top-header">
+      <div><div class="header-title">MIS Reports & Analytics</div><div class="header-breadcrumb"><span>NLAMS</span><span class="breadcrumb-sep">/</span><span>Reports</span></div></div>
+      <div class="header-spacer"></div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <select class="filter-select"><option>FY 2025-26</option><option>FY 2024-25</option><option>FY 2023-24</option></select>
+        <button class="btn btn-outline btn-sm">⬇️ PDF</button>
+        <button class="btn btn-saffron btn-sm">📊 Excel</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <!-- Report Templates -->
+      <div class="card mb-24">
+        <div class="card-header"><span style="font-size:16px;">📋</span><span class="card-title">Quick Report Templates</span></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+            <div style="background:rgba(255,153,0,0.08);border:1px solid rgba(255,153,0,0.2);border-radius:10px;padding:16px;cursor:pointer;transition:all 0.2s;" onmouseenter="this.style.background='rgba(255,153,0,0.14)'" onmouseleave="this.style.background='rgba(255,153,0,0.08)'">
+              <div style="font-size:24px;margin-bottom:8px;">📊</div>
+              <div style="font-size:13px;font-weight:700;color:var(--text-primary);">National Summary Report</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">All-India consolidated acquisition status</div>
+            </div>
+            <div style="background:rgba(0,112,200,0.08);border:1px solid rgba(0,112,200,0.2);border-radius:10px;padding:16px;cursor:pointer;transition:all 0.2s;" onmouseenter="this.style.background='rgba(0,112,200,0.14)'" onmouseleave="this.style.background='rgba(0,112,200,0.08)'">
+              <div style="font-size:24px;margin-bottom:8px;">🗺️</div>
+              <div style="font-size:13px;font-weight:700;color:var(--text-primary);">State-wise MIS Report</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">State-level acquisition & disbursement</div>
+            </div>
+            <div style="background:rgba(19,136,8,0.08);border:1px solid rgba(19,136,8,0.2);border-radius:10px;padding:16px;cursor:pointer;transition:all 0.2s;" onmouseenter="this.style.background='rgba(19,136,8,0.14)'" onmouseleave="this.style.background='rgba(19,136,8,0.08)'">
+              <div style="font-size:24px;margin-bottom:8px;">💰</div>
+              <div style="font-size:13px;font-weight:700;color:var(--text-primary);">Compensation Status Report</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Assessed vs. disbursed analysis</div>
+            </div>
+            <div style="background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);border-radius:10px;padding:16px;cursor:pointer;transition:all 0.2s;" onmouseenter="this.style.background='rgba(124,58,237,0.14)'" onmouseleave="this.style.background='rgba(124,58,237,0.08)'">
+              <div style="font-size:24px;margin-bottom:8px;">🏘️</div>
+              <div style="font-size:13px;font-weight:700;color:var(--text-primary);">R&R Progress Report</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Rehabilitation & resettlement status</div>
+            </div>
+            <div style="background:rgba(229,57,53,0.08);border:1px solid rgba(229,57,53,0.2);border-radius:10px;padding:16px;cursor:pointer;transition:all 0.2s;" onmouseenter="this.style.background='rgba(229,57,53,0.14)'" onmouseleave="this.style.background='rgba(229,57,53,0.08)'">
+              <div style="font-size:24px;margin-bottom:8px;">⏰</div>
+              <div style="font-size:13px;font-weight:700;color:var(--text-primary);">Timeline Adherence Report</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Deadline compliance across all stages</div>
+            </div>
+            <div style="background:rgba(13,148,136,0.08);border:1px solid rgba(13,148,136,0.2);border-radius:10px;padding:16px;cursor:pointer;transition:all 0.2s;" onmouseenter="this.style.background='rgba(13,148,136,0.14)'" onmouseleave="this.style.background='rgba(13,148,136,0.08)'">
+              <div style="font-size:24px;margin-bottom:8px;">🏗️</div>
+              <div style="font-size:13px;font-weight:700;color:var(--text-primary);">Project-wise Detailed Report</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Individual project acquisition metrics</div>
+            </div>
+            <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:16px;cursor:pointer;transition:all 0.2s;" onmouseenter="this.style.background='rgba(245,158,11,0.14)'" onmouseleave="this.style.background='rgba(245,158,11,0.08)'">
+              <div style="font-size:24px;margin-bottom:8px;">🤖</div>
+              <div style="font-size:13px;font-weight:700;color:var(--text-primary);">AI Predictive Analytics</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Forecasts, risk scores, delay prediction</div>
+            </div>
+            <div style="background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.2);border-radius:10px;padding:16px;cursor:pointer;transition:all 0.2s;" onmouseenter="this.style.background='rgba(96,165,250,0.14)'" onmouseleave="this.style.background='rgba(96,165,250,0.08)'">
+              <div style="font-size:24px;margin-bottom:8px;">📈</div>
+              <div style="font-size:13px;font-weight:700;color:var(--text-primary);">Executive Dashboard PDF</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">One-page summary for policy makers</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trend Analysis -->
+      <div class="grid-2 mb-24">
+        <div class="card">
+          <div class="card-header"><span style="font-size:16px;">📈</span><span class="card-title">Annual Land Acquisition Trend</span><span class="card-sub">FY 2019-20 to 2025-26</span></div>
+          <div class="card-body"><div class="chart-container" style="height:240px;"><canvas id="annualTrend"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span style="font-size:16px;">🤖</span><span class="card-title">AI Delay Risk Prediction</span><span class="card-sub">By Project Category</span></div>
+          <div class="card-body"><div class="chart-container" style="height:240px;"><canvas id="riskRadar"></canvas></div></div>
+        </div>
+      </div>
+
+      <!-- State Heatmap Table -->
+      <div class="card mb-24">
+        <div class="card-header">
+          <span style="font-size:16px;">🗺️</span>
+          <span class="card-title">State-wise Consolidated MIS Report — FY 2025-26</span>
+          <button class="card-action" style="margin-left:auto;" onclick="alert('Generating Excel report...')">⬇️ Download Excel</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table" id="misTable">
+            <thead>
+              <tr>
+                <th>State / UT</th>
+                <th>Projects</th>
+                <th>Area Proposed (Ha)</th>
+                <th>Area Acquired (Ha)</th>
+                <th>Acquisition %</th>
+                <th>Comp. Assessed (₹Cr)</th>
+                <th>Comp. Disbursed (₹Cr)</th>
+                <th>Disbursement %</th>
+                <th>Families</th>
+                <th>R&R %</th>
+                <th>Overall Score</th>
+              </tr>
+            </thead>
+            <tbody id="misBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Timeline Compliance -->
+      <div class="card">
+        <div class="card-header"><span style="font-size:16px;">⏰</span><span class="card-title">Stage-wise Timeline Compliance Analysis</span></div>
+        <div class="card-body"><div class="chart-container" style="height:280px;"><canvas id="timelineBar"></canvas></div></div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+Chart.defaults.color = '#5a6478';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = 'Inter, sans-serif';
+
+// Annual Trend
+new Chart(document.getElementById('annualTrend'), {
+  type: 'line',
+  data: {
+    labels: ['FY20','FY21','FY22','FY23','FY24','FY25','FY26 (P)'],
+    datasets: [
+      { label: 'Land Acquired (Ha ×1000)', data: [180, 195, 210, 248, 284, 318, 343], borderColor: '#ff9900', backgroundColor: 'rgba(255,153,0,0.08)', fill: true, tension: 0.4 },
+      { label: 'Compensation (₹ 1000 Cr)', data: [62, 71, 84, 98, 112, 138, 161], borderColor: '#0070c8', backgroundColor: 'rgba(0,112,200,0.05)', fill: true, tension: 0.4 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { boxWidth: 12, usePointStyle: true } } },
+    scales: {
+      x: { grid: { color: 'rgba(255,255,255,0.04)' } },
+      y: { grid: { color: 'rgba(255,255,255,0.04)' } }
+    }
+  }
+});
+
+// Risk Radar
+new Chart(document.getElementById('riskRadar'), {
+  type: 'radar',
+  data: {
+    labels: ['Timeline Risk','Compensation Delay','R&R Risk','Legal Challenges','Land Conflict','Coordination Gap'],
+    datasets: [
+      { label: 'Highways', data: [42, 38, 35, 28, 31, 25], borderColor: '#ff9900', backgroundColor: 'rgba(255,153,0,0.15)', pointBackgroundColor: '#ff9900' },
+      { label: 'Irrigation', data: [68, 72, 74, 54, 62, 71], borderColor: '#e53935', backgroundColor: 'rgba(229,57,53,0.1)', pointBackgroundColor: '#e53935' },
+      { label: 'Renewable', data: [28, 24, 19, 15, 22, 18], borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.1)', pointBackgroundColor: '#22c55e' }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    scales: {
+      r: {
+        grid: { color: 'rgba(255,255,255,0.06)' },
+        ticks: { display: false },
+        pointLabels: { color: '#5a6478', font: { size: 11 } },
+        min: 0, max: 100
+      }
+    },
+    plugins: { legend: { position: 'top', labels: { boxWidth: 10, usePointStyle: true } } }
+  }
+});
+
+// Timeline compliance
+new Chart(document.getElementById('timelineBar'), {
+  type: 'bar',
+  data: {
+    labels: ['Proposal Approval', 'SIA Completion', 'Sec.11 Notification', 'Sec.19 Declaration', 'Award Passing', 'Compensation Payment', 'R&R Completion', 'Possession'],
+    datasets: [
+      { label: 'On Time (%)', data: [84, 71, 78, 69, 73, 62, 54, 71], backgroundColor: 'rgba(34,197,94,0.7)', borderColor: '#22c55e', borderWidth: 1.5, borderRadius: 4 },
+      { label: 'Delayed (%)', data: [16, 29, 22, 31, 27, 38, 46, 29], backgroundColor: 'rgba(229,57,53,0.5)', borderColor: '#e53935', borderWidth: 1.5, borderRadius: 4 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { boxWidth: 12, usePointStyle: true } } },
+    scales: {
+      x: { stacked: true, grid: { display: false }, ticks: { color: '#5a6478', font: { size: 11 } } },
+      y: { stacked: true, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#5a6478', callback: v => v + '%' } }
+    }
+  }
+});
+
+// MIS State Table
+const stateReport = [
+  { state:'Uttar Pradesh', proj:384, proposed:72840, acquired:48234, assessed:24180, disbursed:17404, families:204892, rr:61, score:'B+' },
+  { state:'Maharashtra', proj:312, proposed:58420, acquired:41820, assessed:19840, disbursed:15256, families:178234, rr:68, score:'B+' },
+  { state:'Rajasthan', proj:284, proposed:51840, acquired:37645, assessed:16924, disbursed:14386, families:142300, rr:84, score:'A' },
+  { state:'Madhya Pradesh', proj:218, proposed:47280, acquired:32190, assessed:14124, disbursed:9607, families:121450, rr:66, score:'B' },
+  { state:'Gujarat', proj:204, proposed:38840, acquired:28840, assessed:13284, disbursed:12351, families:98230, rr:91, score:'A+' },
+  { state:'Andhra Pradesh', proj:187, proposed:42840, acquired:24320, assessed:11484, disbursed:5968, families:87340, rr:38, score:'C' },
+  { state:'Karnataka', proj:162, proposed:28240, acquired:19870, assessed:9284, disbursed:8172, families:72100, rr:79, score:'A-' },
+  { state:'Bihar', proj:148, proposed:24820, acquired:17650, assessed:8284, disbursed:5054, families:68400, rr:43, score:'C+' },
+  { state:'Tamil Nadu', proj:131, proposed:21840, acquired:15490, assessed:7284, disbursed:5903, families:57840, rr:76, score:'B+' },
+  { state:'Odisha', proj:118, proposed:18920, acquired:13240, assessed:6124, disbursed:4287, families:48920, rr:64, score:'B' },
+  { state:'Telangana', proj:104, proposed:16840, acquired:12180, assessed:5684, disbursed:4888, families:42840, rr:72, score:'B+' },
+  { state:'Punjab', proj:89, proposed:12840, acquired:9840, assessed:4884, disbursed:4396, families:28920, rr:82, score:'A-' },
+];
+
+const scoreColor = { 'A+':'#22c55e','A':'#22c55e','A-':'#22c55e','B+':'#f59e0b','B':'#f59e0b','B-':'#f59e0b','C+':'#e53935','C':'#e53935','C-':'#e53935' };
+
+function getHeatColor(pct) {
+  if (pct >= 85) return 'rgba(34,197,94,0.15)';
+  if (pct >= 65) return 'rgba(245,158,11,0.12)';
+  return 'rgba(229,57,53,0.12)';
+}
+
+document.getElementById('misBody').innerHTML = stateReport.map(d => {
+  const acqPct = Math.round(d.acquired / d.proposed * 100);
+  const disbPct = Math.round(d.disbursed / d.assessed * 100);
+  return `<tr>
+    <td class="font-bold text-primary-color">${d.state}</td>
+    <td>${d.proj}</td>
+    <td>${d.proposed.toLocaleString()}</td>
+    <td class="text-saffron font-bold">${d.acquired.toLocaleString()}</td>
+    <td style="background:${getHeatColor(acqPct)};">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div class="progress-bar" style="width:40px"><div class="progress-fill ${acqPct>=80?'green':acqPct>=60?'saffron':'red'}" style="width:${acqPct}%"></div></div>
+        <span style="font-size:12px;font-weight:700;">${acqPct}%</span>
+      </div>
+    </td>
+    <td>₹${d.assessed.toLocaleString()}</td>
+    <td>₹${d.disbursed.toLocaleString()}</td>
+    <td style="background:${getHeatColor(disbPct)};">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div class="progress-bar" style="width:40px"><div class="progress-fill ${disbPct>=80?'green':disbPct>=60?'saffron':'red'}" style="width:${disbPct}%"></div></div>
+        <span style="font-size:12px;font-weight:700;">${disbPct}%</span>
+      </div>
+    </td>
+    <td>${d.families.toLocaleString()}</td>
+    <td style="background:${getHeatColor(d.rr)};">
+      <span style="font-size:12px;font-weight:700;color:${d.rr>=80?'#22c55e':d.rr>=60?'#f59e0b':'#e53935'}">${d.rr}%</span>
+    </td>
+    <td><span style="font-weight:800;font-size:14px;color:${scoreColor[d.score]||'#5a6478'};">${d.score}</span></td>
+  </tr>`;
+}).join('');
+</script>
+</body>
+</html>

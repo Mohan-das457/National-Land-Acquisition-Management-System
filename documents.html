@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Document Repository – NLAMS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="shared-auth.js"></script>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="sidebar-logo-icon">N</div><div class="sidebar-logo-text"><div class="sidebar-logo-title">NLAMS</div><div class="sidebar-logo-sub">Land Acquisition System</div></div></div>
+    <div class="sidebar-user"><div class="user-avatar">RK</div><div class="user-info"><div class="user-name">Ramesh Kumar IAS</div><div class="user-role">Central Ministry</div></div></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Core</div>
+      <a href="dashboard.html" class="nav-item"><span class="nav-item-icon">📊</span>Dashboard</a>
+      <a href="projects.html" class="nav-item"><span class="nav-item-icon">🏗️</span>Projects<span class="nav-item-badge">2,847</span></a>
+      <a href="gis-map.html" class="nav-item"><span class="nav-item-icon">🗺️</span>GIS Map View</a>
+      <a href="workflow.html" class="nav-item"><span class="nav-item-icon">🔄</span>Workflow & Approvals<span class="nav-item-badge warning">23</span></a>
+      <div class="nav-section-label">Land & Compensation</div>
+      <a href="compensation.html" class="nav-item"><span class="nav-item-icon">💰</span>Compensation Tracker</a>
+      <a href="documents.html" class="nav-item active"><span class="nav-item-icon">📁</span>Document Repository</a>
+      <div class="nav-section-label">Analytics</div>
+      <a href="reports.html" class="nav-item"><span class="nav-item-icon">📈</span>MIS Reports</a>
+    </nav>
+    <div class="sidebar-footer"><div class="sidebar-footer-links"><a href="index.html" class="sidebar-footer-link">← Logout</a><span class="sidebar-footer-link" style="margin-left:auto;">v2.0.1</span></div></div>
+  </aside>
+
+  <main class="main-content">
+    <header class="top-header">
+      <div><div class="header-title">Document Repository</div><div class="header-breadcrumb"><span>NLAMS</span><span class="breadcrumb-sep">/</span><span>Documents</span></div></div>
+      <div class="header-spacer"></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-outline btn-sm" onclick="toggleUpload()">⬆️ Upload Document</button>
+        <button class="btn btn-saffron btn-sm">🔐 Digital Sign</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <!-- Stats -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;">
+        <div class="kpi-card saffron" style="padding:16px;"><div class="kpi-label">Total Documents</div><div class="kpi-value">1,84,293</div><div style="font-size:11px;color:var(--text-muted);">Across all projects</div></div>
+        <div class="kpi-card green" style="padding:16px;"><div class="kpi-label">Digitally Signed</div><div class="kpi-value">1,42,840</div><div style="font-size:11px;color:#22c55e;">77.5% authenticated</div></div>
+        <div class="kpi-card blue" style="padding:16px;"><div class="kpi-label">Storage Used</div><div class="kpi-value">2.84 TB</div><div style="font-size:11px;color:var(--text-muted);">NIC MeghRaj Cloud</div></div>
+        <div class="kpi-card amber" style="padding:16px;"><div class="kpi-label">Pending Upload</div><div class="kpi-value">3,421</div><div style="font-size:11px;color:#f59e0b;">Action required</div></div>
+      </div>
+
+      <!-- Upload Panel (Hidden by default) -->
+      <div id="uploadPanel" class="card mb-24" style="display:none;border:1px solid rgba(255,153,0,0.2);">
+        <div class="card-header"><span style="font-size:16px;">⬆️</span><span class="card-title">Upload New Document</span></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;">
+            <div><label class="form-label">Document Type</label>
+              <select class="filter-select" style="width:100%;padding:10px 12px;">
+                <option>Section 11 Notification</option><option>Section 19 Declaration</option><option>Award Order</option>
+                <option>Compensation Certificate</option><option>Possession Certificate</option><option>R&R Plan</option>
+                <option>Social Impact Assessment</option><option>Land Records / 7/12</option><option>Court Order</option>
+              </select></div>
+            <div><label class="form-label">Related Project</label><input type="text" class="form-input" placeholder="Search project ID..." /></div>
+            <div><label class="form-label">Document Date</label><input type="date" class="form-input" /></div>
+          </div>
+          <div id="dropZone" style="border:2px dashed rgba(255,153,0,0.3);border-radius:12px;padding:40px;text-align:center;cursor:pointer;transition:all 0.2s;"
+            onmouseenter="this.style.borderColor='rgba(255,153,0,0.6)';this.style.background='rgba(255,153,0,0.04)'"
+            onmouseleave="this.style.borderColor='rgba(255,153,0,0.3)';this.style.background='transparent'"
+            onclick="document.getElementById('fileInput').click()">
+            <div style="font-size:40px;margin-bottom:12px;">📂</div>
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);">Drag & Drop files here</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:6px;">Supports PDF, DOC, XLS, JPG, PNG • Max 50MB per file</div>
+            <button class="btn btn-saffron btn-sm" style="margin-top:14px;">Browse Files</button>
+            <input type="file" id="fileInput" style="display:none" multiple />
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;">
+            <button class="btn btn-outline" onclick="toggleUpload()">Cancel</button>
+            <button class="btn btn-saffron" onclick="handleUpload()">Upload & Index →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Tabs + Filters -->
+      <div class="tab-nav">
+        <button class="tab-btn active" onclick="filterByType('all', this)">📁 All (1,84,293)</button>
+        <button class="tab-btn" onclick="filterByType('notification', this)">📋 Notifications (42,841)</button>
+        <button class="tab-btn" onclick="filterByType('award', this)">⚖️ Awards (28,124)</button>
+        <button class="tab-btn" onclick="filterByType('compensation', this)">💰 Compensation (51,820)</button>
+        <button class="tab-btn" onclick="filterByType('possession', this)">🏠 Possession (19,341)</button>
+        <button class="tab-btn" onclick="filterByType('rr', this)">🏘️ R&R Plans (12,480)</button>
+        <button class="tab-btn" onclick="filterByType('legal', this)">⚖️ Legal (8,924)</button>
+      </div>
+
+      <div class="filter-bar">
+        <div class="search-input-wrap" style="max-width:300px;">
+          <span>🔍</span>
+          <input type="text" placeholder="Search by name, project, ID..." id="docSearch" oninput="filterDocs(this.value)" />
+        </div>
+        <select class="filter-select" id="stateDocFilter" onchange="filterDocs()">
+          <option value="">All States</option>
+          <option>Uttar Pradesh</option><option>Maharashtra</option><option>Gujarat</option><option>Rajasthan</option><option>Andhra Pradesh</option>
+        </select>
+        <select class="filter-select" onchange="filterDocs()">
+          <option>All Time</option><option>Last 7 Days</option><option>Last 30 Days</option><option>Last 3 Months</option>
+        </select>
+        <select class="filter-select" onchange="filterDocs()">
+          <option>All Statuses</option>
+          <option>Digitally Signed</option><option>Pending Signature</option><option>Under Review</option>
+        </select>
+      </div>
+
+      <!-- Document Grid -->
+      <div id="docGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;"></div>
+
+      <!-- Audit Trail -->
+      <div class="card">
+        <div class="card-header"><span style="font-size:16px;">🔍</span><span class="card-title">Document Audit Trail</span><span class="card-sub">Last 10 actions</span></div>
+        <div class="card-body" style="padding:0;">
+          <table class="data-table">
+            <thead><tr><th>Timestamp</th><th>User</th><th>Action</th><th>Document</th><th>IP Address</th></tr></thead>
+            <tbody>
+              <tr><td style="font-size:11px;color:var(--text-muted);">08 Sep 2026, 10:24:31</td><td>Ramesh Kumar IAS</td><td><span class="badge info">Viewed</span></td><td>Rajasthan Solar Park – Award Order</td><td style="font-size:11px;color:var(--text-muted);">10.4.2.18</td></tr>
+              <tr><td style="font-size:11px;color:var(--text-muted);">08 Sep 2026, 09:41:17</td><td>DM Agra (DC-UP-01)</td><td><span class="badge success">Signed</span></td><td>NH-744 Possession Certificate #2341</td><td style="font-size:11px;color:var(--text-muted);">10.5.8.24</td></tr>
+              <tr><td style="font-size:11px;color:var(--text-muted);">08 Sep 2026, 09:18:44</td><td>NHSRCL Admin</td><td><span class="badge saffron">Uploaded</span></td><td>Bullet Train Corridor – Comp. Cert. Batch #48</td><td style="font-size:11px;color:var(--text-muted);">10.6.1.92</td></tr>
+              <tr><td style="font-size:11px;color:var(--text-muted);">07 Sep 2026, 17:52:09</td><td>State Revenue Sec. AP</td><td><span class="badge warning">Revised</span></td><td>Polavaram R&R Plan v3.2</td><td style="font-size:11px;color:var(--text-muted);">10.3.5.11</td></tr>
+              <tr><td style="font-size:11px;color:var(--text-muted);">07 Sep 2026, 16:30:22</td><td>APCRDA Admin</td><td><span class="badge danger">Flagged</span></td><td>Amaravati Land Records – Discrepancy Found</td><td style="font-size:11px;color:var(--text-muted);">10.7.2.45</td></tr>
+              <tr><td style="font-size:11px;color:var(--text-muted);">07 Sep 2026, 14:15:50</td><td>SECI Field Officer</td><td><span class="badge saffron">Uploaded</span></td><td>Ladakh Solar – Environmental Clearance</td><td style="font-size:11px;color:var(--text-muted);">10.8.4.67</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const docTypes = {
+  'notification': { icon: '📋', color: '#7c3aed' },
+  'award': { icon: '⚖️', color: '#ff9900' },
+  'compensation': { icon: '💰', color: '#0070c8' },
+  'possession': { icon: '🏠', color: '#22c55e' },
+  'rr': { icon: '🏘️', color: '#0d9488' },
+  'legal': { icon: '📜', color: '#e53935' },
+  'sia': { icon: '📊', color: '#f59e0b' },
+  'land-record': { icon: '🗺️', color: '#138808' },
+};
+
+const allDocs = [
+  { id:'DOC-2024-00841', name:'NH-744 Section 11 Notification', type:'notification', project:'NH-744 Agra-Lucknow', state:'Uttar Pradesh', date:'18 Jun 2023', size:'2.4 MB', status:'signed', ver:'v1.0' },
+  { id:'DOC-2024-00842', name:'Rajasthan Solar Park – Award Order', type:'award', project:'Rajasthan Solar Park Ph-2', state:'Rajasthan', date:'14 Feb 2024', size:'1.8 MB', status:'signed', ver:'v1.0' },
+  { id:'DOC-2024-00843', name:'Bullet Train Corridor – SIA Report', type:'sia', project:'Mumbai-Ahmedabad Bullet Train', state:'Gujarat', date:'12 Aug 2023', size:'14.2 MB', status:'signed', ver:'v2.1' },
+  { id:'DOC-2024-00844', name:'Polavaram R&R Plan v3.2', type:'rr', project:'Polavaram Irrigation', state:'Andhra Pradesh', date:'07 Sep 2026', size:'8.7 MB', status:'review', ver:'v3.2' },
+  { id:'DOC-2024-00845', name:'Mumbai Metro 9 – Possession Cert.', type:'possession', project:'Mumbai Metro Line 9', state:'Maharashtra', date:'30 Jun 2024', size:'0.9 MB', status:'signed', ver:'v1.0' },
+  { id:'DOC-2024-00846', name:'Delhi-NCR Land Pooling – Court Order', type:'legal', project:'Delhi-NCR Land Pooling', state:'Delhi', date:'22 Mar 2025', size:'3.1 MB', status:'pending', ver:'v1.0' },
+  { id:'DOC-2024-00847', name:'Rewa Solar – Land Records (7/12)', type:'land-record', project:'Rewa Ultra Mega Solar', state:'Madhya Pradesh', date:'05 Jan 2024', size:'6.8 MB', status:'signed', ver:'v1.0' },
+  { id:'DOC-2024-00848', name:'Amaravati Capital – Comp. Certificates', type:'compensation', project:'Amaravati Capital City', state:'Andhra Pradesh', date:'14 Sep 2025', size:'22.4 MB', status:'review', ver:'v2.0' },
+  { id:'DOC-2024-00849', name:'Ken-Betwa – Environmental Clearance', type:'sia', project:'Ken-Betwa River Link', state:'Madhya Pradesh', date:'28 Nov 2024', size:'11.2 MB', status:'signed', ver:'v1.0' },
+];
+
+const statusConfig = {
+  signed: { cls: 'success', label: '🔐 Digitally Signed' },
+  pending: { cls: 'warning', label: '⏳ Pending Signature' },
+  review: { cls: 'info', label: '👁️ Under Review' },
+};
+
+function renderDocGrid(data) {
+  const grid = document.getElementById('docGrid');
+  grid.innerHTML = data.map(d => {
+    const tc = docTypes[d.type] || { icon: '📄', color: '#5a6478' };
+    const sc = statusConfig[d.status];
+    return `
+      <div class="card" style="cursor:pointer;transition:all 0.2s;" onmouseenter="this.style.borderColor='rgba(255,255,255,0.15)';this.style.transform='translateY(-2px)'" onmouseleave="this.style.borderColor='var(--border-subtle)';this.style.transform='translateY(0)'">
+        <div style="padding:16px 16px 12px;">
+          <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;">
+            <div style="width:44px;height:44px;border-radius:10px;background:${tc.color}18;border:1px solid ${tc.color}33;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">${tc.icon}</div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${d.name}</div>
+              <div style="font-size:11px;color:var(--text-muted);">${d.project}</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
+            <span class="badge ${sc.cls}" style="font-size:10px;">${sc.label}</span>
+            <span class="badge neutral" style="font-size:10px;">${d.ver}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:11px;color:var(--text-muted);">
+            <span>📍 ${d.state}</span>
+            <span>📅 ${d.date}</span>
+            <span>📦 ${d.size}</span>
+            <code style="font-size:10px;">${d.id}</code>
+          </div>
+        </div>
+        <div style="padding:10px 16px;border-top:1px solid var(--border-subtle);display:flex;gap:6px;">
+          <button class="btn btn-outline btn-sm" style="flex:1;font-size:11px;" onclick="alert('Opening preview for ${d.id}')">👁️ Preview</button>
+          <button class="btn btn-outline btn-sm" style="flex:1;font-size:11px;" onclick="alert('Downloading ${d.name}')">⬇️ Download</button>
+          <button class="btn btn-ghost btn-sm" style="font-size:11px;" onclick="alert('History for ${d.id}')">🕐</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function filterDocs(q) {
+  if (!q) { renderDocGrid(allDocs); return; }
+  const filtered = allDocs.filter(d =>
+    d.name.toLowerCase().includes(q.toLowerCase()) ||
+    d.project.toLowerCase().includes(q.toLowerCase()) ||
+    d.id.toLowerCase().includes(q.toLowerCase())
+  );
+  renderDocGrid(filtered);
+}
+
+function filterByType(type, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (type === 'all') { renderDocGrid(allDocs); return; }
+  const filtered = allDocs.filter(d => d.type === type);
+  renderDocGrid(filtered.length ? filtered : allDocs);
+}
+
+function toggleUpload() {
+  const panel = document.getElementById('uploadPanel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+function handleUpload() {
+  alert('Document uploaded successfully!\nFile indexed and available in the repository.\nAudit trail entry created.');
+  toggleUpload();
+}
+
+renderDocGrid(allDocs);
+</script>
+</body>
+</html>

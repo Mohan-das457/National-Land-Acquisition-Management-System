@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Compensation Tracker – NLAMS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="shared-auth.js"></script>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="sidebar-logo-icon">N</div><div class="sidebar-logo-text"><div class="sidebar-logo-title">NLAMS</div><div class="sidebar-logo-sub">Land Acquisition System</div></div></div>
+    <div class="sidebar-user"><div class="user-avatar">RK</div><div class="user-info"><div class="user-name">Ramesh Kumar IAS</div><div class="user-role">Central Ministry</div></div></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Core</div>
+      <a href="dashboard.html" class="nav-item"><span class="nav-item-icon">📊</span>Dashboard</a>
+      <a href="projects.html" class="nav-item"><span class="nav-item-icon">🏗️</span>Projects<span class="nav-item-badge">2,847</span></a>
+      <a href="gis-map.html" class="nav-item"><span class="nav-item-icon">🗺️</span>GIS Map View</a>
+      <a href="workflow.html" class="nav-item"><span class="nav-item-icon">🔄</span>Workflow & Approvals<span class="nav-item-badge warning">23</span></a>
+      <div class="nav-section-label">Land & Compensation</div>
+      <a href="compensation.html" class="nav-item active"><span class="nav-item-icon">💰</span>Compensation Tracker</a>
+      <a href="documents.html" class="nav-item"><span class="nav-item-icon">📁</span>Document Repository</a>
+      <div class="nav-section-label">Analytics</div>
+      <a href="reports.html" class="nav-item"><span class="nav-item-icon">📈</span>MIS Reports</a>
+    </nav>
+    <div class="sidebar-footer"><div class="sidebar-footer-links"><a href="index.html" class="sidebar-footer-link">← Logout</a><span class="sidebar-footer-link" style="margin-left:auto;">v2.0.1</span></div></div>
+  </aside>
+
+  <main class="main-content">
+    <header class="top-header">
+      <div><div class="header-title">Compensation Tracker</div><div class="header-breadcrumb"><span>NLAMS</span><span class="breadcrumb-sep">/</span><span>Compensation</span></div></div>
+      <div class="header-spacer"></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-outline btn-sm">⬇️ Export Report</button>
+        <button class="btn btn-saffron btn-sm">+ Record Disbursement</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <!-- KPI Row -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;">
+        <div class="kpi-card saffron" style="padding:18px;">
+          <div class="kpi-label">Total Compensation Assessed</div>
+          <div class="kpi-value">₹1,61,429 Cr</div>
+          <div class="kpi-meta"><span class="kpi-change up">↑ 14.2%</span><span class="kpi-period">vs last FY</span></div>
+        </div>
+        <div class="kpi-card green" style="padding:18px;">
+          <div class="kpi-label">Compensation Disbursed</div>
+          <div class="kpi-value">₹1,24,673 Cr</div>
+          <div class="kpi-meta"><span class="kpi-change up">77.2% disbursed</span></div>
+        </div>
+        <div class="kpi-card red" style="padding:18px;">
+          <div class="kpi-label">Pending Disbursement</div>
+          <div class="kpi-value">₹36,756 Cr</div>
+          <div class="kpi-meta"><span class="kpi-change down">22.8% pending</span></div>
+        </div>
+        <div class="kpi-card blue" style="padding:18px;">
+          <div class="kpi-label">Families Fully Compensated</div>
+          <div class="kpi-value">9,84,230</div>
+          <div class="kpi-meta"><span class="kpi-change up">78.9% of total</span></div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="grid-2 mb-24">
+        <div class="card">
+          <div class="card-header"><span style="font-size:16px;">🥧</span><span class="card-title">Compensation Status Breakdown</span></div>
+          <div class="card-body" style="display:flex;align-items:center;gap:24px;">
+            <div class="chart-container" style="height:200px;width:200px;flex-shrink:0;">
+              <canvas id="compStatusDonut"></canvas>
+            </div>
+            <div style="flex:1;">
+              <div style="margin-bottom:12px;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px;">
+                  <span style="color:#22c55e;font-weight:600;">✅ Fully Paid</span>
+                  <span class="font-bold">₹1,24,673 Cr</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill green" style="width:77.2%"></div></div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">77.2% • 9,84,230 families</div>
+              </div>
+              <div style="margin-bottom:12px;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px;">
+                  <span style="color:#f59e0b;font-weight:600;">⏳ Partial Payment</span>
+                  <span class="font-bold">₹22,140 Cr</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill saffron" style="width:13.7%"></div></div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">13.7% • 1,84,210 families</div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px;">
+                  <span style="color:#e53935;font-weight:600;">❌ Pending</span>
+                  <span class="font-bold">₹14,616 Cr</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill red" style="width:9.1%"></div></div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">9.1% • 79,452 families</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><span style="font-size:16px;">📊</span><span class="card-title">State-wise Disbursement Rate</span></div>
+          <div class="card-body" style="padding:12px 16px;">
+            <div class="chart-container" style="height:230px;">
+              <canvas id="stateCompBar"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- R&R Section -->
+      <div class="card mb-24">
+        <div class="card-header">
+          <span style="font-size:16px;">🏘️</span>
+          <span class="card-title">Rehabilitation & Resettlement (R&R) Status</span>
+          <span class="badge saffron" style="margin-left:auto;">68.4% Overall</span>
+        </div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:20px;">
+            <div style="background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:10px;padding:16px;text-align:center;">
+              <div style="font-size:28px;font-family:'Rajdhani',sans-serif;font-weight:700;color:#22c55e;">8,53,920</div>
+              <div style="font-size:12px;color:var(--text-muted);">Families Rehabilitated</div>
+              <div style="font-size:11px;color:#22c55e;margin-top:4px;">68.4% complete</div>
+            </div>
+            <div style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15);border-radius:10px;padding:16px;text-align:center;">
+              <div style="font-size:28px;font-family:'Rajdhani',sans-serif;font-weight:700;color:#f59e0b;">2,84,120</div>
+              <div style="font-size:12px;color:var(--text-muted);">In Transit Housing</div>
+              <div style="font-size:11px;color:#f59e0b;margin-top:4px;">22.8% in progress</div>
+            </div>
+            <div style="background:rgba(229,57,53,0.06);border:1px solid rgba(229,57,53,0.15);border-radius:10px;padding:16px;text-align:center;">
+              <div style="font-size:28px;font-family:'Rajdhani',sans-serif;font-weight:700;color:#e53935;">1,09,852</div>
+              <div style="font-size:12px;color:var(--text-muted);">Yet to be Rehabilitated</div>
+              <div style="font-size:11px;color:#e53935;margin-top:4px;">8.8% pending</div>
+            </div>
+          </div>
+
+          <!-- R&R Categories -->
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+            <div style="padding:14px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.06);">
+              <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">House Site Allotted</div>
+              <div class="progress-bar mb-4"><div class="progress-fill green" style="width:84%"></div></div>
+              <div style="font-size:13px;font-weight:700;color:#22c55e;">84%</div>
+            </div>
+            <div style="padding:14px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.06);">
+              <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Employment Provided</div>
+              <div class="progress-bar mb-4"><div class="progress-fill saffron" style="width:61%"></div></div>
+              <div style="font-size:13px;font-weight:700;color:#ff9900;">61%</div>
+            </div>
+            <div style="padding:14px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.06);">
+              <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Infrastructure at R&R Site</div>
+              <div class="progress-bar mb-4"><div class="progress-fill blue" style="width:72%"></div></div>
+              <div style="font-size:13px;font-weight:700;color:#60a5fa;">72%</div>
+            </div>
+            <div style="padding:14px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid rgba(255,255,255,0.06);">
+              <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">SHG / Livelihood Prog.</div>
+              <div class="progress-bar mb-4"><div class="progress-fill teal" style="width:48%"></div></div>
+              <div style="font-size:13px;font-weight:700;color:#2dd4bf;">48%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Family-wise Records -->
+      <div class="card">
+        <div class="card-header">
+          <span style="font-size:16px;">👨‍👩‍👧‍👦</span>
+          <span class="card-title">Family-wise Compensation Records</span>
+          <div style="margin-left:auto;display:flex;gap:8px;">
+            <input type="text" class="form-input" placeholder="Search by name / Aadhar..." style="width:220px;padding:6px 12px;font-size:12px;" oninput="filterFamilies(this.value)" />
+            <select class="filter-select" onchange="filterFamilies()">
+              <option>All Statuses</option>
+              <option>Fully Paid</option>
+              <option>Partial</option>
+              <option>Pending</option>
+            </select>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table" id="familyTable">
+            <thead>
+              <tr>
+                <th>Family ID</th><th>Name</th><th>Project</th><th>Village</th><th>Land (Ha)</th>
+                <th>Assessed (₹)</th><th>Paid (₹)</th><th>Payment Status</th><th>R&R Status</th>
+              </tr>
+            </thead>
+            <tbody id="familyBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+Chart.defaults.color = '#5a6478';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = 'Inter, sans-serif';
+
+// Comp Status Donut
+new Chart(document.getElementById('compStatusDonut'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Fully Paid','Partial','Pending'],
+    datasets: [{
+      data: [77.2, 13.7, 9.1],
+      backgroundColor: ['#22c55e','#f59e0b','#e53935'],
+      borderColor: '#080c18', borderWidth: 3
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, cutout: '70%',
+    plugins: { legend: { display: false } }
+  }
+});
+
+// State Comp Bar
+new Chart(document.getElementById('stateCompBar'), {
+  type: 'bar',
+  data: {
+    labels: ['Gujarat','Karnataka','Rajasthan','TN','Maharashtra','UP','MP','Bihar','AP','Delhi'],
+    datasets: [{
+      label: 'Disbursement Rate (%)',
+      data: [93, 88, 85, 81, 77, 72, 68, 61, 52, 41],
+      backgroundColor: ctx => {
+        const v = ctx.raw;
+        return v >= 80 ? 'rgba(34,197,94,0.7)' : v >= 60 ? 'rgba(245,158,11,0.7)' : 'rgba(229,57,53,0.7)';
+      },
+      borderColor: ctx => {
+        const v = ctx.raw;
+        return v >= 80 ? '#22c55e' : v >= 60 ? '#f59e0b' : '#e53935';
+      },
+      borderWidth: 1.5, borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#5a6478', font: { size: 11 } } },
+      y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#5a6478', callback: v => v + '%' }, max: 100 }
+    }
+  }
+});
+
+// Family records
+const families = [
+  { id:'FAM-2024-00142', name:'Rambir Singh', project:'NH-744 Agra', village:'Khandauli', area:2.4, assessed:18400000, paid:18400000, pstatus:'Fully Paid', rstatus:'Rehabilitated' },
+  { id:'FAM-2024-00143', name:'Sunita Devi', project:'NH-744 Agra', village:'Khandauli', area:1.8, assessed:13200000, paid:13200000, pstatus:'Fully Paid', rstatus:'Rehabilitated' },
+  { id:'FAM-2024-00144', name:'Mohammed Iqbal', project:'Bullet Train', village:'Navsari', area:0.6, assessed:8400000, paid:4200000, pstatus:'Partial', rstatus:'Transit Housing' },
+  { id:'FAM-2024-00145', name:'Lakshmi Bai', project:'Polavaram Irrigation', village:'Purusottapatnam', area:3.2, assessed:22400000, paid:0, pstatus:'Pending', rstatus:'Not Yet' },
+  { id:'FAM-2024-00146', name:'Vijay Kumar', project:'Rajasthan Solar Park', village:'Ramji Ka Gaon', area:8.4, assessed:47200000, paid:47200000, pstatus:'Fully Paid', rstatus:'Rehabilitated' },
+  { id:'FAM-2024-00147', name:'Anita Sharma', project:'Mumbai Metro 9', village:'Dahisar', area:0.08, assessed:42000000, paid:42000000, pstatus:'Fully Paid', rstatus:'Not Applicable' },
+  { id:'FAM-2024-00148', name:'Gurmail Singh', project:'Purvanchal Exp.', village:'Barhampur', area:4.1, assessed:28700000, paid:28700000, pstatus:'Fully Paid', rstatus:'Rehabilitated' },
+  { id:'FAM-2024-00149', name:'Parvati Devi', project:'Ken-Betwa Link', village:'Gangau', area:2.6, assessed:18200000, paid:9100000, pstatus:'Partial', rstatus:'Transit Housing' },
+  { id:'FAM-2024-00150', name:'Rajendra Yadav', project:'Amaravati Capital', village:'Undavalli', area:1.2, assessed:84000000, paid:0, pstatus:'Pending', rstatus:'Not Yet' },
+  { id:'FAM-2024-00151', name:'Manjula Kumari', project:'Kaleshwaram', village:'Manthani', area:3.8, assessed:26600000, paid:26600000, pstatus:'Fully Paid', rstatus:'Rehabilitated' },
+];
+
+function renderFamilies(data) {
+  const pStatusMap = {
+    'Fully Paid': 'success',
+    'Partial': 'warning',
+    'Pending': 'danger'
+  };
+  const rStatusMap = {
+    'Rehabilitated': 'success',
+    'Transit Housing': 'warning',
+    'Not Yet': 'danger',
+    'Not Applicable': 'neutral'
+  };
+  document.getElementById('familyBody').innerHTML = data.map(f => `<tr>
+    <td><code style="font-size:11px;">${f.id}</code></td>
+    <td class="font-bold text-primary-color">${f.name}</td>
+    <td style="font-size:12px;">${f.project}</td>
+    <td style="font-size:12px;color:var(--text-muted);">${f.village}</td>
+    <td class="text-saffron font-bold">${f.area}</td>
+    <td>₹${(f.assessed/100000).toFixed(2)}L</td>
+    <td style="color:${f.paid > 0 ? '#22c55e' : 'var(--accent-red)'}">₹${(f.paid/100000).toFixed(2)}L</td>
+    <td><span class="badge ${pStatusMap[f.pstatus]}">${f.pstatus}</span></td>
+    <td><span class="badge ${rStatusMap[f.rstatus]}">${f.rstatus}</span></td>
+  </tr>`).join('');
+}
+
+function filterFamilies(q) {
+  if (!q) { renderFamilies(families); return; }
+  const filtered = families.filter(f =>
+    f.name.toLowerCase().includes(q.toLowerCase()) ||
+    f.id.toLowerCase().includes(q.toLowerCase()) ||
+    f.village.toLowerCase().includes(q.toLowerCase())
+  );
+  renderFamilies(filtered);
+}
+
+renderFamilies(families);
+</script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Projects – NLAMS | National Land Acquisition System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="shared-auth.js"></script>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="sidebar-logo-icon">N</div><div class="sidebar-logo-text"><div class="sidebar-logo-title">NLAMS</div><div class="sidebar-logo-sub">Land Acquisition System</div></div></div>
+    <div class="sidebar-user"><div class="user-avatar">RK</div><div class="user-info"><div class="user-name">Ramesh Kumar IAS</div><div class="user-role">Central Ministry</div></div></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Core</div>
+      <a href="dashboard.html" class="nav-item"><span class="nav-item-icon">📊</span>Dashboard</a>
+      <a href="projects.html" class="nav-item active"><span class="nav-item-icon">🏗️</span>Projects<span class="nav-item-badge">2,847</span></a>
+      <a href="gis-map.html" class="nav-item"><span class="nav-item-icon">🗺️</span>GIS Map View</a>
+      <a href="workflow.html" class="nav-item"><span class="nav-item-icon">🔄</span>Workflow & Approvals<span class="nav-item-badge warning">23</span></a>
+      <div class="nav-section-label">Land & Compensation</div>
+      <a href="compensation.html" class="nav-item"><span class="nav-item-icon">💰</span>Compensation Tracker</a>
+      <a href="documents.html" class="nav-item"><span class="nav-item-icon">📁</span>Document Repository</a>
+      <div class="nav-section-label">Analytics</div>
+      <a href="reports.html" class="nav-item"><span class="nav-item-icon">📈</span>MIS Reports</a>
+      <a href="#" class="nav-item"><span class="nav-item-icon">🔔</span>Notifications<span class="nav-item-badge">7</span></a>
+      <div class="nav-section-label">Administration</div>
+      <a href="#" class="nav-item"><span class="nav-item-icon">👥</span>User Management</a>
+      <a href="#" class="nav-item"><span class="nav-item-icon">⚙️</span>Settings</a>
+    </nav>
+    <div class="sidebar-footer"><div class="sidebar-footer-links"><a href="index.html" class="sidebar-footer-link">← Logout</a><span class="sidebar-footer-link" style="margin-left:auto;">v2.0.1</span></div></div>
+  </aside>
+
+  <main class="main-content">
+    <header class="top-header">
+      <div>
+        <div class="header-title">Project Management</div>
+        <div class="header-breadcrumb"><span>NLAMS</span><span class="breadcrumb-sep">/</span><span>Projects</span></div>
+      </div>
+      <div class="header-spacer"></div>
+      <div class="header-search"><span>🔍</span><input type="text" placeholder="Search projects..." id="projectSearch" oninput="filterProjects()"/></div>
+      <div class="header-actions">
+        <button class="btn btn-saffron btn-sm" onclick="openAddModal()">+ New Project</button>
+        <a href="#" class="header-btn">🔔<span class="notif-count">7</span></a>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <!-- Pipeline Summary -->
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:24px;">
+        <div class="kpi-card saffron" style="padding:16px;cursor:pointer;" onclick="filterByStatus('all')">
+          <div class="kpi-label">All Projects</div>
+          <div class="kpi-value" style="font-size:22px;">2,847</div>
+        </div>
+        <div class="kpi-card blue" style="padding:16px;cursor:pointer;" onclick="filterByStatus('proposed')">
+          <div class="kpi-label">Proposed</div>
+          <div class="kpi-value" style="font-size:22px;">312</div>
+        </div>
+        <div class="kpi-card purple" style="padding:16px;cursor:pointer;" onclick="filterByStatus('notified')">
+          <div class="kpi-label">Notified</div>
+          <div class="kpi-value" style="font-size:22px;">481</div>
+        </div>
+        <div class="kpi-card amber" style="padding:16px;cursor:pointer;" onclick="filterByStatus('award')">
+          <div class="kpi-label">Award Declared</div>
+          <div class="kpi-value" style="font-size:22px;">724</div>
+        </div>
+        <div class="kpi-card green" style="padding:16px;cursor:pointer;" onclick="filterByStatus('compensation')">
+          <div class="kpi-label">Compensation</div>
+          <div class="kpi-value" style="font-size:22px;">891</div>
+        </div>
+        <div class="kpi-card teal" style="padding:16px;cursor:pointer;" onclick="filterByStatus('possession')">
+          <div class="kpi-label">Possession</div>
+          <div class="kpi-value" style="font-size:22px;">439</div>
+        </div>
+      </div>
+
+      <!-- Workflow Stage Visual -->
+      <div class="card mb-24">
+        <div class="card-header">
+          <span style="font-size:16px;">🔄</span>
+          <span class="card-title">RFCTLARR Land Acquisition Workflow Pipeline</span>
+        </div>
+        <div class="card-body" style="padding:20px 24px;">
+          <div style="display:flex;align-items:center;gap:0;overflow-x:auto;">
+            <!-- Stage 1 -->
+            <div style="flex:1;min-width:100px;text-align:center;">
+              <div style="background:rgba(0,112,200,0.15);border:1px solid rgba(0,112,200,0.3);border-radius:10px;padding:12px 8px;">
+                <div style="font-size:18px;margin-bottom:4px;">📝</div>
+                <div style="font-size:11px;font-weight:700;color:#60a5fa;">Proposal</div>
+                <div style="font-size:20px;font-weight:700;font-family:'Rajdhani',sans-serif;color:#60a5fa;">312</div>
+              </div>
+            </div>
+            <div style="width:24px;text-align:center;color:#5a6478;font-size:16px;">→</div>
+            <!-- Stage 2 -->
+            <div style="flex:1;min-width:100px;text-align:center;">
+              <div style="background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);border-radius:10px;padding:12px 8px;">
+                <div style="font-size:18px;margin-bottom:4px;">📋</div>
+                <div style="font-size:11px;font-weight:700;color:#a78bfa;">Sec.11 Notice</div>
+                <div style="font-size:20px;font-weight:700;font-family:'Rajdhani',sans-serif;color:#a78bfa;">481</div>
+              </div>
+            </div>
+            <div style="width:24px;text-align:center;color:#5a6478;font-size:16px;">→</div>
+            <!-- Stage 3 -->
+            <div style="flex:1;min-width:100px;text-align:center;">
+              <div style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:12px 8px;">
+                <div style="font-size:18px;margin-bottom:4px;">📊</div>
+                <div style="font-size:11px;font-weight:700;color:#f59e0b;">Social Impact</div>
+                <div style="font-size:20px;font-weight:700;font-family:'Rajdhani',sans-serif;color:#f59e0b;">392</div>
+              </div>
+            </div>
+            <div style="width:24px;text-align:center;color:#5a6478;font-size:16px;">→</div>
+            <!-- Stage 4 -->
+            <div style="flex:1;min-width:100px;text-align:center;">
+              <div style="background:rgba(255,153,0,0.15);border:1px solid rgba(255,153,0,0.3);border-radius:10px;padding:12px 8px;">
+                <div style="font-size:18px;margin-bottom:4px;">📜</div>
+                <div style="font-size:11px;font-weight:700;color:#ff9900;">Sec.19 Decl.</div>
+                <div style="font-size:20px;font-weight:700;font-family:'Rajdhani',sans-serif;color:#ff9900;">724</div>
+              </div>
+            </div>
+            <div style="width:24px;text-align:center;color:#5a6478;font-size:16px;">→</div>
+            <!-- Stage 5 -->
+            <div style="flex:1;min-width:100px;text-align:center;">
+              <div style="background:rgba(229,57,53,0.15);border:1px solid rgba(229,57,53,0.3);border-radius:10px;padding:12px 8px;">
+                <div style="font-size:18px;margin-bottom:4px;">⚖️</div>
+                <div style="font-size:11px;font-weight:700;color:#f87171;">Award (Sec.31)</div>
+                <div style="font-size:20px;font-weight:700;font-family:'Rajdhani',sans-serif;color:#f87171;">891</div>
+              </div>
+            </div>
+            <div style="width:24px;text-align:center;color:#5a6478;font-size:16px;">→</div>
+            <!-- Stage 6 -->
+            <div style="flex:1;min-width:100px;text-align:center;">
+              <div style="background:rgba(13,148,136,0.15);border:1px solid rgba(13,148,136,0.3);border-radius:10px;padding:12px 8px;">
+                <div style="font-size:18px;margin-bottom:4px;">💰</div>
+                <div style="font-size:11px;font-weight:700;color:#2dd4bf;">Compensation</div>
+                <div style="font-size:20px;font-weight:700;font-family:'Rajdhani',sans-serif;color:#2dd4bf;">608</div>
+              </div>
+            </div>
+            <div style="width:24px;text-align:center;color:#5a6478;font-size:16px;">→</div>
+            <!-- Stage 7 -->
+            <div style="flex:1;min-width:100px;text-align:center;">
+              <div style="background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);border-radius:10px;padding:12px 8px;">
+                <div style="font-size:18px;margin-bottom:4px;">🏠</div>
+                <div style="font-size:11px;font-weight:700;color:#22c55e;">Possession</div>
+                <div style="font-size:20px;font-weight:700;font-family:'Rajdhani',sans-serif;color:#22c55e;">439</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-bar">
+        <select class="filter-select" id="stateFilter" onchange="filterProjects()">
+          <option value="">All States</option>
+          <option>Uttar Pradesh</option>
+          <option>Maharashtra</option>
+          <option>Rajasthan</option>
+          <option>Madhya Pradesh</option>
+          <option>Gujarat</option>
+          <option>Andhra Pradesh</option>
+          <option>Karnataka</option>
+          <option>Bihar</option>
+          <option>Tamil Nadu</option>
+          <option>Odisha</option>
+          <option>Telangana</option>
+        </select>
+        <select class="filter-select" id="catFilter" onchange="filterProjects()">
+          <option value="">All Categories</option>
+          <option value="Highway">Highway</option>
+          <option value="Railway">Railway</option>
+          <option value="Irrigation">Irrigation</option>
+          <option value="Renewable Energy">Renewable Energy</option>
+          <option value="Urban Development">Urban Development</option>
+          <option value="Industrial">Industrial Corridor</option>
+        </select>
+        <select class="filter-select" id="statusFilter" onchange="filterProjects()">
+          <option value="">All Statuses</option>
+          <option value="Proposed">Proposed</option>
+          <option value="Notified">Notified</option>
+          <option value="Award Declared">Award Declared</option>
+          <option value="Compensation">Compensation</option>
+          <option value="Possession">Possession</option>
+          <option value="Delayed">Delayed</option>
+        </select>
+        <select class="filter-select" id="orgFilter" onchange="filterProjects()">
+          <option value="">All Organizations</option>
+          <option>NHAI</option><option>NHSRCL</option><option>SECI</option>
+          <option>MMRDA</option><option>APWRDC</option>
+        </select>
+        <div style="margin-left:auto;display:flex;gap:8px;">
+          <button class="btn btn-outline btn-sm">⬇️ Export</button>
+          <button class="btn btn-saffron btn-sm" onclick="openAddModal()">+ Add Project</button>
+        </div>
+      </div>
+
+      <!-- Projects Table -->
+      <div class="card">
+        <div class="card-header">
+          <span style="font-size:16px;">📋</span>
+          <span class="card-title">All Projects</span>
+          <span class="card-sub" id="projectCount">Showing 25 of 2,847</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table" id="projectsTable">
+            <thead>
+              <tr>
+                <th>Project ID</th>
+                <th>Project Name</th>
+                <th>State</th>
+                <th>District</th>
+                <th>Category</th>
+                <th>Organization</th>
+                <th>Area (Ha)</th>
+                <th>Comp. (₹ Cr)</th>
+                <th>Families</th>
+                <th>Status</th>
+                <th>Progress</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="projectsBody"></tbody>
+          </table>
+        </div>
+        <div style="padding:16px;border-top:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:12px;color:var(--text-muted);">Page 1 of 114</span>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-outline btn-sm">← Prev</button>
+            <button class="btn btn-saffron btn-sm">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Add Project Modal -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal" style="max-width:640px;">
+    <div class="modal-header">
+      <div class="modal-title">➕ Submit New Project Proposal</div>
+      <button class="modal-close" onclick="closeAddModal()">✕</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">Project Name *</label>
+        <input type="text" class="form-input" placeholder="e.g., NH-948 Expansion" />
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">Proposing Organization *</label>
+        <input type="text" class="form-input" placeholder="e.g., NHAI" />
+      </div>
+      <div>
+        <label class="form-label">State *</label>
+        <select class="filter-select" style="width:100%;padding:10px 12px;">
+          <option>Uttar Pradesh</option><option>Maharashtra</option><option>Rajasthan</option><option>Gujarat</option>
+        </select>
+      </div>
+      <div>
+        <label class="form-label">District *</label>
+        <input type="text" class="form-input" placeholder="District name" />
+      </div>
+      <div>
+        <label class="form-label">Category *</label>
+        <select class="filter-select" style="width:100%;padding:10px 12px;">
+          <option>Highway</option><option>Railway</option><option>Irrigation</option><option>Renewable Energy</option><option>Urban Development</option>
+        </select>
+      </div>
+      <div>
+        <label class="form-label">Land Area Required (Ha) *</label>
+        <input type="number" class="form-input" placeholder="0.00" />
+      </div>
+      <div class="form-group" style="grid-column:1/-1;margin-bottom:0;">
+        <label class="form-label">Project Description</label>
+        <textarea class="form-input" rows="3" placeholder="Brief description of the project and purpose..."></textarea>
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">Expected Start Date</label>
+        <input type="date" class="form-input" />
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">Central Ministry / Department</label>
+        <input type="text" class="form-input" placeholder="e.g., MoRTH" />
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end;">
+      <button class="btn btn-outline" onclick="closeAddModal()">Cancel</button>
+      <button class="btn btn-saffron" onclick="submitProject()">Submit Proposal →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const projectData = [
+  { id:'P-2024-001', name:'NH-744 Agra–Lucknow Widening', state:'Uttar Pradesh', dist:'Agra', cat:'Highway', org:'NHAI', area:4820, comp:1840, fam:2341, status:'Possession', pct:82 },
+  { id:'P-2024-002', name:'Mumbai-Ahmedabad Bullet Train', state:'Gujarat', dist:'Surat', cat:'Railway', org:'NHSRCL', area:6420, comp:3840, fam:4218, status:'Compensation', pct:64 },
+  { id:'P-2024-003', name:'Polavaram Irrigation Project', state:'Andhra Pradesh', dist:'W. Godavari', cat:'Irrigation', org:'APWRDC', area:9840, comp:3240, fam:8420, status:'Delayed', pct:38 },
+  { id:'P-2024-004', name:'Rajasthan Solar Park Ph-2', state:'Rajasthan', dist:'Jodhpur', cat:'Renewable Energy', org:'SECI', area:12450, comp:2840, fam:4821, status:'Possession', pct:91 },
+  { id:'P-2024-005', name:'Mumbai Metro Line 9', state:'Maharashtra', dist:'Mumbai', cat:'Urban Development', org:'MMRDA', area:1840, comp:3240, fam:12840, status:'Award Declared', pct:55 },
+  { id:'P-2024-006', name:'Delhi-Meerut Expressway', state:'Uttar Pradesh', dist:'Ghaziabad', cat:'Highway', org:'NHAI', area:2890, comp:1980, fam:3241, status:'Possession', pct:91 },
+  { id:'P-2024-007', name:'Mumbai-Nagpur Samruddhi', state:'Maharashtra', dist:'Nagpur', cat:'Highway', org:'MSRDC', area:5640, comp:2840, fam:4820, status:'Compensation', pct:71 },
+  { id:'P-2024-008', name:'Rewa Ultra Mega Solar', state:'Madhya Pradesh', dist:'Rewa', cat:'Renewable Energy', org:'RRECL', area:8240, comp:1840, fam:3241, status:'Possession', pct:96 },
+  { id:'P-2024-009', name:'Ken-Betwa River Link', state:'Madhya Pradesh', dist:'Panna', cat:'Irrigation', org:'NWDA', area:4820, comp:1840, fam:2841, status:'Compensation', pct:52 },
+  { id:'P-2024-010', name:'Bengaluru Ring Road', state:'Karnataka', dist:'Bengaluru', cat:'Highway', org:'NHAI', area:3480, comp:2190, fam:3210, status:'Delayed', pct:42 },
+  { id:'P-2024-011', name:'Kaleshwaram Lift Irrigation', state:'Telangana', dist:'Karimnagar', cat:'Irrigation', org:'KLIS', area:3640, comp:2140, fam:2190, status:'Possession', pct:79 },
+  { id:'P-2024-012', name:'Sardar Sarovar Extension', state:'Gujarat', dist:'Bharuch', cat:'Irrigation', org:'SSNNL', area:5420, comp:2840, fam:3924, status:'Possession', pct:84 },
+  { id:'P-2024-013', name:'Purvanchal Expressway', state:'Uttar Pradesh', dist:'Azamgarh', cat:'Highway', org:'UPEIDA', area:3820, comp:1420, fam:2841, status:'Possession', pct:95 },
+  { id:'P-2024-014', name:'Chennai-Bengaluru HSR', state:'Tamil Nadu', dist:'Vellore', cat:'Railway', org:'NHSRCL', area:3920, comp:1840, fam:2841, status:'Notified', pct:47 },
+  { id:'P-2024-015', name:'Ladakh Renewable Energy', state:'Ladakh', dist:'Leh', cat:'Renewable Energy', org:'SECI', area:5840, comp:920, fam:841, status:'Notified', pct:44 },
+  { id:'P-2024-016', name:'Amaravati Capital City', state:'Andhra Pradesh', dist:'Guntur', cat:'Urban Development', org:'APCRDA', area:29840, comp:8420, fam:28410, status:'Delayed', pct:24 },
+  { id:'P-2024-017', name:'GIFT City Phase-3', state:'Gujarat', dist:'Gandhinagar', cat:'Urban Development', org:'GIDC', area:920, comp:1240, fam:2841, status:'Possession', pct:88 },
+  { id:'P-2024-018', name:'Delhi-NCR Land Pooling', state:'Delhi', dist:'Outer North', cat:'Urban Development', org:'DDA', area:2840, comp:8420, fam:18420, status:'Delayed', pct:31 },
+  { id:'P-2024-019', name:'NH-48 Four-Laning Rajasthan', state:'Rajasthan', dist:'Jaipur', cat:'Highway', org:'NHAI', area:3240, comp:1240, fam:1820, status:'Award Declared', pct:65 },
+  { id:'P-2024-020', name:'Gorakhpur Rail Loop', state:'Uttar Pradesh', dist:'Gorakhpur', cat:'Railway', org:'NR', area:1240, comp:480, fam:921, status:'Possession', pct:88 },
+  { id:'P-2024-021', name:'Chennai Peripheral Ring Road', state:'Tamil Nadu', dist:'Chennai', cat:'Highway', org:'NHAI', area:2140, comp:1840, fam:1924, status:'Compensation', pct:58 },
+  { id:'P-2024-022', name:'Delhi-Varanasi HSR Corridor', state:'Uttar Pradesh', dist:'Allahabad', cat:'Railway', org:'NHSRCL', area:4820, comp:2100, fam:3840, status:'Delayed', pct:28 },
+  { id:'P-2024-023', name:'Vizag-Chennai Industrial Corr.', state:'Andhra Pradesh', dist:'Visakhapatnam', cat:'Highway', org:'NICDC', area:6840, comp:2840, fam:5210, status:'Proposed', pct:12 },
+  { id:'P-2024-024', name:'Bhopal-Indore Expressway', state:'Madhya Pradesh', dist:'Bhopal', cat:'Highway', org:'MPRDCL', area:2180, comp:980, fam:1820, status:'Proposed', pct:8 },
+  { id:'P-2024-025', name:'Odisha Industrial Zone', state:'Odisha', dist:'Cuttack', cat:'Industrial', org:'IDCO', area:4820, comp:1240, fam:4210, status:'Notified', pct:22 },
+];
+
+const statusMap = {
+  'Possession': { cls:'success', color:'#22c55e' },
+  'Compensation': { cls:'info', color:'#60a5fa' },
+  'Award Declared': { cls:'warning', color:'#f59e0b' },
+  'Notified': { cls:'saffron', color:'#ff9900' },
+  'Proposed': { cls:'neutral', color:'#5a6478' },
+  'Delayed': { cls:'danger', color:'#e53935' },
+};
+
+const progressColors = { 'Possession':'green', 'Compensation':'blue', 'Award Declared':'saffron', 'Notified':'purple', 'Proposed':'neutral', 'Delayed':'red' };
+
+function renderProjects(data) {
+  const tbody = document.getElementById('projectsBody');
+  tbody.innerHTML = data.map(p => {
+    const s = statusMap[p.status] || { cls:'neutral', color:'#5a6478' };
+    const pc = progressColors[p.status] || 'neutral';
+    return `<tr>
+      <td><code style="font-size:11px;color:var(--text-muted);">${p.id}</code></td>
+      <td><span class="font-bold text-primary-color" style="font-size:13px;">${p.name}</span></td>
+      <td>${p.state}</td>
+      <td>${p.dist}</td>
+      <td><span class="badge neutral">${p.cat}</span></td>
+      <td style="color:var(--text-muted);">${p.org}</td>
+      <td class="text-saffron font-bold">${p.area.toLocaleString()}</td>
+      <td>₹${p.comp.toLocaleString()}</td>
+      <td>${p.fam.toLocaleString()}</td>
+      <td><span class="badge ${s.cls}"><span class="badge-dot" style="background:${s.color}"></span>${p.status}</span></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="progress-bar" style="width:60px"><div class="progress-fill ${pc}" style="width:${p.pct}%"></div></div>
+          <span style="font-size:11px;color:${s.color};font-weight:700;min-width:28px;">${p.pct}%</span>
+        </div>
+      </td>
+      <td>
+        <div style="display:flex;gap:4px;">
+          <button class="btn btn-outline btn-sm" onclick="viewProject('${p.id}')">👁️</button>
+          <button class="btn btn-outline btn-sm" onclick="window.location='gis-map.html'">🗺️</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+  document.getElementById('projectCount').textContent = `Showing ${data.length} of 2,847`;
+}
+
+function filterProjects() {
+  const q = document.getElementById('projectSearch').value.toLowerCase();
+  const state = document.getElementById('stateFilter').value;
+  const cat = document.getElementById('catFilter').value;
+  const status = document.getElementById('statusFilter').value;
+  const org = document.getElementById('orgFilter').value;
+
+  const filtered = projectData.filter(p => {
+    return (!q || p.name.toLowerCase().includes(q) || p.state.toLowerCase().includes(q) || p.id.toLowerCase().includes(q)) &&
+           (!state || p.state === state) &&
+           (!cat || p.cat === cat) &&
+           (!status || p.status === status) &&
+           (!org || p.org === org);
+  });
+  renderProjects(filtered);
+}
+
+function filterByStatus(status) {
+  if (status === 'all') { renderProjects(projectData); return; }
+  const statusNames = { proposed:'Proposed', notified:'Notified', award:'Award Declared', compensation:'Compensation', possession:'Possession' };
+  const filtered = projectData.filter(p => p.status === statusNames[status]);
+  renderProjects(filtered.length ? filtered : projectData);
+}
+
+function viewProject(id) { alert('Navigating to project details for ' + id); }
+function openAddModal() { document.getElementById('addModal').classList.add('open'); }
+function closeAddModal() { document.getElementById('addModal').classList.remove('open'); }
+function submitProject() {
+  alert('Project proposal submitted successfully! Workflow routing initiated.');
+  closeAddModal();
+}
+
+// Initial render
+renderProjects(projectData);
+</script>
+</body>
+</html>

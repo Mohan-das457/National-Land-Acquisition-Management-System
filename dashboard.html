@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Executive Dashboard – NLAMS | DoLR</title>
+  <meta name="description" content="National Land Acquisition Management System – Executive Dashboard with real-time KPIs, state-wise analytics, and project progress." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="shared-auth.js"></script>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">N</div>
+      <div class="sidebar-logo-text">
+        <div class="sidebar-logo-title">NLAMS</div>
+        <div class="sidebar-logo-sub">Land Acquisition System</div>
+      </div>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">RK</div>
+      <div class="user-info">
+        <div class="user-name">Ramesh Kumar IAS</div>
+        <div class="user-role">Central Ministry</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Core</div>
+      <a href="dashboard.html" class="nav-item active">
+        <span class="nav-item-icon">📊</span> Dashboard
+      </a>
+      <a href="projects.html" class="nav-item">
+        <span class="nav-item-icon">🏗️</span> Projects
+        <span class="nav-item-badge">2,847</span>
+      </a>
+      <a href="gis-map.html" class="nav-item">
+        <span class="nav-item-icon">🗺️</span> GIS Map View
+      </a>
+      <a href="workflow.html" class="nav-item">
+        <span class="nav-item-icon">🔄</span> Workflow & Approvals
+        <span class="nav-item-badge warning">23</span>
+      </a>
+
+      <div class="nav-section-label">Land & Compensation</div>
+      <a href="compensation.html" class="nav-item">
+        <span class="nav-item-icon">💰</span> Compensation Tracker
+      </a>
+      <a href="documents.html" class="nav-item">
+        <span class="nav-item-icon">📁</span> Document Repository
+      </a>
+
+      <div class="nav-section-label">Analytics</div>
+      <a href="reports.html" class="nav-item">
+        <span class="nav-item-icon">📈</span> MIS Reports
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-item-icon">🤖</span> AI Predictions
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-item-icon">🔔</span> Notifications
+        <span class="nav-item-badge">7</span>
+      </a>
+
+      <div class="nav-section-label">Administration</div>
+      <a href="#" class="nav-item">
+        <span class="nav-item-icon">👥</span> User Management
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-item-icon">🔐</span> Audit Logs
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-item-icon">⚙️</span> Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-links">
+        <a href="index.html" class="sidebar-footer-link">← Logout</a>
+        <span class="sidebar-footer-link" style="margin-left:auto;">v2.0.1</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <!-- Header -->
+    <header class="top-header">
+      <div>
+        <div class="header-title">Executive Dashboard</div>
+        <div class="header-breadcrumb">
+          <span>NLAMS</span><span class="breadcrumb-sep">/</span><span>Dashboard</span>
+        </div>
+      </div>
+      <div class="header-spacer"></div>
+      <div class="header-search">
+        <span>🔍</span>
+        <input type="text" placeholder="Search projects, states, districts..." />
+      </div>
+      <div class="header-actions">
+        <a href="#" class="header-btn notif-badge">
+          🔔 <span class="notif-count">7</span>
+        </a>
+        <a href="#" class="header-btn">📥</a>
+        <a href="#" class="header-btn">👤</a>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="page-content">
+
+      <!-- Alert Banner -->
+      <div class="alert warning mb-20">
+        <span class="alert-icon">⚠️</span>
+        <div class="alert-content">
+          <div class="alert-title" id="dash-alert-title">23 Projects Approaching Statutory Deadline</div>
+          <div class="alert-desc" id="dash-alert-desc">Section 11 notifications pending for 23 projects across UP, Maharashtra, and Rajasthan. Action required within 15 days.</div>
+        </div>
+        <button class="btn btn-sm btn-outline" onclick="window.location='workflow.html'">Review Now</button>
+      </div>
+
+      <!-- KPI Cards Row 1 -->
+      <div class="kpi-grid mb-20">
+        <div class="kpi-card saffron">
+          <div class="kpi-header">
+            <div class="kpi-label">Total Land Proposed</div>
+            <div class="kpi-icon">📐</div>
+          </div>
+          <div class="kpi-value" id="kpi-land-proposed">1,42,850 Ha</div>
+          <div class="kpi-meta">
+            <span class="kpi-change up" id="kpi-meta-proposed">↑ 8.3%</span>
+            <span class="kpi-period">in active scope</span>
+          </div>
+          <div class="kpi-sparkline"><canvas id="sparkline1" height="40"></canvas></div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-header">
+            <div class="kpi-label">Land Possessed (Sec 38)</div>
+            <div class="kpi-icon">✅</div>
+          </div>
+          <div class="kpi-value" id="kpi-land-acquired">98,420 Ha</div>
+          <div class="kpi-meta">
+            <span class="kpi-change up" id="kpi-meta-acquired">68.9%</span>
+            <span class="kpi-period">possession complete</span>
+          </div>
+          <div class="kpi-sparkline"><canvas id="sparkline2" height="40"></canvas></div>
+        </div>
+        <div class="kpi-card blue">
+          <div class="kpi-header">
+            <div class="kpi-label">Compensation Disbursed (DBT)</div>
+            <div class="kpi-icon">💰</div>
+          </div>
+          <div class="kpi-value" id="kpi-comp-disbursed">₹48,250 Cr</div>
+          <div class="kpi-meta">
+            <span class="kpi-change up" id="kpi-meta-comp">Direct PFMS</span>
+            <span class="kpi-period">Aadhaar verified</span>
+          </div>
+          <div class="kpi-sparkline"><canvas id="sparkline3" height="40"></canvas></div>
+        </div>
+        <div class="kpi-card red">
+          <div class="kpi-header">
+            <div class="kpi-label">Pending Approvals / SLA</div>
+            <div class="kpi-icon">⏱️</div>
+          </div>
+          <div class="kpi-value" id="kpi-pending-approvals">23 Files</div>
+          <div class="kpi-meta">
+            <span class="kpi-change text-red" id="kpi-meta-sla">4 Urgent</span>
+            <span class="kpi-period">near statutory lapse</span>
+          </div>
+          <div class="kpi-sparkline"><canvas id="sparkline4" height="40"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Row 2: More KPIs -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;">
+        <div class="kpi-card purple">
+          <div class="kpi-header"><div class="kpi-label">Notifications Issued</div><div class="kpi-icon">📋</div></div>
+          <div class="kpi-value">4,21,345</div>
+          <div class="kpi-meta"><span class="kpi-change up">↑ 5.2%</span><span class="kpi-period">Sec. 11 & Sec. 19</span></div>
+        </div>
+        <div class="kpi-card amber">
+          <div class="kpi-header"><div class="kpi-label">Awards Declared</div><div class="kpi-icon">🏆</div></div>
+          <div class="kpi-value">1,98,234</div>
+          <div class="kpi-meta"><span class="kpi-change up">↑ 9.7%</span><span class="kpi-period">under RFCTLARR</span></div>
+        </div>
+        <div class="kpi-card teal">
+          <div class="kpi-header"><div class="kpi-label">Possession Completed</div><div class="kpi-icon">🏠</div></div>
+          <div class="kpi-value">71.2%</div>
+          <div class="kpi-meta"><span class="kpi-change up">↑ 3.1%</span><span class="kpi-period">of acquired parcels</span></div>
+        </div>
+        <div class="kpi-card saffron">
+          <div class="kpi-header"><div class="kpi-label">Active Projects</div><div class="kpi-icon">🏗️</div></div>
+          <div class="kpi-value">2,847</div>
+          <div class="kpi-meta"><span class="kpi-change up">↑ 127 new</span><span class="kpi-period">this fiscal year</span></div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="grid-2-1 mb-24">
+        <!-- State-wise Progress -->
+        <div class="card">
+          <div class="card-header">
+            <span style="font-size:16px;">📊</span>
+            <span class="card-title">State-wise Land Acquisition Progress</span>
+            <select class="filter-select" style="margin-left:auto;" onchange="updateStateChart(this.value)">
+              <option value="acquired">Area Acquired</option>
+              <option value="compensation">Compensation</option>
+              <option value="families">Families Affected</option>
+            </select>
+          </div>
+          <div class="card-body">
+            <div class="chart-container" style="height:320px;">
+              <canvas id="stateBarChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project Category Donut -->
+        <div class="card">
+          <div class="card-header">
+            <span style="font-size:16px;">🥧</span>
+            <span class="card-title">Projects by Category</span>
+          </div>
+          <div class="card-body">
+            <div class="chart-container" style="height:230px;">
+              <canvas id="categoryDonut"></canvas>
+            </div>
+            <div style="margin-top:16px;">
+              <div class="flex justify-between mb-8" style="font-size:12px;">
+                <span style="display:flex;align-items:center;gap:6px;color:var(--text-secondary)"><span style="width:10px;height:10px;border-radius:2px;background:#ff9900;display:inline-block;"></span>Highways</span>
+                <span class="text-saffron font-bold">842</span>
+              </div>
+              <div class="flex justify-between mb-8" style="font-size:12px;">
+                <span style="display:flex;align-items:center;gap:6px;color:var(--text-secondary)"><span style="width:10px;height:10px;border-radius:2px;background:#138808;display:inline-block;"></span>Railways</span>
+                <span class="text-green font-bold">614</span>
+              </div>
+              <div class="flex justify-between mb-8" style="font-size:12px;">
+                <span style="display:flex;align-items:center;gap:6px;color:var(--text-secondary)"><span style="width:10px;height:10px;border-radius:2px;background:#0070c8;display:inline-block;"></span>Irrigation</span>
+                <span style="color:#60a5fa;font-weight:700;">512</span>
+              </div>
+              <div class="flex justify-between mb-8" style="font-size:12px;">
+                <span style="display:flex;align-items:center;gap:6px;color:var(--text-secondary)"><span style="width:10px;height:10px;border-radius:2px;background:#7c3aed;display:inline-block;"></span>Renewable Energy</span>
+                <span style="color:#a78bfa;font-weight:700;">389</span>
+              </div>
+              <div class="flex justify-between" style="font-size:12px;">
+                <span style="display:flex;align-items:center;gap:6px;color:var(--text-secondary)"><span style="width:10px;height:10px;border-radius:2px;background:#0d9488;display:inline-block;"></span>Urban Development</span>
+                <span style="color:#2dd4bf;font-weight:700;">490</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Second Charts Row -->
+      <div class="grid-2 mb-24">
+        <!-- Compensation Trend -->
+        <div class="card">
+          <div class="card-header">
+            <span style="font-size:16px;">📈</span>
+            <span class="card-title">Monthly Compensation Disbursement</span>
+            <span class="card-sub">FY 2025-26</span>
+          </div>
+          <div class="card-body">
+            <div class="chart-container" style="height:220px;">
+              <canvas id="compensationTrend"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- R&R Status -->
+        <div class="card">
+          <div class="card-header">
+            <span style="font-size:16px;">🏘️</span>
+            <span class="card-title">R&R Progress by State (Top 8)</span>
+          </div>
+          <div class="card-body" id="rr-progress-body">
+            <!-- Dynamic content -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Row: Recent Activity + Top Projects -->
+      <div class="grid-2">
+        <!-- Recent Projects Table -->
+        <div class="card">
+          <div class="card-header">
+            <span style="font-size:16px;">🏗️</span>
+            <span class="card-title">Recent Project Activities</span>
+            <a href="projects.html" class="card-action">View All</a>
+          </div>
+          <div class="card-body" style="padding:0;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Project</th>
+                  <th>State</th>
+                  <th>Category</th>
+                  <th>Status</th>
+                  <th>Progress</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="font-bold text-primary-color">NH-744 Expansion</span><br/><span class="text-muted" style="font-size:11px;">NHAI</span></td>
+                  <td>Uttar Pradesh</td>
+                  <td><span class="badge saffron">Highway</span></td>
+                  <td><span class="badge success"><span class="badge-dot" style="background:#22c55e"></span>Possession</span></td>
+                  <td><div class="progress-bar" style="width:80px"><div class="progress-fill green" style="width:82%"></div></div></td>
+                </tr>
+                <tr>
+                  <td><span class="font-bold text-primary-color">Bullet Train Corridor</span><br/><span class="text-muted" style="font-size:11px;">NHSRCL</span></td>
+                  <td>Gujarat</td>
+                  <td><span class="badge info">Railway</span></td>
+                  <td><span class="badge warning"><span class="badge-dot" style="background:var(--accent-amber)"></span>Compensation</span></td>
+                  <td><div class="progress-bar" style="width:80px"><div class="progress-fill saffron" style="width:64%"></div></div></td>
+                </tr>
+                <tr>
+                  <td><span class="font-bold text-primary-color">Polavaram Irrigation</span><br/><span class="text-muted" style="font-size:11px;">APWRDC</span></td>
+                  <td>Andhra Pradesh</td>
+                  <td><span class="badge" style="color:#2dd4bf;background:rgba(13,148,136,0.1)">Irrigation</span></td>
+                  <td><span class="badge danger"><span class="badge-dot" style="background:var(--accent-red)"></span>Notified</span></td>
+                  <td><div class="progress-bar" style="width:80px"><div class="progress-fill blue" style="width:38%"></div></div></td>
+                </tr>
+                <tr>
+                  <td><span class="font-bold text-primary-color">Rajasthan Solar Park</span><br/><span class="text-muted" style="font-size:11px;">SECI</span></td>
+                  <td>Rajasthan</td>
+                  <td><span class="badge purple">Renewable</span></td>
+                  <td><span class="badge success"><span class="badge-dot" style="background:#22c55e"></span>Possession</span></td>
+                  <td><div class="progress-bar" style="width:80px"><div class="progress-fill purple" style="width:91%"></div></div></td>
+                </tr>
+                <tr>
+                  <td><span class="font-bold text-primary-color">Mumbai Metro Line 9</span><br/><span class="text-muted" style="font-size:11px;">MMRDA</span></td>
+                  <td>Maharashtra</td>
+                  <td><span class="badge neutral">Urban</span></td>
+                  <td><span class="badge warning"><span class="badge-dot" style="background:var(--accent-amber)"></span>Award</span></td>
+                  <td><div class="progress-bar" style="width:80px"><div class="progress-fill saffron" style="width:55%"></div></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Notifications Panel -->
+        <div class="card">
+          <div class="card-header">
+            <span style="font-size:16px;">🔔</span>
+            <span class="card-title">Critical Alerts & Notifications</span>
+            <span class="badge danger" style="margin-left:auto;">7 Urgent</span>
+          </div>
+          <div class="card-body">
+            <div class="alert danger mb-12">
+              <span class="alert-icon">🚨</span>
+              <div class="alert-content">
+                <div class="alert-title">Statutory Deadline Breach</div>
+                <div class="alert-desc">3 projects in Bihar exceeded 1-year compensation timeline under RFCTLARR Sec. 38.</div>
+              </div>
+            </div>
+            <div class="alert warning mb-12">
+              <span class="alert-icon">⏰</span>
+              <div class="alert-content">
+                <div class="alert-title">Pending Section 11 Approvals</div>
+                <div class="alert-desc">14 notifications awaiting District Collector approval in Madhya Pradesh.</div>
+              </div>
+            </div>
+            <div class="alert warning mb-12">
+              <span class="alert-icon">💸</span>
+              <div class="alert-content">
+                <div class="alert-title">Compensation Disbursement Delay</div>
+                <div class="alert-desc">₹847 Cr for Yamuna Expressway pending bank account verification for 2,341 families.</div>
+              </div>
+            </div>
+            <div class="alert info mb-12">
+              <span class="alert-icon">📋</span>
+              <div class="alert-content">
+                <div class="alert-title">R&R Plan Submission Due</div>
+                <div class="alert-desc">Polavaram Irrigation Project R&R plan update due in 7 days per NHRC directions.</div>
+              </div>
+            </div>
+            <div class="alert success">
+              <span class="alert-icon">✅</span>
+              <div class="alert-content">
+                <div class="alert-title">Rajasthan Solar Park – Possession Complete</div>
+                <div class="alert-desc">12,450 Ha possession transferred. All 4,821 families rehabilitated successfully.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+// ===== CHART DEFAULTS =====
+Chart.defaults.color = '#5a6478';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = 'Inter, sans-serif';
+Chart.defaults.font.size = 12;
+
+// ===== STATE DATA =====
+const stateData = {
+  acquired: {
+    labels: ['UP','Maharashtra','Rajasthan','MP','Gujarat','AP','Karnataka','Bihar','Tamil Nadu','Odisha'],
+    data: [48234, 41820, 37645, 32190, 28840, 24320, 19870, 17650, 15490, 13240],
+    color: '#ff9900'
+  },
+  compensation: {
+    labels: ['UP','Maharashtra','Rajasthan','MP','Gujarat','AP','Karnataka','Bihar','Tamil Nadu','Odisha'],
+    data: [18420, 16340, 14870, 12640, 10980, 9240, 7840, 6920, 5840, 4920],
+    color: '#0070c8'
+  },
+  families: {
+    labels: ['UP','Maharashtra','Rajasthan','MP','Gujarat','AP','Karnataka','Bihar','Tamil Nadu','Odisha'],
+    data: [204892, 178234, 142300, 121450, 98230, 87340, 72100, 68400, 57840, 48920],
+    color: '#e53935'
+  }
+};
+
+// State Bar Chart
+let stateChart = new Chart(document.getElementById('stateBarChart'), {
+  type: 'bar',
+  data: {
+    labels: stateData.acquired.labels,
+    datasets: [{
+      label: 'Area Acquired (Ha)',
+      data: stateData.acquired.data,
+      backgroundColor: 'rgba(255,153,0,0.7)',
+      borderColor: '#ff9900',
+      borderWidth: 1.5,
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#5a6478' } },
+      y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#5a6478' } }
+    }
+  }
+});
+
+function updateStateChart(metric) {
+  const d = stateData[metric];
+  stateChart.data.datasets[0].data = d.data;
+  stateChart.data.datasets[0].backgroundColor = d.color + 'b3';
+  stateChart.data.datasets[0].borderColor = d.color;
+  stateChart.data.datasets[0].label = metric === 'acquired' ? 'Area Acquired (Ha)' : metric === 'compensation' ? 'Compensation (₹ Cr)' : 'Families Affected';
+  stateChart.update();
+}
+
+// Category Donut
+new Chart(document.getElementById('categoryDonut'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Highways','Railways','Irrigation','Renewable','Urban Dev','Others'],
+    datasets: [{
+      data: [842, 614, 512, 389, 490, 0],
+      backgroundColor: ['#ff9900','#138808','#0070c8','#7c3aed','#0d9488','#5a6478'],
+      borderColor: '#080c18',
+      borderWidth: 3,
+      hoverOffset: 6
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    cutout: '68%',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => `  ${ctx.label}: ${ctx.raw} projects`
+        }
+      }
+    }
+  }
+});
+
+// Compensation Trend Line
+new Chart(document.getElementById('compensationTrend'), {
+  type: 'line',
+  data: {
+    labels: ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'],
+    datasets: [
+      {
+        label: 'Assessed (₹ Cr)',
+        data: [11200, 12400, 13100, 14200, 15800, 13900, 16200, 14800, 15600, 17200, 16800, 18900],
+        borderColor: '#0070c8',
+        backgroundColor: 'rgba(0,112,200,0.08)',
+        fill: true, tension: 0.4, pointRadius: 3
+      },
+      {
+        label: 'Disbursed (₹ Cr)',
+        data: [8900, 9800, 10200, 11400, 12700, 11100, 13800, 12100, 13200, 14800, 13900, 16400],
+        borderColor: '#ff9900',
+        backgroundColor: 'rgba(255,153,0,0.08)',
+        fill: true, tension: 0.4, pointRadius: 3
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { boxWidth: 12, usePointStyle: true, padding: 16 } } },
+    scales: {
+      x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#5a6478' } },
+      y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#5a6478', callback: v => '₹' + (v/1000).toFixed(0) + 'k' } }
+    }
+  }
+});
+
+// R&R Progress bars
+const rrData = [
+  { state: 'Gujarat', pct: 91, color: 'green' },
+  { state: 'Rajasthan', pct: 84, color: 'green' },
+  { state: 'Karnataka', pct: 79, color: 'green' },
+  { state: 'Tamil Nadu', pct: 76, color: 'teal' },
+  { state: 'Maharashtra', pct: 68, color: 'saffron' },
+  { state: 'Uttar Pradesh', pct: 61, color: 'saffron' },
+  { state: 'Bihar', pct: 43, color: 'red' },
+  { state: 'Andhra Pradesh', pct: 38, color: 'red' },
+];
+
+const rrBody = document.getElementById('rr-progress-body');
+rrBody.innerHTML = rrData.map(d => `
+  <div style="margin-bottom:14px;">
+    <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+      <span style="font-size:12px;color:var(--text-secondary);">${d.state}</span>
+      <span style="font-size:12px;font-weight:700;color:${d.pct >= 70 ? '#22c55e' : d.pct >= 50 ? 'var(--accent-saffron)' : 'var(--accent-red)'};">${d.pct}%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill ${d.color}" style="width:${d.pct}%"></div>
+    </div>
+  </div>
+`).join('');
+
+// Sparklines
+function makeSparkline(id, data, color) {
+  new Chart(document.getElementById(id), {
+    type: 'line',
+    data: {
+      labels: data.map((_, i) => i),
+      datasets: [{ data, borderColor: color, borderWidth: 2, fill: false, pointRadius: 0, tension: 0.4 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: { x: { display: false }, y: { display: false } },
+      elements: { point: { radius: 0 } }
+    }
+  });
+}
+makeSparkline('sparkline1', [120, 135, 128, 145, 152, 148, 162, 175, 168, 184, 190, 198], '#ff9900');
+makeSparkline('sparkline2', [90, 98, 105, 112, 118, 122, 132, 140, 136, 148, 158, 166], '#138808');
+makeSparkline('sparkline3', [65, 72, 78, 84, 91, 87, 98, 105, 112, 118, 127, 138], '#0070c8');
+makeSparkline('sparkline4', [200, 218, 230, 242, 255, 248, 264, 278, 285, 295, 302, 312], '#e53935');
+
+// Dynamic role change integration
+window.onNLAMSRoleChange = function(role) {
+  if (document.getElementById('kpi-land-proposed')) {
+    document.getElementById('kpi-land-proposed').textContent = role.stats.landProposed;
+  }
+  if (document.getElementById('kpi-land-acquired')) {
+    document.getElementById('kpi-land-acquired').textContent = role.stats.landAcquired;
+  }
+  if (document.getElementById('kpi-comp-disbursed')) {
+    document.getElementById('kpi-comp-disbursed').textContent = role.stats.compDisbursed;
+  }
+  if (document.getElementById('kpi-pending-approvals')) {
+    document.getElementById('kpi-pending-approvals').textContent = `${role.stats.pendingApprovals} Files`;
+  }
+  if (document.getElementById('kpi-meta-sla')) {
+    document.getElementById('kpi-meta-sla').textContent = `${role.stats.slaBreaches} Urgent`;
+  }
+  if (document.getElementById('dash-alert-title')) {
+    document.getElementById('dash-alert-title').textContent = `${role.stats.pendingApprovals} Pending Actions in ${role.scope}`;
+    document.getElementById('dash-alert-desc').textContent = `Statutory monitoring for ${role.badge} (${role.name}). ${role.stats.slaBreaches} statutory milestone(s) require intervention under RFCTLARR Act 2013.`;
+  }
+  const badge = document.querySelector('.nav-item-badge');
+  if (badge) badge.textContent = role.stats.projects;
+};
+
+// Initial sync
+setTimeout(() => {
+  if (typeof getCurrentRole === 'function') {
+    window.onNLAMSRoleChange(getCurrentRole());
+  }
+}, 100);
+</script>
+</body>
+</html>

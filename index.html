@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NLAMS – National Land Acquisition & Management System | DoLR, MoRD</title>
+  <meta name="description" content="Real-Time National Land Acquisition & Management System for End-to-End Digital Monitoring and Decision Support by Ministry of Rural Development, Department of Land Resources." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Landing-specific styles */
+    .landing-body {
+      min-height: 100vh;
+      background: var(--bg-primary);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Animated background */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,153,0,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,153,0,0.04) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-orb-1 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(255,153,0,0.12) 0%, transparent 70%);
+      top: -200px; left: -200px;
+      animation: orbFloat 8s ease-in-out infinite;
+    }
+    .bg-orb-2 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(19,136,8,0.1) 0%, transparent 70%);
+      bottom: -150px; right: -100px;
+      animation: orbFloat 10s ease-in-out infinite reverse;
+    }
+    .bg-orb-3 {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(0,112,200,0.08) 0%, transparent 70%);
+      top: 50%; right: 30%;
+      animation: orbFloat 12s ease-in-out infinite;
+    }
+    @keyframes orbFloat {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-30px) scale(1.05); }
+    }
+
+    /* Top header bar */
+    .gov-header {
+      position: relative; z-index: 10;
+      background: linear-gradient(135deg, var(--accent-saffron), #e68a00);
+      padding: 8px 40px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .gov-header-text { color: #fff; font-size: 12px; font-weight: 500; }
+    .gov-header-text strong { font-size: 13px; }
+    .gov-header-divider { width: 1px; height: 30px; background: rgba(255,255,255,0.4); }
+    .emblem-wrap { display: flex; align-items: center; gap: 10px; }
+    .emblem-svg { width: 40px; height: 40px; }
+
+    /* Navbar */
+    .navbar {
+      position: relative; z-index: 10;
+      background: rgba(10,12,20,0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,153,0,0.2);
+      padding: 0 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 14px;
+    }
+    .nav-logo-badge {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--accent-saffron), #e68a00);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 800;
+      color: white; font-family: 'Rajdhani', sans-serif;
+    }
+    .nav-logo-text { line-height: 1.2; }
+    .nav-logo-text .logo-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 18px; font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: 0.5px;
+    }
+    .nav-logo-text .logo-sub {
+      font-size: 10px; color: var(--text-muted); font-weight: 400;
+    }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-link {
+      color: var(--text-secondary); font-size: 13px; font-weight: 500;
+      text-decoration: none; padding: 6px 14px; border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .nav-link:hover { color: var(--accent-saffron); background: rgba(255,153,0,0.08); }
+    .nav-cta {
+      background: var(--accent-saffron); color: #fff;
+      padding: 8px 20px; border-radius: 8px; font-weight: 600;
+      text-decoration: none; font-size: 13px;
+      transition: all 0.2s;
+    }
+    .nav-cta:hover { background: #e68a00; transform: translateY(-1px); }
+
+    /* Hero section */
+    .hero {
+      position: relative; z-index: 1;
+      padding: 80px 40px 60px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: center;
+      max-width: 1400px; margin: 0 auto;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,153,0,0.12);
+      border: 1px solid rgba(255,153,0,0.3);
+      color: var(--accent-saffron);
+      padding: 6px 14px; border-radius: 20px;
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.8px; text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero-badge-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent-saffron);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.4); }
+    }
+    .hero h1 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 52px; font-weight: 700;
+      line-height: 1.1; color: var(--text-primary);
+      margin-bottom: 20px;
+    }
+    .hero h1 .highlight {
+      background: linear-gradient(135deg, var(--accent-saffron), #ffcc44);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero-desc {
+      font-size: 16px; color: var(--text-secondary);
+      line-height: 1.7; margin-bottom: 36px; max-width: 520px;
+    }
+    .hero-stats {
+      display: flex; gap: 32px; margin-bottom: 36px;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat-val {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 28px; font-weight: 700;
+      color: var(--accent-saffron);
+    }
+    .hero-stat-lbl { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .hero-actions { display: flex; gap: 14px; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-saffron), #e68a00);
+      color: white; padding: 14px 28px; border-radius: 10px;
+      font-weight: 600; font-size: 15px; text-decoration: none;
+      border: none; cursor: pointer;
+      transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px;
+      box-shadow: 0 8px 24px rgba(255,153,0,0.3);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(255,153,0,0.4); }
+    .btn-secondary {
+      background: rgba(255,255,255,0.06); color: var(--text-primary);
+      padding: 14px 28px; border-radius: 10px;
+      font-weight: 600; font-size: 15px; text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.12); cursor: pointer;
+      transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+
+    /* Login card */
+    .login-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 36px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+    }
+    .login-card-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 22px; font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .login-card-sub {
+      font-size: 13px; color: var(--text-muted); margin-bottom: 28px;
+    }
+    .role-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 10px; margin-bottom: 24px;
+    }
+    .role-btn {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px; padding: 14px 12px;
+      cursor: pointer; text-align: center;
+      transition: all 0.2s; color: var(--text-secondary);
+      font-size: 12px; font-weight: 500;
+    }
+    .role-btn:hover, .role-btn.active {
+      border-color: var(--accent-saffron);
+      background: rgba(255,153,0,0.08);
+      color: var(--accent-saffron);
+    }
+    .role-btn .role-icon { font-size: 24px; margin-bottom: 6px; display: block; }
+    .form-group { margin-bottom: 16px; }
+    .form-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; display: block; font-weight: 500; }
+    .form-input {
+      width: 100%; background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px; padding: 10px 14px;
+      color: var(--text-primary); font-size: 14px;
+      transition: border-color 0.2s; box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    .form-input:focus { outline: none; border-color: var(--accent-saffron); }
+    .form-input::placeholder { color: var(--text-muted); }
+    .login-btn {
+      width: 100%; background: linear-gradient(135deg, var(--accent-saffron), #e68a00);
+      color: white; border: none; border-radius: 8px;
+      padding: 12px; font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: all 0.3s;
+      font-family: 'Inter', sans-serif; margin-top: 4px;
+    }
+    .login-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(255,153,0,0.3); }
+    .login-divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 16px 0; color: var(--text-muted); font-size: 12px;
+    }
+    .login-divider::before, .login-divider::after {
+      content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.1);
+    }
+    .public-access-btn {
+      width: 100%; background: transparent;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--text-secondary); border-radius: 8px;
+      padding: 10px; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;
+    }
+    .public-access-btn:hover { border-color: rgba(255,255,255,0.25); color: var(--text-primary); }
+
+    /* Ticker strip */
+    .ticker-strip {
+      position: relative; z-index: 10;
+      background: rgba(255,153,0,0.08);
+      border-top: 1px solid rgba(255,153,0,0.15);
+      border-bottom: 1px solid rgba(255,153,0,0.15);
+      padding: 10px 0; overflow: hidden;
+    }
+    .ticker-label {
+      position: absolute; left: 0; top: 0; bottom: 0;
+      background: var(--accent-saffron); color: white;
+      display: flex; align-items: center; padding: 0 16px;
+      font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      z-index: 2; white-space: nowrap;
+    }
+    .ticker-content {
+      display: flex; gap: 60px;
+      animation: tickerScroll 40s linear infinite;
+      padding-left: 140px; white-space: nowrap;
+    }
+    @keyframes tickerScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .ticker-item {
+      color: var(--text-secondary); font-size: 12px; font-weight: 500;
+    }
+    .ticker-item span { color: var(--accent-saffron); font-weight: 700; }
+
+    /* Features section */
+    .features-section {
+      position: relative; z-index: 1;
+      padding: 60px 40px;
+      max-width: 1400px; margin: 0 auto;
+    }
+    .section-header { text-align: center; margin-bottom: 48px; }
+    .section-tag {
+      display: inline-block;
+      background: rgba(255,153,0,0.1); color: var(--accent-saffron);
+      border: 1px solid rgba(255,153,0,0.2);
+      padding: 4px 12px; border-radius: 20px; font-size: 11px;
+      font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .section-title {
+      font-family: 'Rajdhani', sans-serif; font-size: 36px;
+      font-weight: 700; color: var(--text-primary);
+    }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+    }
+    .feature-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; padding: 24px;
+      transition: all 0.3s; cursor: default;
+    }
+    .feature-card:hover {
+      border-color: rgba(255,153,0,0.3);
+      background: rgba(255,153,0,0.04);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+    }
+    .feature-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 16px;
+    }
+    .feature-title { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+    .feature-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+    /* Stats bar */
+    .stats-bar {
+      position: relative; z-index: 1;
+      background: rgba(255,255,255,0.02);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 40px;
+    }
+    .stats-bar-inner {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      gap: 0; max-width: 1200px; margin: 0 auto;
+    }
+    .stat-item {
+      text-align: center; padding: 20px;
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-value {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 36px; font-weight: 700;
+      background: linear-gradient(135deg, var(--accent-saffron), #ffcc44);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+    .stat-label { font-size: 12px; color: var(--text-muted); }
+    .stat-change { font-size: 11px; color: var(--accent-green); margin-top: 4px; }
+
+    /* Footer */
+    .site-footer {
+      position: relative; z-index: 1;
+      background: rgba(5,7,15,0.95);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 32px 40px;
+    }
+    .footer-inner {
+      max-width: 1400px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-logos { display: flex; align-items: center; gap: 24px; }
+    .footer-gov-badge {
+      font-size: 11px; color: var(--text-muted); line-height: 1.4;
+    }
+    .footer-gov-badge strong { color: var(--text-secondary); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-link { font-size: 12px; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+    .footer-link:hover { color: var(--accent-saffron); }
+    .footer-copy { font-size: 11px; color: var(--text-muted); }
+
+    @media (max-width: 1024px) {
+      .hero { grid-template-columns: 1fr; gap: 40px; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats-bar-inner { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .hero { padding: 40px 20px; }
+      .hero h1 { font-size: 36px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .stats-bar-inner { grid-template-columns: repeat(2, 1fr); }
+      .navbar { padding: 0 20px; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body class="landing-body">
+  <div class="bg-grid"></div>
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+
+  <!-- Government Header -->
+  <div class="gov-header">
+    <div class="emblem-wrap">
+      <svg class="emblem-svg" viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="18" fill="rgba(255,255,255,0.2)" stroke="white" stroke-width="1.5"/>
+        <text x="20" y="24" text-anchor="middle" fill="white" font-size="12" font-weight="bold">🇮🇳</text>
+      </svg>
+      <div>
+        <div class="gov-header-text"><strong>भारत सरकार | Government of India</strong></div>
+        <div class="gov-header-text">Ministry of Rural Development | Department of Land Resources (DoLR)</div>
+      </div>
+    </div>
+    <div class="gov-header-divider"></div>
+    <div class="gov-header-text">Smart India Hackathon 2026 | PS #26016</div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-logo">
+      <div class="nav-logo-badge">N</div>
+      <div class="nav-logo-text">
+        <div class="logo-title">NLAMS</div>
+        <div class="logo-sub">National Land Acquisition & Management System</div>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="#features" class="nav-link">Features</a>
+      <a href="dashboard.html" class="nav-link">Dashboard</a>
+      <a href="gis-map.html" class="nav-link">GIS Map</a>
+      <a href="reports.html" class="nav-link">Reports</a>
+    </div>
+    <a href="dashboard.html" class="nav-cta">Enter Portal →</a>
+  </nav>
+
+  <!-- Ticker Strip -->
+  <div class="ticker-strip">
+    <div class="ticker-label">📡 LIVE</div>
+    <div class="ticker-content">
+      <div class="ticker-item">🏗️ Total Projects: <span>2,847</span></div>
+      <div class="ticker-item">📏 Land Acquired: <span>3,42,891 Ha</span></div>
+      <div class="ticker-item">💰 Compensation Disbursed: <span>₹1,24,673 Cr</span></div>
+      <div class="ticker-item">👨‍👩‍👧‍👦 Families Affected: <span>12,47,892</span></div>
+      <div class="ticker-item">🏘️ R&R Progress: <span>68.4%</span></div>
+      <div class="ticker-item">📋 Notifications Issued: <span>4,21,345</span></div>
+      <div class="ticker-item">🏆 Awards Declared: <span>1,98,234</span></div>
+      <div class="ticker-item">✅ Possession Completed: <span>71.2%</span></div>
+      <!-- Duplicate for seamless loop -->
+      <div class="ticker-item">🏗️ Total Projects: <span>2,847</span></div>
+      <div class="ticker-item">📏 Land Acquired: <span>3,42,891 Ha</span></div>
+      <div class="ticker-item">💰 Compensation Disbursed: <span>₹1,24,673 Cr</span></div>
+      <div class="ticker-item">👨‍👩‍👧‍👦 Families Affected: <span>12,47,892</span></div>
+      <div class="ticker-item">🏘️ R&R Progress: <span>68.4%</span></div>
+      <div class="ticker-item">📋 Notifications Issued: <span>4,21,345</span></div>
+      <div class="ticker-item">🏆 Awards Declared: <span>1,98,234</span></div>
+      <div class="ticker-item">✅ Possession Completed: <span>71.2%</span></div>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        Real-Time Monitoring Platform
+      </div>
+      <h1>
+        Digital Land<br/>
+        Acquisition<br/>
+        <span class="highlight">Management</span>
+      </h1>
+      <p class="hero-desc">
+        A unified national platform digitizing the complete land acquisition lifecycle—from project proposal to final possession—enabling transparent, efficient, and accountable governance across all States and Union Territories.
+      </p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-val">36</div>
+          <div class="hero-stat-lbl">States & UTs</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-val">2,847</div>
+          <div class="hero-stat-lbl">Active Projects</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-val">₹1.24L Cr</div>
+          <div class="hero-stat-lbl">Compensation Paid</div>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <a href="dashboard.html" class="btn-primary">
+          📊 View Dashboard
+        </a>
+        <a href="gis-map.html" class="btn-secondary">
+          🗺️ GIS Map View
+        </a>
+      </div>
+    </div>
+
+    <!-- Login Card -->
+    <div class="login-card">
+      <div class="login-card-title">🔐 Secure Login</div>
+      <div class="login-card-sub">Select your role to access the portal</div>
+
+      <div class="role-grid">
+        <div class="role-btn active" id="role-ministry" onclick="selectRole('central', this)">
+          <span class="role-icon">🏛️</span>
+          Central Ministry
+          <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">DoLR / MoRD HQ</div>
+        </div>
+        <div class="role-btn" id="role-state" onclick="selectRole('state', this)">
+          <span class="role-icon">🏢</span>
+          State Govt
+          <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">Maharashtra Rev.</div>
+        </div>
+        <div class="role-btn" id="role-district" onclick="selectRole('district', this)">
+          <span class="role-icon">⚖️</span>
+          District CALA
+          <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">Thane Collectorate</div>
+        </div>
+        <div class="role-btn" id="role-field" onclick="selectRole('surveyor', this)">
+          <span class="role-icon">📐</span>
+          Field Surveyor
+          <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">Dahanu Cadastral</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Official NIC / Gov Email</label>
+        <input type="text" class="form-input" placeholder="user@nic.in" id="user-id" value="ramesh.kumar@dolr.gov.in" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-input" placeholder="••••••••" id="user-pwd" value="••••••••" />
+      </div>
+
+      <button class="login-btn" onclick="doLogin()">
+        Sign In to NLAMS Portal →
+      </button>
+
+      <div class="login-divider">or</div>
+
+      <button class="public-access-btn" onclick="window.location='dashboard.html'">
+        👁️ View Public Dashboard (No Login)
+      </button>
+    </div>
+  </section>
+
+  <!-- Stats Bar -->
+  <div class="stats-bar">
+    <div class="stats-bar-inner">
+      <div class="stat-item">
+        <div class="stat-value">2,847</div>
+        <div class="stat-label">Total Projects</div>
+        <div class="stat-change">↑ 127 this year</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">3.42L Ha</div>
+        <div class="stat-label">Land Acquired</div>
+        <div class="stat-change">↑ 12% vs last year</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">₹1.24L Cr</div>
+        <div class="stat-label">Compensation Disbursed</div>
+        <div class="stat-change">↑ 18% vs last year</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">12.47L</div>
+        <div class="stat-label">Families Affected</div>
+        <div class="stat-change">68.4% R&R Complete</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">36</div>
+        <div class="stat-label">States & UTs Onboarded</div>
+        <div class="stat-change">100% Coverage</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <section class="features-section" id="features">
+    <div class="section-header">
+      <div class="section-tag">Platform Capabilities</div>
+      <div class="section-title">End-to-End Digital Land Acquisition</div>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(255,153,0,0.1);">🔄</div>
+        <div class="feature-title">Digital Workflow Engine</div>
+        <div class="feature-desc">Automated routing from proposal submission through scrutiny, approvals, notifications, awards, compensation, possession, and closure.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(0,180,100,0.1);">🗺️</div>
+        <div class="feature-title">GIS & Geo-tagging</div>
+        <div class="feature-desc">GeoServer & Leaflet-powered interactive maps with geo-tagged land parcels, cadastral boundaries, and spatial analytics.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(0,140,255,0.1);">📊</div>
+        <div class="feature-title">Real-Time Dashboards</div>
+        <div class="feature-desc">Project-wise, district-wise, state-wise, and national-level analytics with KPIs, heatmaps, and predictive indicators.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(180,0,255,0.1);">🔗</div>
+        <div class="feature-title">API Integration</div>
+        <div class="feature-desc">RESTful API integration with DILRMP land records, cadastral maps, PFMS financial systems, and state government portals.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(255,60,60,0.1);">🔔</div>
+        <div class="feature-title">Automated Alerts</div>
+        <div class="feature-desc">SMS, email, and push notifications for pending approvals, statutory deadlines, compensation delays, and milestone events.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(255,200,0,0.1);">📁</div>
+        <div class="feature-title">Document Repository</div>
+        <div class="feature-desc">Secure storage for notifications, awards, legal documents with version control, audit trails, and digital signatures.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(0,220,180,0.1);">👥</div>
+        <div class="feature-title">Role-Based Access</div>
+        <div class="feature-desc">Granular RBAC for Ministry, State, District, and Field levels with audit logs and GoI cybersecurity compliance.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:rgba(255,100,0,0.1);">🤖</div>
+        <div class="feature-title">AI & Predictive Analytics</div>
+        <div class="feature-desc">ML-powered timeline prediction, bottleneck detection, compensation trend analysis, and policy formulation support.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logos">
+        <div class="footer-gov-badge">
+          <strong>NLAMS v2.0</strong><br/>
+          National Land Acquisition & Management System<br/>
+          Department of Land Resources (DoLR), MoRD
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="#" class="footer-link">RTI</a>
+        <a href="#" class="footer-link">Accessibility</a>
+        <a href="#" class="footer-link">Privacy Policy</a>
+        <a href="#" class="footer-link">Help & Support</a>
+        <a href="#" class="footer-link">API Docs</a>
+      </div>
+      <div class="footer-copy">
+        © 2026 Government of India. NIC Cloud (MeghRaj) Hosted.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    let selectedRole = 'central';
+
+    const roleCredentials = {
+      central: { email: 'ramesh.kumar@dolr.gov.in', name: 'Dr. Ramesh Kumar IAS (Joint Secretary, DoLR)' },
+      state: { email: 'priya.sharma@maharashtra.gov.in', name: 'Smt. Priya Sharma IAS (Principal Secretary - Revenue)' },
+      district: { email: 'collector.thane@maharashtra.gov.in', name: 'Amit Patil IAS (Collector & CALA, Thane)' },
+      surveyor: { email: 'rajesh.surveyor@dahanu.gov.in', name: 'Rajesh Deshmukh (Sr. Revenue Inspector, Dahanu)' }
+    };
+
+    function selectRole(role, el) {
+      if (role === 'ministry') role = 'central';
+      if (role === 'field') role = 'surveyor';
+      selectedRole = role;
+      document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      
+      const cred = roleCredentials[role];
+      if (cred) {
+        document.getElementById('user-id').value = cred.email;
+      }
+    }
+
+    function doLogin() {
+      const uid = document.getElementById('user-id').value;
+      if (!uid) { alert('Please enter your User ID'); return; }
+      
+      // Persist chosen role
+      localStorage.setItem('nlams_current_role', selectedRole);
+      
+      // Animate the button
+      const btn = document.querySelector('.login-btn');
+      btn.textContent = 'Authenticating Persona...';
+      btn.style.opacity = '0.8';
+      setTimeout(() => {
+        window.location.href = 'dashboard.html?role=' + selectedRole;
+      }, 500);
+    }
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    // Counter animation on scroll
+    const counters = document.querySelectorAll('.stat-value');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    });
+    counters.forEach(counter => {
+      counter.style.opacity = '0';
+      counter.style.transform = 'translateY(10px)';
+      counter.style.transition = 'all 0.6s ease';
+      observer.observe(counter);
+    });
+  </script>
+</body>
+</html>

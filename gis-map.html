@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cadastral GIS – Tamil Nadu & Andhra Pradesh Corridors | NLAMS</title>
+  <meta name="description" content="High-precision cadastral land parcel GIS map for Tamil Nadu (Chennai Peripheral Ring Road) and Andhra Pradesh (Amaravati Capital Region) with Patta / Webland 1B records and 60m RoW corridor."/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="shared-auth.js"></script>
+  <script src="cadastral-data.js"></script>
+  <style>
+    #map { width: 100%; height: calc(100vh - 60px); }
+    .map-overlay {
+      position: absolute; z-index: 1000;
+      background: rgba(10,14,26,0.96);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+    }
+    .map-controls {
+      top: 80px; right: 20px;
+      width: 320px; max-height: calc(100vh - 160px); overflow-y: auto;
+    }
+    .map-legend {
+      bottom: 48px; left: 20px;
+      padding: 14px 16px;
+      max-width: 300px;
+    }
+    .map-search-bar {
+      top: 80px; left: 20px;
+      width: 320px; padding: 10px 14px;
+    }
+    .map-panel-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .map-panel-title { font-size: 13px; font-weight: 700; color: #f0f4ff; }
+    .map-panel-body { padding: 12px 16px; }
+    .layer-toggle {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .layer-toggle:last-child { border-bottom: none; }
+    .toggle-switch {
+      position: relative; width: 32px; height: 18px; cursor: pointer; flex-shrink: 0;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0; border-radius: 18px;
+      background: rgba(255,255,255,0.15); transition: 0.2s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: white; left: 3px; top: 3px; transition: 0.2s;
+    }
+    input:checked + .toggle-slider { background: #ff9900; }
+    input:checked + .toggle-slider::before { transform: translateX(14px); }
+    .layer-label { font-size: 12px; color: #a8b4cc; flex: 1; }
+    .layer-color { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+    .parcel-popup .leaflet-popup-content-wrapper {
+      background: rgba(10,14,26,0.98);
+      border: 1px solid rgba(255,153,0,0.4);
+      border-radius: 10px; color: #f0f4ff;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.7);
+    }
+    .parcel-popup .leaflet-popup-tip { background: rgba(10,14,26,0.98); }
+
+    .map-stat-strip {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 999;
+      background: rgba(8,12,24,0.95);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex; gap: 0; padding: 8px 20px;
+    }
+    .map-stat {
+      flex: 1; text-align: center;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      padding: 0 14px;
+    }
+    .map-stat:last-child { border-right: none; }
+    .map-stat-val { font-family: 'Rajdhani', sans-serif; font-size: 17px; font-weight: 700; color: #ff9900; }
+    .map-stat-lbl { font-size: 10px; color: #5a6478; }
+
+    .detail-panel {
+      position: absolute; right: -420px; top: 0; bottom: 0;
+      width: 400px; z-index: 1001;
+      background: rgba(10,14,26,0.98);
+      border-left: 1px solid rgba(255,153,0,0.3);
+      overflow-y: auto;
+      transition: right 0.3s cubic-bezier(0.16,1,0.3,1);
+      box-shadow: -10px 0 30px rgba(0,0,0,0.7);
+    }
+    .detail-panel.open { right: 0; }
+    .detail-panel-header {
+      padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: space-between;
+      background: linear-gradient(90deg, rgba(255,153,0,0.1), transparent);
+    }
+    .close-panel-btn {
+      width: 28px; height: 28px; border-radius: 6px;
+      background: rgba(255,255,255,0.08); border: none;
+      color: #a8b4cc; cursor: pointer; font-size: 14px;
+    }
+    .close-panel-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+    .detail-row {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 12px;
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-key { color: #5a6478; flex: 1; }
+    .detail-val { color: #f0f4ff; font-weight: 500; text-align: right; flex: 1.3; }
+
+    .legend-item {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 5px; font-size: 11px; color: #a8b4cc;
+    }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+    /* Top Regional Corridor Navigation */
+    .quick-scope-banner {
+      position: absolute; top: 80px; left: 50%; transform: translateX(-50%);
+      z-index: 1000;
+      background: rgba(13,17,32,0.96);
+      border: 1px solid rgba(255,153,0,0.4);
+      border-radius: 30px;
+      padding: 6px 18px;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      font-size: 12px;
+    }
+    .corridor-btn {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+      color: #cbd5e1; padding: 4px 12px; border-radius: 16px;
+      font-size: 11.5px; cursor: pointer; transition: all 0.2s; font-weight: 600;
+    }
+    .corridor-btn:hover, .corridor-btn.active {
+      background: #ff9900; color: #080c18; font-weight: 700; border-color: #ff9900;
+      box-shadow: 0 4px 14px rgba(255,153,0,0.3);
+    }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">N</div>
+      <div class="sidebar-logo-text">
+        <div class="sidebar-logo-title">NLAMS</div>
+        <div class="sidebar-logo-sub">Land Acquisition System</div>
+      </div>
+    </div>
+
+    <!-- User Persona dynamically synchronized by shared-auth.js -->
+    <div class="sidebar-user">
+      <div class="user-avatar">AJ</div>
+      <div class="user-info">
+        <div class="user-name">Dr. Alby John IAS</div>
+        <div class="user-role">CALA Tiruvallur (TN)</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Core</div>
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-item-icon">📊</span> Dashboard
+      </a>
+      <a href="projects.html" class="nav-item">
+        <span class="nav-item-icon">🏗️</span> Projects
+        <span class="nav-item-badge">2,847</span>
+      </a>
+      <a href="gis-map.html" class="nav-item active">
+        <span class="nav-item-icon">🗺️</span> GIS Map View
+      </a>
+      <a href="workflow.html" class="nav-item">
+        <span class="nav-item-icon">🔄</span> Workflow & Approvals
+        <span class="nav-item-badge warning">23</span>
+      </a>
+
+      <div class="nav-section-label">Land & Compensation</div>
+      <a href="compensation.html" class="nav-item">
+        <span class="nav-item-icon">💰</span> Compensation Tracker
+      </a>
+      <a href="documents.html" class="nav-item">
+        <span class="nav-item-icon">📁</span> Document Repository
+      </a>
+
+      <div class="nav-section-label">Analytics & Governance</div>
+      <a href="reports.html" class="nav-item">
+        <span class="nav-item-icon">📈</span> MIS Reports
+      </a>
+      <a href="#" class="nav-item" onclick="openExplainerModal()">
+        <span class="nav-item-icon">📖</span> Project Explainer
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-item-icon">🔔</span> Notifications
+        <span class="nav-item-badge">7</span>
+      </a>
+
+      <div class="nav-section-label">Administration</div>
+      <a href="#" class="nav-item">
+        <span class="nav-item-icon">👥</span> User Roles
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-item-icon">⚙️</span> Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-links">
+        <a href="index.html" class="sidebar-footer-link">← Logout</a>
+        <span class="sidebar-footer-link" style="margin-left:auto;">v2.0.1</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content" style="position:relative;">
+    <!-- Top Header -->
+    <header class="top-header">
+      <div>
+        <div class="header-title" id="gisHeaderTitle">Cadastral GIS: Tamil Nadu & Andhra Pradesh Corridors</div>
+        <div class="header-breadcrumb"><span>NLAMS</span><span class="breadcrumb-sep">/</span><span id="gisBreadcrumb">Tamil Nadu (CPRR) & AP (Amaravati)</span></div>
+      </div>
+      <div class="header-spacer"></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-outline btn-sm" id="addGeotagBtn" onclick="toggleGeotagMode()">📍 Surveyor DGPS Demarcation</button>
+        <button class="btn btn-saffron btn-sm" onclick="exportKML()">⬇️ Export KML / Shapefile</button>
+      </div>
+    </header>
+
+    <!-- Map Container -->
+    <div style="position:relative; overflow:hidden; height:calc(100vh - 60px);">
+      <div id="map"></div>
+
+      <!-- Regional Corridor Switcher -->
+      <div class="quick-scope-banner">
+        <span style="color:#a8b4cc;font-size:11px;font-weight:700;">PROTOTYPE CORRIDOR:</span>
+        <button class="corridor-btn active" id="btnCorridorTN" onclick="switchCorridor('TN')">🌊 Tamil Nadu (CPRR Sriperumbudur)</button>
+        <button class="corridor-btn" id="btnCorridorAP" onclick="switchCorridor('AP')">🌾 Andhra Pradesh (Amaravati Axis)</button>
+        <button class="corridor-btn" id="btnCorridorMH" onclick="switchCorridor('MH')">⚡ Maharashtra (NE-4 P17)</button>
+        <button class="corridor-btn" id="btnCorridorNational" onclick="switchCorridor('national')">🇮🇳 Pan-India (22 Projects)</button>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="map-overlay map-search-bar">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:14px;">🔍</span>
+          <input type="text" placeholder="Search Survey No (e.g. 142/1A, 204/1), Village..." id="mapSearch"
+            style="background:none;border:none;outline:none;color:#f0f4ff;font-size:13px;width:100%;font-family:'Inter',sans-serif;"
+            oninput="filterMapSearch(this.value)"/>
+        </div>
+      </div>
+
+      <!-- Layer Controls -->
+      <div class="map-overlay map-controls">
+        <div class="map-panel-header">
+          <span class="map-panel-title">Spatial Layers & Tenures</span>
+          <span style="font-size:11px;color:#22c55e;font-weight:700;" id="layerActiveCount">Sub-Meter Active</span>
+        </div>
+        <div class="map-panel-body">
+          <div style="font-size:10.5px;color:#5a6478;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">Cadastral Boundaries</div>
+          
+          <div class="layer-toggle">
+            <label class="toggle-switch"><input type="checkbox" checked id="chkParcels" onchange="toggleParcelsLayer()"><span class="toggle-slider"></span></label>
+            <div class="layer-color" style="background:#22c55e;border:1px solid #ff9900;"></div>
+            <span class="layer-label" id="lblParcels">Cadastral Patta Parcels</span>
+          </div>
+          
+          <div class="layer-toggle">
+            <label class="toggle-switch"><input type="checkbox" checked id="chkRow" onchange="toggleRowLayer()"><span class="toggle-slider"></span></label>
+            <div class="layer-color" style="background:#ff9900;height:4px;"></div>
+            <span class="layer-label" id="lblRow">60m Expressway RoW Alignment</span>
+          </div>
+
+          <div class="layer-toggle">
+            <label class="toggle-switch"><input type="checkbox" checked id="chkGcps" onchange="toggleGcpsLayer()"><span class="toggle-slider"></span></label>
+            <div class="layer-color" style="background:#38bdf8;border-radius:50%;"></div>
+            <span class="layer-label">DGPS Boundary Stones (GCPs)</span>
+          </div>
+
+          <div style="margin-top:12px; padding-top:10px; border-top: 1px solid rgba(255,255,255,0.06);">
+            <div style="font-size:10.5px;color:#5a6478;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">Statutory Stage Filter</div>
+            <div class="layer-toggle">
+              <label class="toggle-switch"><input type="checkbox" checked onchange="filterStatus('possession', this.checked)"><span class="toggle-slider"></span></label>
+              <div class="layer-color" style="background:#22c55e;"></div>
+              <span class="layer-label">Sec 38 - Possession Complete</span>
+            </div>
+            <div class="layer-toggle">
+              <label class="toggle-switch"><input type="checkbox" checked onchange="filterStatus('award', this.checked)"><span class="toggle-slider"></span></label>
+              <div class="layer-color" style="background:#f59e0b;"></div>
+              <span class="layer-label">Sec 23 - Award Declared (DBT)</span>
+            </div>
+            <div class="layer-toggle">
+              <label class="toggle-switch"><input type="checkbox" checked onchange="filterStatus('declaration', this.checked)"><span class="toggle-slider"></span></label>
+              <div class="layer-color" style="background:#3b82f6;"></div>
+              <span class="layer-label">Sec 19 - Declaration Published</span>
+            </div>
+            <div class="layer-toggle">
+              <label class="toggle-switch"><input type="checkbox" checked onchange="filterStatus('disputed', this.checked)"><span class="toggle-slider"></span></label>
+              <div class="layer-color" style="background:#ef4444;"></div>
+              <span class="layer-label">⚠️ High Court Stay / Disputed</span>
+            </div>
+          </div>
+
+          <div style="margin-top:12px; padding-top:10px; border-top: 1px solid rgba(255,255,255,0.06);">
+            <div style="font-size:10.5px;color:#5a6478;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">Satellite Basemap Imagery</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+              <button class="btn btn-outline btn-sm" onclick="setMapStyle('satellite')" style="font-size:11px;padding:4px 8px;">🛰️ Satellite High-Res</button>
+              <button class="btn btn-outline btn-sm" onclick="setMapStyle('dark')" style="font-size:11px;padding:4px 8px;">🌙 Ops Dark</button>
+              <button class="btn btn-outline btn-sm" onclick="setMapStyle('osm')" style="font-size:11px;padding:4px 8px;">📍 Cadastral Street</button>
+              <button class="btn btn-outline btn-sm" onclick="setMapStyle('topo')" style="font-size:11px;padding:4px 8px;">🗺️ Topographic</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="map-overlay map-legend">
+        <div style="font-size:11px;font-weight:700;color:#f0f4ff;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.8px;">Cadastral Legend</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#22c55e;"></div>Sec 38 - Physical Possession (DBT Paid)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f59e0b;"></div>Sec 23 - Award Declared (100% Solatium)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#3b82f6;"></div>Sec 19 - Final Declaration Published</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ef4444;"></div>⚠️ High Court Stay / Valuation Dispute</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff9900;height:3px;"></div>60-Meter Statutory Alignment Corridor</div>
+      </div>
+
+      <!-- Map Stats Strip -->
+      <div class="map-stat-strip">
+        <div class="map-stat">
+          <div class="map-stat-val" id="statCorridorName">Tamil Nadu (CPRR Sriperumbudur)</div>
+          <div class="map-stat-lbl">Active Project Corridor</div>
+        </div>
+        <div class="map-stat">
+          <div class="map-stat-val" id="statParcelsInView">7 Patta Parcels</div>
+          <div class="map-stat-lbl">Cadastral Holdings in Footprint</div>
+        </div>
+        <div class="map-stat">
+          <div class="map-stat-val" id="statAreaInView">12.6 Ha (31.1 Acres)</div>
+          <div class="map-stat-lbl">Acquired Land Footprint</div>
+        </div>
+        <div class="map-stat">
+          <div class="map-stat-val" id="statCompInView">₹22.47 Cr</div>
+          <div class="map-stat-lbl">Total Award Compensation</div>
+        </div>
+        <div class="map-stat">
+          <div class="map-stat-val" id="statGeotagMode" style="color:#5a6478;">STANDBY</div>
+          <div class="map-stat-lbl">Surveyor DGPS Demarcation</div>
+        </div>
+      </div>
+
+      <!-- Detail Slide-Out Panel -->
+      <div class="detail-panel" id="detailPanel">
+        <div class="detail-panel-header">
+          <div>
+            <div style="font-size:10px;color:#ff9900;text-transform:uppercase;letter-spacing:0.8px;font-weight:700;" id="panelRecordType">Patta / Chitta & Land Record</div>
+            <span style="font-size:15px;font-weight:700;color:#f0f4ff;" id="panelTitle">Survey No Details</span>
+          </div>
+          <button class="close-panel-btn" onclick="closePanel()">✕</button>
+        </div>
+        <div style="padding:18px;" id="panelContent"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// ===== MAP INITIALIZATION =====
+// Default to Tamil Nadu corridor (Sriperumbudur / Tiruvallur)
+let currentRegion = 'TN';
+
+const map = L.map('map', {
+  center: [12.9950, 79.9550],
+  zoom: 15,
+  zoomControl: false
+});
+
+// Satellite High-Res & Dark Basemaps
+const tileLayers = {
+  satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: '©Esri, Maxar, Earthstar Geographics', maxZoom: 19
+  }),
+  dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '©OpenStreetMap ©CartoDB', maxZoom: 19
+  }),
+  osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '©OpenStreetMap contributors', maxZoom: 19
+  }),
+  topo: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+    attribution: '©OpenTopoMap', maxZoom: 17
+  })
+};
+
+let currentTile = tileLayers.satellite;
+currentTile.addTo(map);
+L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+function setMapStyle(style) {
+  if (tileLayers[style]) {
+    map.removeLayer(currentTile);
+    currentTile = tileLayers[style];
+    currentTile.addTo(map);
+  }
+}
+
+// Layer Groups
+const layerGroupParcels = L.layerGroup().addTo(map);
+const layerGroupRow = L.layerGroup().addTo(map);
+const layerGroupGcps = L.layerGroup().addTo(map);
+const layerGroupNational = L.layerGroup();
+
+const parcelMapItems = [];
+
+// ===== RENDER REGIONAL CORRIDOR =====
+function loadCorridorData(region) {
+  currentRegion = region;
+  layerGroupParcels.clearLayers();
+  layerGroupRow.clearLayers();
+  layerGroupGcps.clearLayers();
+  layerGroupNational.clearLayers();
+  parcelMapItems.length = 0;
+
+  let parcels = [];
+  let alignment = null;
+
+  if (region === 'TN') {
+    parcels = TN_CADASTRAL_PARCELS;
+    alignment = TN_EXPRESSWAY_ALIGNMENT;
+    map.flyTo([12.9950, 79.9550], 15, { duration: 1.2 });
+    document.getElementById('statCorridorName').textContent = 'Tamil Nadu (CPRR Sriperumbudur)';
+    document.getElementById('statParcelsInView').textContent = '7 Patta Parcels';
+    document.getElementById('statAreaInView').textContent = '12.6 Ha (31.1 Acres)';
+    document.getElementById('statCompInView').textContent = '₹22.47 Cr';
+    document.getElementById('gisHeaderTitle').textContent = 'Cadastral GIS: Tamil Nadu Corridor (CPRR Package 2)';
+    document.getElementById('lblParcels').textContent = 'Tamil Nadu Patta Parcels (7)';
+    document.getElementById('lblRow').textContent = 'CPRR 60m Expressway Alignment';
+  } else if (region === 'AP') {
+    parcels = AP_CADASTRAL_PARCELS;
+    alignment = AP_EXPRESSWAY_ALIGNMENT;
+    map.flyTo([16.5430, 80.5250], 15, { duration: 1.2 });
+    document.getElementById('statCorridorName').textContent = 'Andhra Pradesh (Amaravati Axis)';
+    document.getElementById('statParcelsInView').textContent = '5 Khata Parcels';
+    document.getElementById('statAreaInView').textContent = '12.75 Ha (31.5 Acres)';
+    document.getElementById('statCompInView').textContent = '₹22.78 Cr';
+    document.getElementById('gisHeaderTitle').textContent = 'Cadastral GIS: Andhra Pradesh Corridor (Amaravati Seed Core)';
+    document.getElementById('lblParcels').textContent = 'AP Webland 1B Parcels (5)';
+    document.getElementById('lblRow').textContent = 'Amaravati Core Axis 60m RoW';
+  } else if (region === 'MH') {
+    parcels = MH_CADASTRAL_PARCELS;
+    alignment = MH_EXPRESSWAY_ALIGNMENT;
+    map.flyTo([19.9725, 72.9180], 15, { duration: 1.2 });
+    document.getElementById('statCorridorName').textContent = 'Maharashtra (NE-4 P17 Palghar)';
+    document.getElementById('statParcelsInView').textContent = '2 Cadastral Plots';
+    document.getElementById('statAreaInView').textContent = '3.8 Ha (9.4 Acres)';
+    document.getElementById('statCompInView').textContent = '₹4.44 Cr';
+    document.getElementById('gisHeaderTitle').textContent = 'Cadastral GIS: Maharashtra Corridor (Delhi-Mumbai NE-4)';
+    document.getElementById('lblParcels').textContent = 'Maharashtra 7/12 Parcels';
+    document.getElementById('lblRow').textContent = 'NE-4 60m Expressway RoW';
+  } else if (region === 'national') {
+    map.flyTo([21.5937, 78.9629], 5, { duration: 1.2 });
+    document.getElementById('statCorridorName').textContent = 'Pan-India National Overview';
+    document.getElementById('statParcelsInView').textContent = '22 Flagship Megaprojects';
+    document.getElementById('statAreaInView').textContent = '3,42,891 Ha';
+    document.getElementById('statCompInView').textContent = '₹1,24,673 Cr';
+    document.getElementById('gisHeaderTitle').textContent = 'National Land Acquisition Overview (Pan-India)';
+    renderNationalMegaprojects();
+    return;
+  }
+
+  // Render Parcels
+  parcels.forEach(p => {
+    const isDisputed = p.status === 'disputed';
+    const polygon = L.polygon(p.polygon, {
+      color: p.statusColor,
+      weight: isDisputed ? 3 : 2,
+      dashArray: isDisputed ? '6, 6' : null,
+      fillColor: p.statusColor,
+      fillOpacity: 0.45
+    });
+
+    polygon.on('mouseover', function() {
+      this.setStyle({ fillOpacity: 0.75, weight: 3.5, color: '#ffffff' });
+    });
+    polygon.on('mouseout', function() {
+      this.setStyle({ fillOpacity: 0.45, weight: isDisputed ? 3 : 2, color: p.statusColor });
+    });
+
+    polygon.bindPopup(`
+      <div style="font-family:'Inter',sans-serif;min-width:240px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+          <strong style="font-size:14px;color:#ff9900;">Survey #${p.surveyNo}</strong>
+          <span style="font-size:10px;padding:2px 6px;border-radius:4px;background:${p.statusColor}33;color:${p.statusColor};font-weight:700;">● ${p.statusBadge}</span>
+        </div>
+        <div style="font-size:11px;color:#a8b4cc;margin-bottom:8px;">${p.village}, ${p.taluk || p.district}</div>
+        <div style="font-size:12px;color:#f0f4ff;margin-bottom:4px;"><strong>Owner:</strong> ${p.owner}</div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;background:rgba(255,255,255,0.06);padding:6px 8px;border-radius:6px;margin-bottom:8px;">
+          <div><span style="color:#5a6478;">Acquired:</span> <strong style="color:#22c55e;">${p.acquiredAreaHa} Ha</strong></div>
+          <div><span style="color:#5a6478;">Award:</span> <strong style="color:#ff9900;">${p.totalAward.split(' ')[0]}</strong></div>
+        </div>
+        <button onclick="showParcelDetails('${p.id}')" style="width:100%;background:#ff9900;border:none;color:#080c18;padding:5px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;">Inspect ${region === 'TN' ? 'Patta' : 'Webland 1B'} Record & Valuation →</button>
+      </div>
+    `, { className: 'parcel-popup' });
+
+    polygon.on('click', () => showParcelDetails(p.id));
+
+    // Permanent Survey No label
+    const center = polygon.getBounds().getCenter();
+    const labelMarker = L.marker(center, {
+      icon: L.divIcon({
+        className: 'khasra-label',
+        html: `<div style="background:rgba(10,14,26,0.9);border:1px solid ${p.statusColor};color:#fff;font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:3px;white-space:nowrap;transform:translate(-50%,-50%);">${p.surveyNo}</div>`,
+        iconSize: [0, 0]
+      })
+    });
+
+    layerGroupParcels.addLayer(polygon);
+    layerGroupParcels.addLayer(labelMarker);
+    parcelMapItems.push({ parcel: p, polygon, labelMarker });
+  });
+
+  // Render Right-of-Way Alignment
+  if (alignment) {
+    const bufferPoly = L.polygon(alignment.bufferPolygon, {
+      color: '#ff9900', weight: 1.5, dashArray: '8, 4', fillColor: '#ff9900', fillOpacity: 0.15
+    });
+    bufferPoly.bindPopup(`<strong>${alignment.name}</strong><br/>60-Meter Statutory Right-of-Way (RoW) Footprint`);
+    layerGroupRow.addLayer(bufferPoly);
+
+    const centerline = L.polyline(alignment.centerline, {
+      color: '#ff9900', weight: 3.5
+    });
+    layerGroupRow.addLayer(centerline);
+  }
+
+  // Render GCPs
+  AP_TN_SURVEY_GCPS.forEach(gcp => {
+    if ((region === 'TN' && gcp.id.includes('TN')) || (region === 'AP' && gcp.id.includes('AP'))) {
+      const marker = L.circleMarker([gcp.lat, gcp.lng], {
+        radius: 6, fillColor: '#38bdf8', color: '#ffffff', weight: 2, fillOpacity: 0.9
+      });
+      marker.bindPopup(`
+        <div style="font-family:'Inter',sans-serif;font-size:11px;">
+          <strong style="color:#38bdf8;">📌 DGPS Benchmark: ${gcp.code}</strong><br/>
+          Type: ${gcp.type}<br/>
+          Elev: ${gcp.elev}<br/>
+          Coord: ${gcp.lat.toFixed(5)}°N, ${gcp.lng.toFixed(5)}°E
+        </div>
+      `, { className: 'parcel-popup' });
+      layerGroupGcps.addLayer(marker);
+    }
+  });
+}
+
+function renderNationalMegaprojects() {
+  layerGroupNational.clearLayers();
+  if (typeof projects !== 'undefined') {
+    projects.forEach(p => {
+      const circle = L.circleMarker([p.lat, p.lng], {
+        radius: 10, fillColor: '#ff9900', color: '#ffffff', weight: 2, fillOpacity: 0.8
+      });
+      circle.bindPopup(`<strong>${p.name}</strong><br/>${p.district}, ${p.state}<br/>Area: ${p.area} Ha | Progress: ${p.progress}%`);
+      layerGroupNational.addLayer(circle);
+    });
+    layerGroupNational.addTo(map);
+  }
+}
+
+// Switch Corridor Button Handler
+function switchCorridor(region) {
+  document.querySelectorAll('.corridor-btn').forEach(b => b.classList.remove('active'));
+  const btnId = region === 'TN' ? 'btnCorridorTN' : region === 'AP' ? 'btnCorridorAP' : region === 'MH' ? 'btnCorridorMH' : 'btnCorridorNational';
+  const el = document.getElementById(btnId);
+  if (el) el.classList.add('active');
+  loadCorridorData(region);
+}
+
+// ===== PARCEL DETAIL INSPECTOR =====
+function showParcelDetails(parcelId) {
+  let allParcels = [...TN_CADASTRAL_PARCELS, ...AP_CADASTRAL_PARCELS, ...MH_CADASTRAL_PARCELS];
+  const p = allParcels.find(item => item.id === parcelId);
+  if (!p) return;
+
+  const isTN = p.stateCode === 'TN';
+  const isAP = p.stateCode === 'AP';
+  const recordName = isTN ? 'Tamil Nadu Patta / Chitta Extract' : isAP ? 'Andhra Pradesh Webland 1B Adangal' : 'Maharashtra 7/12 Land Extract';
+
+  document.getElementById('panelRecordType').textContent = recordName;
+  document.getElementById('panelTitle').textContent = `Survey No. ${p.surveyNo} (${p.stateName})`;
+
+  document.getElementById('panelContent').innerHTML = `
+    <!-- Status Badge -->
+    <div style="margin-bottom:14px;">
+      <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;background:${p.statusColor}22;color:${p.statusColor};border:1px solid ${p.statusColor}55;">
+        <span>●</span> ${p.stageText}
+      </div>
+    </div>
+
+    <!-- Title & Land Tenure Details -->
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;margin-bottom:14px;">
+      <div style="font-size:10px;color:#ff9900;text-transform:uppercase;font-weight:700;margin-bottom:6px;">${isTN ? 'Land Tenure: Patta Passbook Record' : isAP ? 'Land Tenure: Webland 1B Khatabedar' : 'Record of Rights'}</div>
+      <div class="detail-row"><span class="detail-key">Registered Owner</span><span class="detail-val" style="color:#f0f4ff;font-weight:700;">${p.owner}</span></div>
+      <div class="detail-row"><span class="detail-key">${isTN ? 'Patta Number' : isAP ? 'Khata Number' : 'Gat / Khata'}</span><span class="detail-val" style="color:#38bdf8;font-weight:700;">${p.pattaNo}</span></div>
+      <div class="detail-row"><span class="detail-key">Aadhaar Linked</span><span class="detail-val" style="color:${p.aadhaarLinked?'#22c55e':'#ef4444'};">${p.aadhaarLinked?'✅ Verified with State Registry':'⚠️ Pending Verification'}</span></div>
+      <div class="detail-row"><span class="detail-key">Village & Taluk</span><span class="detail-val">${p.village}, ${p.taluk}</span></div>
+      <div class="detail-row"><span class="detail-key">Land Classification</span><span class="detail-val" style="color:#ff9900;">${p.landType}</span></div>
+      <div class="detail-row"><span class="detail-key">Total Holding</span><span class="detail-val">${p.totalAreaHa} Hectares (${(p.totalAreaHa*2.471).toFixed(1)} Acres)</span></div>
+      <div class="detail-row"><span class="detail-key">Acquired Footprint</span><span class="detail-val text-saffron" style="font-weight:700;">${p.acquiredAreaHa} Hectares (${(p.acquiredAreaHa*2.471).toFixed(1)} Acres)</span></div>
+    </div>
+
+    <!-- RFCTLARR Act 2013 Statutory Valuation -->
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;margin-bottom:14px;">
+      <div style="font-size:10px;color:#22c55e;text-transform:uppercase;font-weight:700;margin-bottom:6px;">Section 23 Statutory Award (100% Solatium)</div>
+      <div class="detail-row"><span class="detail-key">${isTN ? 'Guideline Value / Ha' : 'Basic Value / Ha'}</span><span class="detail-val">${p.guidelineValuePerHa}</span></div>
+      <div class="detail-row"><span class="detail-key">Statutory Multiplier</span><span class="detail-val">${p.multiplier}</span></div>
+      <div class="detail-row"><span class="detail-key">Base Market Consideration</span><span class="detail-val">${p.baseComp}</span></div>
+      <div class="detail-row"><span class="detail-key">100% Solatium (Sec 30(1))</span><span class="detail-val" style="color:#f59e0b;">+ ${p.solatium}</span></div>
+      <div class="detail-row"><span class="detail-key">12% Interest (Sec 30(3))</span><span class="detail-val">+ ${p.interest}</span></div>
+      <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:8px;margin-top:6px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:12px;font-weight:700;color:#f0f4ff;">Total Award Disbursed</span>
+        <span style="font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:#22c55e;">${p.totalAward}</span>
+      </div>
+    </div>
+
+    <!-- DBT via PFMS / State Treasury -->
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;margin-bottom:14px;">
+      <div style="font-size:10px;color:#38bdf8;text-transform:uppercase;font-weight:700;margin-bottom:6px;">Direct Benefit Transfer (DBT) Payout</div>
+      <div style="font-size:12px;color:#cbd5e1;margin-bottom:4px;">${p.dbtStatus}</div>
+      <div style="font-size:11px;color:#5a6478;">Treasury Release Date: ${p.dbtDate}</div>
+    </div>
+
+    <!-- On-Ground Survey & Tree Valuation -->
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;margin-bottom:16px;">
+      <div style="font-size:10px;color:#a855f7;text-transform:uppercase;font-weight:700;margin-bottom:6px;">Field Ground Truthing & Assets Valued</div>
+      <div class="detail-row"><span class="detail-key">Standing Trees Assessed</span><span class="detail-val">${p.treesAssessed}</span></div>
+      <div class="detail-row"><span class="detail-key">Structures / Wells Valued</span><span class="detail-val">${p.structureVal}</span></div>
+      <div class="detail-row"><span class="detail-key">Joint Survey Date</span><span class="detail-val">${p.surveyDate}</span></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <button class="btn btn-saffron btn-sm" onclick="alert('Viewing State Gazette Notification & Revenue Order for Survey #${p.surveyNo}')">📜 State Gazette</button>
+      <button class="btn btn-outline btn-sm" onclick="window.location.href='compensation.html'">💰 DBT Ledger</button>
+    </div>
+  `;
+
+  document.getElementById('detailPanel').classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('detailPanel').classList.remove('open');
+}
+
+// Layer Toggles
+function toggleParcelsLayer() {
+  const chk = document.getElementById('chkParcels').checked;
+  if (chk) map.addLayer(layerGroupParcels); else map.removeLayer(layerGroupParcels);
+}
+function toggleRowLayer() {
+  const chk = document.getElementById('chkRow').checked;
+  if (chk) map.addLayer(layerGroupRow); else map.removeLayer(layerGroupRow);
+}
+function toggleGcpsLayer() {
+  const chk = document.getElementById('chkGcps').checked;
+  if (chk) map.addLayer(layerGroupGcps); else map.removeLayer(layerGroupGcps);
+}
+
+// Status Filter
+function filterStatus(statusKey, isChecked) {
+  parcelMapItems.forEach(item => {
+    if (item.parcel.status === statusKey) {
+      if (isChecked) {
+        item.polygon.setStyle({ opacity: 1, fillOpacity: 0.45 });
+      } else {
+        item.polygon.setStyle({ opacity: 0, fillOpacity: 0 });
+      }
+    }
+  });
+}
+
+// Search Filter
+function filterMapSearch(query) {
+  const q = query.toLowerCase().trim();
+  if (!q) {
+    parcelMapItems.forEach(i => i.polygon.setStyle({ opacity: 1, fillOpacity: 0.45 }));
+    return;
+  }
+
+  parcelMapItems.forEach(i => {
+    const p = i.parcel;
+    const match = p.surveyNo.toLowerCase().includes(q) || 
+                  p.owner.toLowerCase().includes(q) || 
+                  p.village.toLowerCase().includes(q);
+    if (match) {
+      i.polygon.setStyle({ opacity: 1, fillOpacity: 0.85, color: '#ffcc00', weight: 4 });
+      map.panTo(i.polygon.getBounds().getCenter());
+      showParcelDetails(p.id);
+    } else {
+      i.polygon.setStyle({ opacity: 0.15, fillOpacity: 0.05 });
+    }
+  });
+}
+
+// Surveyor DGPS Demarcation Tool
+let geotagMode = false;
+let surveyPoints = [];
+let tempPolygon = null;
+
+function toggleGeotagMode() {
+  geotagMode = !geotagMode;
+  const btn = document.getElementById('addGeotagBtn');
+  const statMode = document.getElementById('statGeotagMode');
+  
+  if (geotagMode) {
+    btn.textContent = '❌ Stop Demarcation';
+    btn.classList.replace('btn-outline', 'btn-saffron');
+    statMode.textContent = 'DEMARCATION ACTIVE';
+    statMode.style.color = '#ff9900';
+    map.getContainer().style.cursor = 'crosshair';
+    surveyPoints = [];
+    alert(`📍 DGPS Demarcation Active in ${currentRegion === 'TN' ? 'Tamil Nadu (CPRR)' : currentRegion === 'AP' ? 'Andhra Pradesh (Amaravati)' : 'Maharashtra'}:\nClick 3 or more corner stones on the map to digitize a new Cadastral Survey Boundary!`);
+  } else {
+    btn.textContent = '📍 Surveyor DGPS Demarcation';
+    btn.classList.replace('btn-saffron', 'btn-outline');
+    statMode.textContent = 'STANDBY';
+    statMode.style.color = '#5a6478';
+    map.getContainer().style.cursor = '';
+    if (tempPolygon) map.removeLayer(tempPolygon);
+  }
+}
+
+map.on('click', e => {
+  if (!geotagMode) return;
+  const { lat, lng } = e.latlng;
+  surveyPoints.push([lat, lng]);
+
+  L.circleMarker([lat, lng], {
+    radius: 4, fillColor: '#ff9900', color: '#fff', weight: 2, fillOpacity: 1
+  }).addTo(map);
+
+  if (surveyPoints.length >= 3) {
+    if (tempPolygon) map.removeLayer(tempPolygon);
+    tempPolygon = L.polygon(surveyPoints, {
+      color: '#ff9900', weight: 2, fillColor: '#ff9900', fillOpacity: 0.4
+    }).addTo(map);
+
+    const areaHa = calculatePolygonAreaHa(surveyPoints);
+    const areaLocal = currentRegion === 'TN' ? `${(areaHa * 247.1).toFixed(1)} Cents` : `${(areaHa * 2.471).toFixed(2)} Acres`;
+
+    tempPolygon.bindPopup(`
+      <div style="font-family:'Inter',sans-serif;">
+        <strong style="color:#ff9900;">📐 Digitize Cadastral Survey Boundary</strong><br/>
+        Vertices: ${surveyPoints.length}<br/>
+        Area: <strong>${areaHa} Ha (${areaLocal})</strong><br/>
+        <div style="margin-top:8px;">
+          <input type="text" id="newSurveyNo" placeholder="Enter ${currentRegion === 'TN' ? 'Survey No (e.g. 148/1A)' : 'Survey No (e.g. 208/1)'}" style="width:100%;padding:4px;font-size:11px;margin-bottom:6px;background:#111;color:#fff;border:1px solid #444;border-radius:4px;"/><br/>
+          <button onclick="saveNewSurveyParcel(${areaHa}, '${areaLocal}')" style="background:#22c55e;color:#fff;border:none;padding:5px 12px;border-radius:4px;font-size:11px;font-weight:700;cursor:pointer;">Register ${currentRegion === 'TN' ? 'Patta Demarcation' : 'Webland 1B Record'}</button>
+        </div>
+      </div>
+    `).openPopup();
+  }
+});
+
+function saveNewSurveyParcel(areaHa, areaLocal) {
+  const sNo = document.getElementById('newSurveyNo').value || 'New-Survey-Plot';
+  alert(`✅ Panchnama Demarcation Registered!\nSurvey No: ${sNo}\nAcquired Area: ${areaHa} Ha (${areaLocal})\nAppended to ${currentRegion === 'TN' ? 'Tiruvallur / Sriperumbudur Taluk Registry' : 'Guntur / Thullur Mandal Webland Registry'}.`);
+  toggleGeotagMode();
+}
+
+function exportKML() {
+  alert(`Exporting ${currentRegion} Cadastral GIS Layers in OGC KML & ESRI Shapefile format:\n- Cadastral Parcel Polygons (Survey & Sub-division Boundaries)\n- 60m Centerline Expressway Alignment Buffer\n- DGPS Ground Control Benchmark Points`);
+}
+
+// Role change integration
+window.onNLAMSRoleChange = function(role) {
+  if (role.stateCode === 'TN') {
+    switchCorridor('TN');
+  } else if (role.stateCode === 'AP') {
+    switchCorridor('AP');
+  } else {
+    switchCorridor('national');
+  }
+};
+
+// Initial Load: Tamil Nadu corridor
+loadCorridorData('TN');
+</script>
+</body>
+</html>

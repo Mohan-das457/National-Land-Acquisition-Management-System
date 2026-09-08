@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Digital Workflow & Approvals Engine – NLAMS | DoLR, MoRD</title>
+  <meta name="description" content="End-to-End Digital Land Acquisition Workflow with e-Office Green Noting, Section 25 Statutory Lapse Alarms, Digital Signatures, and Role-Based Decision Support."/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="shared-auth.js"></script>
+  <style>
+    /* Funnel Pipeline Styles */
+    .funnel-stage {
+      flex: 1; min-width: 150px; text-align: center;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px; padding: 12px 10px;
+      cursor: pointer; transition: all 0.25s ease;
+      position: relative;
+    }
+    .funnel-stage:hover, .funnel-stage.active {
+      transform: translateY(-3px);
+      border-color: var(--accent-saffron);
+      background: rgba(255,153,0,0.08);
+      box-shadow: 0 8px 24px rgba(255,153,0,0.2);
+    }
+    .funnel-stage.active::after {
+      content: ''; position: absolute; bottom: -8px; left: 50%;
+      transform: translateX(-50%); width: 12px; height: 12px;
+      background: #ff9900; clip-path: polygon(50% 100%, 0 0, 100% 0);
+    }
+    .stage-icon { font-size: 20px; margin-bottom: 4px; }
+    .stage-title { font-size: 11px; font-weight: 700; color: #a8b4cc; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stage-count { font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; color: #f0f4ff; }
+    .stage-sub { font-size: 10px; color: #5a6478; }
+
+    /* e-Office Green Sheet Modal */
+    .eoffice-modal-wrap {
+      position: fixed; inset: 0; background: rgba(5,8,18,0.88);
+      backdrop-filter: blur(12px); z-index: 10000;
+      display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .eoffice-paper {
+      background: #0d1222; border: 1px solid rgba(255,153,0,0.3);
+      border-radius: 16px; width: 100%; max-width: 920px;
+      max-height: 90vh; display: flex; flex-direction: column;
+      box-shadow: 0 24px 70px rgba(0,0,0,0.85); overflow: hidden;
+    }
+    .green-noting-box {
+      background: rgba(19,136,8,0.06); border: 1px solid rgba(19,136,8,0.25);
+      border-left: 4px solid #22c55e; border-radius: 8px;
+      padding: 16px; margin-bottom: 16px;
+    }
+    .noting-header {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 11px; color: #4ade80; font-weight: 700; margin-bottom: 8px;
+    }
+    .scrutiny-checklist {
+      display: flex; flex-direction: column; gap: 8px; margin: 14px 0;
+    }
+    .check-item {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+      padding: 8px 12px; border-radius: 6px; font-size: 12px; color: #cbd5e1;
+    }
+    .check-item input[type="checkbox"] {
+      width: 16px; height: 16px; accent-color: #22c55e; cursor: pointer;
+    }
+    .digital-seal {
+      border: 2px dashed #22c55e; background: rgba(34,197,94,0.08);
+      border-radius: 10px; padding: 12px 16px; display: none;
+      align-items: center; gap: 14px; margin: 14px 0;
+    }
+
+    /* Countdown indicator */
+    .lapse-gauge {
+      display: flex; align-items: center; gap: 8px;
+      padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;
+    }
+    .lapse-gauge.danger { background: rgba(229,57,53,0.15); color: #ef4444; border: 1px solid rgba(229,57,53,0.3); }
+    .lapse-gauge.warning { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+    .lapse-gauge.normal { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">N</div>
+      <div class="sidebar-logo-text">
+        <div class="sidebar-logo-title">NLAMS</div>
+        <div class="sidebar-logo-sub">Land Acquisition System</div>
+      </div>
+    </div>
+
+    <!-- User Persona dynamically synchronized by shared-auth.js -->
+    <div class="sidebar-user">
+      <div class="user-avatar">RK</div>
+      <div class="user-info">
+        <div class="user-name">Dr. Ramesh Kumar IAS</div>
+        <div class="user-role">Central Ministry</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Core</div>
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-item-icon">📊</span> Dashboard
+      </a>
+      <a href="projects.html" class="nav-item">
+        <span class="nav-item-icon">🏗️</span> Projects
+        <span class="nav-item-badge">2,847</span>
+      </a>
+      <a href="gis-map.html" class="nav-item">
+        <span class="nav-item-icon">🗺️</span> GIS Map View
+      </a>
+      <a href="workflow.html" class="nav-item active">
+        <span class="nav-item-icon">🔄</span> Workflow & Approvals
+        <span class="nav-item-badge warning" id="sidebarBadgeCount">23</span>
+      </a>
+
+      <div class="nav-section-label">Land & Compensation</div>
+      <a href="compensation.html" class="nav-item">
+        <span class="nav-item-icon">💰</span> Compensation Tracker
+      </a>
+      <a href="documents.html" class="nav-item">
+        <span class="nav-item-icon">📁</span> Document Repository
+      </a>
+
+      <div class="nav-section-label">Analytics & Governance</div>
+      <a href="reports.html" class="nav-item">
+        <span class="nav-item-icon">📈</span> MIS Reports
+      </a>
+      <a href="#" class="nav-item" onclick="openExplainerModal()">
+        <span class="nav-item-icon">📖</span> Project Explainer
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-item-icon">🔔</span> Notifications
+        <span class="nav-item-badge">7</span>
+      </a>
+
+      <div class="nav-section-label">Administration</div>
+      <a href="#" class="nav-item">
+        <span class="nav-item-icon">👥</span> User Roles
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-item-icon">⚙️</span> Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-links">
+        <a href="index.html" class="sidebar-footer-link">← Logout</a>
+        <span class="sidebar-footer-link" style="margin-left:auto;">v2.0.1</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <!-- Top Header -->
+    <header class="top-header">
+      <div>
+        <div class="header-title">Digital Workflow & Approvals Engine</div>
+        <div class="header-breadcrumb"><span>NLAMS</span><span class="breadcrumb-sep">/</span><span>Statutory Milestone Pipeline</span></div>
+      </div>
+      <div class="header-spacer"></div>
+      <!-- Persona selector & Explainer button automatically injected by shared-auth.js -->
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-outline btn-sm" onclick="exportCabinetBrief()">📊 Export Cabinet Brief</button>
+        <button class="btn btn-saffron btn-sm" onclick="openNewFileModal()">+ Initiate Acquisition File</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <!-- Executive Metric Bar -->
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;">
+        <div class="kpi-card saffron" style="padding:16px;">
+          <div class="kpi-label">Active Queue Files</div>
+          <div class="kpi-value" id="kpiQueueTotal" style="font-size:22px;">23</div>
+          <div class="kpi-period" style="font-size:11px;color:#f59e0b;">In current jurisdiction</div>
+        </div>
+        <div class="kpi-card red" style="padding:16px;">
+          <div class="kpi-label">Section 25 Alarms</div>
+          <div class="kpi-value" id="kpiOverdue" style="font-size:22px;">4</div>
+          <div class="kpi-period" style="font-size:11px;color:#ef4444;">Near statutory 12-mo lapse</div>
+        </div>
+        <div class="kpi-card amber" style="padding:16px;">
+          <div class="kpi-label">Citizen Objections (Sec 15)</div>
+          <div class="kpi-value" style="font-size:22px;">29</div>
+          <div class="kpi-period" style="font-size:11px;color:#f59e0b;">Quasi-Judicial hearings</div>
+        </div>
+        <div class="kpi-card green" style="padding:16px;">
+          <div class="kpi-label">Cleared This Month</div>
+          <div class="kpi-value" id="kpiCleared" style="font-size:22px;">148</div>
+          <div class="kpi-period" style="font-size:11px;color:#22c55e;">Avg: 6.8 days per file</div>
+        </div>
+        <div class="kpi-card blue" style="padding:16px;">
+          <div class="kpi-label">e-Sign Compliance</div>
+          <div class="kpi-value" style="font-size:22px;">99.4%</div>
+          <div class="kpi-period" style="font-size:11px;color:#60a5fa;">Cryptographic DSC verify</div>
+        </div>
+      </div>
+
+      <!-- Interactive 6-Stage Statutory Funnel Bar -->
+      <div class="card mb-20">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="font-size:12px;font-weight:700;color:#ff9900;text-transform:uppercase;letter-spacing:0.8px;">
+            ⚖️ RFCTLARR Act 2013 Statutory Lifecycle Funnel (Click Stage to Filter Queue)
+          </div>
+          <div style="font-size:11px;color:#a8b4cc;">
+            Filter: <span id="currentStageFilterText" style="color:#22c55e;font-weight:700;">Showing All Stages</span>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;">
+          <div class="funnel-stage active" onclick="filterByStage('all', this)">
+            <div class="stage-icon">📂</div>
+            <div class="stage-title">All Stages</div>
+            <div class="stage-count">23</div>
+            <div class="stage-sub">Complete Pipeline</div>
+          </div>
+          <div class="funnel-stage" onclick="filterByStage('Stage 1', this)">
+            <div class="stage-icon">📝</div>
+            <div class="stage-title">1. Proposal & SIA</div>
+            <div class="stage-count">3</div>
+            <div class="stage-sub">Social Impact Study</div>
+          </div>
+          <div class="funnel-stage" onclick="filterByStage('Stage 2', this)">
+            <div class="stage-icon">📰</div>
+            <div class="stage-title">2. Sec 11 Notice</div>
+            <div class="stage-count">5</div>
+            <div class="stage-sub">Gazette Notification</div>
+          </div>
+          <div class="funnel-stage" onclick="filterByStage('Stage 3', this)">
+            <div class="stage-icon">⚖️</div>
+            <div class="stage-title">3. Sec 15 Hearing</div>
+            <div class="stage-count">4</div>
+            <div class="stage-sub">60-Day Objections</div>
+          </div>
+          <div class="funnel-stage" onclick="filterByStage('Stage 4', this)">
+            <div class="stage-icon">📜</div>
+            <div class="stage-title">4. Sec 19 Decl.</div>
+            <div class="stage-count">4</div>
+            <div class="stage-sub">12-Mo Clock Starts</div>
+          </div>
+          <div class="funnel-stage" onclick="filterByStage('Stage 5', this)">
+            <div class="stage-icon">💰</div>
+            <div class="stage-title">5. Sec 23 Award</div>
+            <div class="stage-count">4</div>
+            <div class="stage-sub">100% Solatium Set</div>
+          </div>
+          <div class="funnel-stage" onclick="filterByStage('Stage 6', this)">
+            <div class="stage-icon">🏠</div>
+            <div class="stage-title">6. Sec 38 Poss.</div>
+            <div class="stage-count">3</div>
+            <div class="stage-sub">DBT & Site Handover</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="tab-nav" style="margin-bottom:18px;">
+        <button class="tab-btn active" onclick="switchWorkflowTab('pending', this)">⏳ Pending Approvals Queue (<span id="tabCountPending">10</span>)</button>
+        <button class="tab-btn" onclick="switchWorkflowTab('objections', this)">⚖️ Citizen Objections & Hearings (Sec 15)</button>
+        <button class="tab-btn" onclick="switchWorkflowTab('escalated', this)">🚨 Section 25 Statutory Alarms (4)</button>
+        <button class="tab-btn" onclick="switchWorkflowTab('timeline', this)">📅 Project Milestone Visualizer</button>
+        <button class="tab-btn" onclick="switchWorkflowTab('audit', this)">📜 e-Office Audit Trail (<span id="tabCountCompleted">148</span>)</button>
+      </div>
+
+      <!-- TAB 1: PENDING APPROVALS QUEUE -->
+      <div id="tab-pending">
+        <div id="workflowCardsContainer">
+          <!-- Dynamically populated by JS -->
+        </div>
+      </div>
+
+      <!-- TAB 2: CITIZEN OBJECTIONS QUEUE -->
+      <div id="tab-objections" class="hidden">
+        <div class="alert warning mb-16">
+          <span class="alert-icon">⚖️</span>
+          <div class="alert-content">
+            <div class="alert-title">Quasi-Judicial Section 15 Hearing Docket</div>
+            <div class="alert-desc">Objections submitted by affected landowners within the mandatory 60-day window following Section 11 publication. Collector/CALA must pass formal speaking orders before publishing Section 19 declaration.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Petition No</th>
+                  <th>Landowner / Petitioner</th>
+                  <th>Village & Khasra No</th>
+                  <th>Objection Ground</th>
+                  <th>Scheduled Hearing</th>
+                  <th>CALA Bench</th>
+                  <th>Quasi-Judicial Action</th>
+                </tr>
+              </thead>
+              <tbody id="objectionsTableBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: STATUTORY LAPSE ALARMS -->
+      <div id="tab-escalated" class="hidden">
+        <div class="alert danger mb-16">
+          <span class="alert-icon">🚨</span>
+          <div class="alert-content">
+            <div class="alert-title">RFCTLARR Act Section 25 Statutory Clock Breaches</div>
+            <div class="alert-desc">Under Indian Law, an acquisition automatically LAPSES if Section 23 Award is not declared within 12 months from Section 19 publication date. These files have triggered high-level ministerial escalation.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Project Name</th>
+                  <th>State & District</th>
+                  <th>Sec 19 Pub Date</th>
+                  <th>Statutory Deadline</th>
+                  <th>Time Remaining</th>
+                  <th>Escalated Officer</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="escalationsTableBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: PROJECT MILESTONE VISUALIZER -->
+      <div id="tab-timeline" class="hidden">
+        <div class="card">
+          <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:18px;">📅</span>
+              <span class="card-title">Interactive Project Lifecycle Visualizer</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:12px;color:#a8b4cc;">Select Corridor:</span>
+              <select class="filter-select" id="timelineProjectSelect" onchange="renderTimeline(this.value)">
+                <option value="P-17">Delhi-Mumbai Expressway (NE-4 Package 17) - Thane/Palghar</option>
+                <option value="HSR-01">Mumbai-Ahmedabad High Speed Rail (Bullet Train Package 1)</option>
+                <option value="KB-02">Ken-Betwa River Interlinking Project</option>
+                <option value="SOL-03">Rajasthan Ultra Mega Solar Park Phase-2</option>
+              </select>
+            </div>
+          </div>
+          <div class="card-body" id="timelineContent">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: COMPLETED AUDIT TRAIL -->
+      <div id="tab-audit" class="hidden">
+        <div class="card">
+          <div class="card-header"><span style="font-size:16px;">📜</span><span class="card-title">Immutable e-Office Scrutiny & Sign-Off Ledger</span></div>
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>File Tracking ID</th>
+                  <th>Project Corridor</th>
+                  <th>Statutory Milestone Approved</th>
+                  <th>Approving Officer</th>
+                  <th>Timestamp</th>
+                  <th>Cryptographic DSC Hash</th>
+                  <th>Official Gazette Record</th>
+                </tr>
+              </thead>
+              <tbody id="auditTableBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ===== E-OFFICE GREEN NOTING MODAL ===== -->
+<div class="eoffice-modal-wrap" id="eofficeModal">
+  <div class="eoffice-paper">
+    <!-- Header -->
+    <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.08);background:linear-gradient(90deg, rgba(19,136,8,0.15), transparent);display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#22c55e,#15803d);display:flex;align-items:center;justify-content:center;font-size:18px;">📋</div>
+        <div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:#f0f4ff;" id="modalFileTitle">File No: e-File/DoLR/2026/LA-MUM-744/P4</div>
+          <div style="font-size:11px;color:#4ade80;" id="modalFileSubtitle">National Land Acquisition Single Source of Truth &bull; e-Office Digital Docket</div>
+        </div>
+      </div>
+      <button onclick="closeEofficeModal()" style="background:rgba(255,255,255,0.08);border:none;color:#a8b4cc;width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:16px;">✕</button>
+    </div>
+
+    <!-- Body -->
+    <div style="padding:20px;overflow-y:auto;flex:1;" id="modalFileBody">
+      <!-- File metadata -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:12px;margin-bottom:16px;">
+        <div><div style="font-size:10px;color:#5a6478;text-transform:uppercase;">Project Name</div><div style="font-size:12px;font-weight:700;color:#f0f4ff;" id="mfProject">Delhi-Mumbai Expressway</div></div>
+        <div><div style="font-size:10px;color:#5a6478;text-transform:uppercase;">Statutory Stage</div><div style="font-size:12px;font-weight:700;color:#ff9900;" id="mfStage">Section 23 - Award Declaration</div></div>
+        <div><div style="font-size:10px;color:#5a6478;text-transform:uppercase;">Land Footprint</div><div style="font-size:12px;font-weight:700;color:#22c55e;" id="mfArea">342 Hectares (68 Parcels)</div></div>
+        <div><div style="font-size:10px;color:#5a6478;text-transform:uppercase;">Award Consideration</div><div style="font-size:12px;font-weight:700;color:#38bdf8;" id="mfAmount">₹184.20 Crore</div></div>
+      </div>
+
+      <!-- Green Note Sheet (Government e-Office Standard) -->
+      <div class="green-noting-box">
+        <div class="noting-header">
+          <span>📝 NOTE SHEET #4 &bull; DEPARTMENT OF LAND RESOURCES / CALA</span>
+          <span id="notingOfficerTag">Officer: Dr. Ramesh Kumar IAS</span>
+        </div>
+        <p style="font-size:12.5px;color:#cbd5e1;line-height:1.6;margin:0 0 10px;" id="notingText">
+          Submitted for statutory approval under Section 23 of the RFCTLARR Act, 2013. The Competent Authority for Land Acquisition (CALA) has concluded inquiry into claims and objections submitted pursuant to Section 15. The compensation assessment includes Market Value (₹92.10 Cr) &plus; 100% Solatium under Section 30(1) (₹92.10 Cr) &plus; 12% additional interest per annum from Section 11 date.
+        </p>
+        <div style="font-size:11px;color:#4ade80;">Reference Acts: RFCTLARR Act 2013 | National Highways Act 1956 Sec 3G</div>
+      </div>
+
+      <!-- Mandatory Statutory Compliance Checklist -->
+      <div style="font-size:12px;font-weight:700;color:#ff9900;text-transform:uppercase;margin-bottom:8px;">Statutory Verification Checklist (RFCTLARR Compliance):</div>
+      <div class="scrutiny-checklist">
+        <label class="check-item"><input type="checkbox" checked id="chk1"/> <span>Record of Rights (7/12 Extract) verified against State Digital Land Records database</span></label>
+        <label class="check-item"><input type="checkbox" checked id="chk2"/> <span>Social Impact Assessment (SIA) public hearing recommendations addressed</span></label>
+        <label class="check-item"><input type="checkbox" checked id="chk3"/> <span>Gram Sabha consent resolution verified (PESA Act Schedule V areas)</span></label>
+        <label class="check-item"><input type="checkbox" checked id="chk4"/> <span>100% Solatium correctly computed under Section 30(1) of RFCTLARR Act</span></label>
+        <label class="check-item"><input type="checkbox" checked id="chk5"/> <span>12% per annum additional interest credited from date of Section 11 notification</span></label>
+        <label class="check-item"><input type="checkbox" checked id="chk6"/> <span>Bank escrow account provisioned via PFMS for Direct Benefit Transfer (DBT)</span></label>
+      </div>
+
+      <!-- Digital Signature Seal (Hidden until signed) -->
+      <div class="digital-seal" id="digitalSealBox">
+        <div style="width:40px;height:40px;border-radius:50%;background:#22c55e;display:flex;align-items:center;justify-content:center;color:#080c18;font-size:22px;font-weight:800;">✓</div>
+        <div>
+          <div style="font-weight:700;color:#22c55e;font-size:13px;">CRYPTOGRAPHICALLY SIGNED & VERIFIED</div>
+          <div style="font-size:11px;color:#a8b4cc;" id="sealSignerText">Signed by: Dr. Ramesh Kumar IAS | NIC-DSC-9842 | SHA-256 Verified</div>
+          <div style="font-size:10px;color:#5a6478;" id="sealTimestampText">Timestamp: 08-Sep-2026 13:15:22 IST</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding:16px 20px;border-top:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.25);display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-outline btn-sm" onclick="signWithDSC()" id="btnSignDSC">✍️ Apply Cryptographic e-Sign</button>
+        <button class="btn btn-outline btn-sm" onclick="showGazettePreview()">📜 Preview Gazette Notification</button>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-danger btn-sm" onclick="raiseQueryPrompt()">❓ Raise Query to Field</button>
+        <button class="btn btn-saffron btn-sm" onclick="executeApproval()" id="btnApproveFile">✅ Approve & Forward File →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== WORKFLOW DATASET =====
+let pendingFiles = [
+  {
+    id: "WF-2026-001",
+    fileNo: "e-File/DoLR/2026/NE4-PKG17/744",
+    project: "Delhi-Mumbai Expressway (NE-4 Package 17)",
+    state: "Maharashtra",
+    district: "Palghar / Thane",
+    action: "Section 23 Award Determination & Solatium Approval",
+    stage: "Stage 5",
+    stageName: "Sec 23 Award",
+    amount: "₹184.20 Cr",
+    area: "342 Ha (68 Parcels)",
+    authority: "District Collector & CALA (Amit Patil IAS)",
+    assignedRole: "district",
+    priority: "critical",
+    daysLeft: 6,
+    lapseDaysElapsed: 340, // out of 365
+    dueDate: "14-Sep-2026",
+    details: "Final award determination for 68 farm plots in Kasa and Charoti villages. Base circle rate + 1.5x multiplier + 100% Solatium computed. Bank escrow ready."
+  },
+  {
+    id: "WF-2026-002",
+    fileNo: "e-File/MoR/2026/HSR-SURAT/102",
+    project: "Mumbai-Ahmedabad Bullet Train Corridor",
+    state: "Gujarat",
+    district: "Surat",
+    action: "Section 19 Final Acquisition Declaration",
+    stage: "Stage 4",
+    stageName: "Sec 19 Decl.",
+    amount: "₹245.00 Cr",
+    area: "210 Ha (42 Parcels)",
+    authority: "Principal Secretary - Revenue, Gujarat",
+    assignedRole: "state",
+    priority: "high",
+    daysLeft: 12,
+    lapseDaysElapsed: 180,
+    dueDate: "20-Sep-2026",
+    details: "Objection hearings concluded under Section 15. Zero pending High Court stays. Gazette declaration submitted for authentication."
+  },
+  {
+    id: "WF-2026-003",
+    fileNo: "e-File/MoWR/2026/POLA-RR/884",
+    project: "Polavaram Major Multipurpose Irrigation",
+    state: "Andhra Pradesh",
+    district: "West Godavari",
+    action: "Compensation Disbursement & R&R Housing Allotment",
+    stage: "Stage 6",
+    stageName: "Sec 38 Poss.",
+    amount: "₹420.00 Cr",
+    area: "980 Ha (1,240 Families)",
+    authority: "State Nodal Officer & NHRC",
+    assignedRole: "central",
+    priority: "critical",
+    daysLeft: -14, // OVERDUE
+    lapseDaysElapsed: 395, // breached
+    dueDate: "25-Aug-2026",
+    details: "Statutory timeline exceeded by 14 days. 420 tribal families pending rehabilitation package. Ministerial intervention active."
+  },
+  {
+    id: "WF-2026-004",
+    fileNo: "e-File/MoRTH/2026/MUM-METRO9/412",
+    project: "Mumbai Metro Line 9 Extension",
+    state: "Maharashtra",
+    district: "Thane",
+    action: "Social Impact Assessment (SIA) Clearance Review",
+    stage: "Stage 1",
+    stageName: "Proposal & SIA",
+    amount: "₹86.40 Cr",
+    area: "48 Ha (Urban Parcels)",
+    authority: "MMRDA & Collectorate",
+    assignedRole: "district",
+    priority: "medium",
+    daysLeft: 18,
+    lapseDaysElapsed: 45,
+    dueDate: "26-Sep-2026",
+    details: "Expert group recommendations received. Commercial shopkeepers relocation scheme approved by state cabinet."
+  },
+  {
+    id: "WF-2026-005",
+    fileNo: "e-File/DoLR/2026/DL-POOL-712",
+    project: "Delhi-NCR Land Pooling Sector 24",
+    state: "Delhi",
+    district: "North Delhi",
+    action: "Section 11 Preliminary Notification Gazette",
+    stage: "Stage 2",
+    stageName: "Sec 11 Notice",
+    amount: "₹312.00 Cr",
+    area: "620 Ha (Village Alipur)",
+    authority: "DDA Vice Chairman",
+    assignedRole: "central",
+    priority: "high",
+    daysLeft: 4,
+    lapseDaysElapsed: 82,
+    dueDate: "12-Sep-2026",
+    details: "Consolidated survey sheets finalized. 30-day public objection notification published in gazette and 3 vernacular dailies."
+  },
+  {
+    id: "WF-2026-006",
+    fileNo: "e-File/MoRTH/2026/NH48-RAJ/519",
+    project: "NH-48 Jaipur-Udaipur 6-Laning",
+    state: "Rajasthan",
+    district: "Jaipur",
+    action: "Section 15 Hearing of Farmer Objections",
+    stage: "Stage 3",
+    stageName: "Sec 15 Hearing",
+    amount: "₹142.50 Cr",
+    area: "190 Ha (312 Claims)",
+    authority: "District Collector, Jaipur",
+    assignedRole: "district",
+    priority: "medium",
+    daysLeft: 9,
+    lapseDaysElapsed: 140,
+    dueDate: "17-Sep-2026",
+    details: "68 objections regarding agricultural tube-well compensation valuation. Revenue Inspector submitted revised assessment."
+  },
+  {
+    id: "WF-2026-007",
+    fileNo: "e-File/NWDA/2026/KEN-BETWA/301",
+    project: "Ken-Betwa National River Link Phase-1",
+    state: "Madhya Pradesh",
+    district: "Panna",
+    action: "Direct Benefit Transfer (DBT) Payout Release",
+    stage: "Stage 6",
+    stageName: "Sec 38 Poss.",
+    amount: "₹180.00 Cr",
+    area: "480 Ha (Forest Fringe)",
+    authority: "State Finance & CALA Panna",
+    assignedRole: "state",
+    priority: "medium",
+    daysLeft: 11,
+    lapseDaysElapsed: 290,
+    dueDate: "19-Sep-2026",
+    details: "Phase-1 beneficiary Aadhaar accounts linked with PFMS. Collectorate ready to issue possession certificates to NWDA."
+  },
+  {
+    id: "WF-2026-008",
+    fileNo: "e-File/SECI/2026/RAJ-SOLAR/221",
+    project: "Rajasthan Ultra Mega Solar Park Phase-2",
+    state: "Rajasthan",
+    district: "Jodhpur",
+    action: "Government Revenue Land Transfer Sanction",
+    stage: "Stage 5",
+    stageName: "Sec 23 Award",
+    amount: "₹95.00 Cr",
+    area: "1,200 Ha (Barren Desert)",
+    authority: "Board of Revenue, Ajmer",
+    assignedRole: "state",
+    priority: "low",
+    daysLeft: 22,
+    lapseDaysElapsed: 210,
+    dueDate: "30-Sep-2026",
+    details: "Uninhabited government wasteland lease sanction. Gram Panchayat NOC recorded with zero private land displacement."
+  },
+  {
+    id: "WF-2026-009",
+    fileNo: "e-File/DoLR/2026/DHN-JMS-142",
+    project: "Delhi-Mumbai Corridor - Taluka Dahanu",
+    state: "Maharashtra",
+    district: "Palghar",
+    action: "Joint Measurement Survey (JMS) Panchnama Sign-off",
+    stage: "Stage 3",
+    stageName: "Sec 15 Hearing",
+    amount: "₹24.80 Cr",
+    area: "34 Ha (14 Cadastral Plots)",
+    authority: "Sr. Revenue Inspector (Rajesh Deshmukh)",
+    assignedRole: "surveyor",
+    priority: "high",
+    daysLeft: 3,
+    lapseDaysElapsed: 60,
+    dueDate: "11-Sep-2026",
+    details: "Field ground truthing completed for Khasra 142/1 to 145/2. DGPS boundary stones embedded; fruit-bearing trees counted."
+  },
+  {
+    id: "WF-2026-010",
+    fileNo: "e-File/MoRTH/2026/CHN-RING/901",
+    project: "Chennai Peripheral Ring Road Package 4",
+    state: "Tamil Nadu",
+    district: "Tiruvallur",
+    action: "Section 11 Gazette Notification Publication",
+    stage: "Stage 2",
+    stageName: "Sec 11 Notice",
+    amount: "₹118.00 Cr",
+    area: "165 Ha (Paddy Fields)",
+    authority: "DRO & CALA Tiruvallur",
+    assignedRole: "state",
+    priority: "medium",
+    daysLeft: 8,
+    lapseDaysElapsed: 75,
+    dueDate: "16-Sep-2026",
+    details: "Alignment verified with state highway department. Revenue village survey numbers published for public scrutiny."
+  }
+];
+
+// Citizen Objections Dataset (Section 15 Hearing Docket)
+const citizenObjections = [
+  { petitionNo: "OBJ-2026-841", petitioner: "Haribhau Tukaram Patil", village: "Charoti (Palghar)", khasra: "Khasra #145/2", ground: "Dispute over Roadfront Commercial Circle Rate vs Agricultural Rate", scheduledDate: "12-Sep-2026 (11:00 AM)", bench: "CALA Thane Bench", status: "Hearing Listed" },
+  { petitionNo: "OBJ-2026-842", petitioner: "Savitri Bai Gavit", village: "Kasa Khurd", khasra: "Khasra #143/A", ground: "Prayer for compensation of 42 fruit-bearing Chiku trees under Sec 29", scheduledDate: "12-Sep-2026 (02:30 PM)", bench: "CALA Thane Bench", status: "Surveyor Report Pending" },
+  { petitionNo: "OBJ-2026-843", petitioner: "Gram Panchayat Charoti", village: "Charoti", khasra: "Khasra #145/1", ground: "Alternate cattle grazing land allocation request (Common Land)", scheduledDate: "14-Sep-2026 (11:30 AM)", bench: "CALA Thane Bench", status: "Hearing Listed" },
+  { petitionNo: "OBJ-2026-844", petitioner: "Dhondu Somaji Mengal", village: "Kasa Khurd", khasra: "Khasra #142/2", ground: "Boundary overlap claim with Social Forestry strip (Khasra 144)", scheduledDate: "15-Sep-2026 (10:30 AM)", bench: "Sub-Divisional Officer, Dahanu", status: "Joint Survey Ordered" },
+  { petitionNo: "OBJ-2026-845", petitioner: "Legal Heirs of Sakharam", village: "Ambesari", khasra: "Khasra #149/2", ground: "Succession certificate submission & apportionment prayer among 4 heirs", scheduledDate: "16-Sep-2026 (03:00 PM)", bench: "CALA Thane Bench", status: "Documents Scrutinized" }
+];
+
+// Statutory Section 25 Alarms (12-Month Limit)
+const statutoryAlarms = [
+  { project: "Polavaram Irrigation Project", state: "Andhra Pradesh", district: "West Godavari", sec19Date: "14-Aug-2025", statutoryDeadline: "14-Aug-2026", remaining: "14 Days Lapsed ⚠️", officer: "Union Secy, Water Resources", color: "#ef4444" },
+  { project: "Delhi-NCR Land Pooling Alipur", state: "Delhi", district: "North Delhi", sec19Date: "18-Sep-2025", statutoryDeadline: "18-Sep-2026", remaining: "10 Days Remaining 🚨", officer: "Lt. Governor / DDA VC", color: "#f59e0b" },
+  { project: "Amaravati Capital City Expansion", state: "Andhra Pradesh", district: "Guntur", sec19Date: "28-Sep-2025", statutoryDeadline: "28-Sep-2026", remaining: "20 Days Remaining 🚨", officer: "Principal Secretary, Revenue", color: "#f59e0b" },
+  { project: "Delhi-Varanasi High Speed Rail", state: "Uttar Pradesh", district: "Prayagraj", sec19Date: "05-Oct-2025", statutoryDeadline: "05-Oct-2026", remaining: "27 Days Remaining ⚠️", officer: "Collector, Prayagraj", color: "#f59e0b" }
+];
+
+// Timeline Project Milestone Data
+const timelineData = {
+  "P-17": [
+    { date: "12-Jan-2024", title: "Project Proposal Submitted by NHAI", desc: "Proposal for 342 Ha in Dahanu/Palghar corridor submitted to Central Ministry.", badge: "Completed", color: "#22c55e" },
+    { date: "08-Mar-2024", title: "Social Impact Assessment (SIA) Approved", desc: "Public hearings in Kasa and Charoti. Minimal displacement certified by Tata Institute.", badge: "Completed", color: "#22c55e" },
+    { date: "15-Jul-2024", title: "Section 11 Preliminary Notification Gazette", desc: "Official Maharashtra Gazette publication freezing land transactions across 14 taluka villages.", badge: "Completed", color: "#22c55e" },
+    { date: "20-Oct-2024", title: "Section 15 Objection Hearings Concluded", desc: "CALA Thane heard 34 objection petitions. Boundary resurvey conducted by Rajesh Deshmukh.", badge: "Completed", color: "#22c55e" },
+    { date: "10-Jan-2025", title: "Section 19 Final Declaration Published", desc: "Formal declaration of acquisition. Section 25 statutory 12-month clock initiated.", badge: "Completed", color: "#22c55e" },
+    { date: "Active Today", title: "Section 23 Award Determination & Solatium", desc: "₹184.20 Cr compensation assessment pending final e-Sign approval in executive queue.", badge: "Active Now", color: "#ff9900" },
+    { date: "Target: Oct 2026", title: "Section 38 Physical Possession Handover", desc: "100% compensation disbursement via PFMS followed by civil works handover.", badge: "Upcoming", color: "#5a6478" }
+  ],
+  "HSR-01": [
+    { date: "05-Feb-2024", title: "Alignment Survey by NHSRCL", desc: "High-speed rail corridor alignment pegging across Surat district.", badge: "Completed", color: "#22c55e" },
+    { date: "14-Jun-2024", title: "Section 11 Notification Published", desc: "Surat District Collector published preliminary gazette for 210 Ha.", badge: "Completed", color: "#22c55e" },
+    { date: "Active Today", title: "Section 19 Final Declaration Scrutiny", desc: "State Revenue Secretary reviewing R&R rehabilitation package.", badge: "Active Now", color: "#ff9900" }
+  ],
+  "KB-02": [
+    { date: "10-Nov-2023", title: "Ken-Betwa National Link Approved", desc: "Union Cabinet sanction accorded for ₹44,605 Cr interlinking project.", badge: "Completed", color: "#22c55e" },
+    { date: "14-Feb-2025", title: "Section 23 Award Passed (₹180 Cr)", desc: "Market value plus 100% Solatium awarded to Panna farmers.", badge: "Completed", color: "#22c55e" },
+    { date: "Active Today", title: "PFMS Direct Benefit Transfer in Progress", desc: "82% farmers have received compensation directly in bank accounts.", badge: "Active Now", color: "#ff9900" }
+  ],
+  "SOL-03": [
+    { date: "02-Aug-2024", title: "SECI Solar Park Proposal", desc: "Requisition for 1,200 Ha desert wasteland in Jodhpur district.", badge: "Completed", color: "#22c55e" },
+    { date: "Active Today", title: "Government Revenue Land Transfer", desc: "Board of Revenue Ajmer finalizing zero-displacement transfer.", badge: "Active Now", color: "#ff9900" }
+  ]
+};
+
+// Audit Trail (Completed Actions)
+let auditLedger = [
+  { id: "AUD-2026-981", file: "e-File/DoLR/2026/RAJ-SOL-14/P2", project: "Rajasthan Solar Park", milestone: "Sec 38 Possession Handover", officer: "DM Jodhpur (IAS)", time: "07-Sep-2026 16:42 IST", hash: "SHA256: 7d4a...b912", gazette: "G.S.R. 841(E)" },
+  { id: "AUD-2026-980", file: "e-File/UPEIDA/2026/PURV-712/A1", project: "Purvanchal Expressway Ext", milestone: "Sec 23 Award Passed (₹94 Cr)", officer: "SDM Azamgarh", time: "06-Sep-2026 11:20 IST", hash: "SHA256: 3c8e...f401", gazette: "UP-GAZ-194" },
+  { id: "AUD-2026-979", file: "e-File/GIDC/2026/GIFT-PH3/02", project: "GIFT City Phase-3 Expansion", milestone: "Sec 19 Final Declaration", officer: "Principal Secy, Gujarat", time: "05-Sep-2026 15:10 IST", hash: "SHA256: 9b2d...a387", gazette: "GUJ-GAZ-882" },
+  { id: "AUD-2026-978", file: "e-File/NR/2026/GKP-LOOP/33", project: "Gorakhpur Rail Bypass Loop", milestone: "Sec 11 Preliminary Notice", officer: "Collector Gorakhpur", time: "04-Sep-2026 10:15 IST", hash: "SHA256: 1a9f...e440", gazette: "G.S.R. 719(E)" },
+  { id: "AUD-2026-977", file: "e-File/SSNNL/2026/SARDAR-04", project: "Sardar Sarovar Canal Extension", milestone: "R&R Scheme Sanctioned", officer: "LAC Gujarat", time: "03-Sep-2026 14:30 IST", hash: "SHA256: 6e1a...8821", gazette: "SSN-2026-04" }
+];
+
+let activeSelectedFile = null;
+let currentFunnelStage = 'all';
+
+// ===== RENDER WORKFLOW QUEUE =====
+function renderWorkflowQueue() {
+  const container = document.getElementById('workflowCardsContainer');
+  const userRole = getCurrentRole().id;
+
+  // Filter by funnel stage if chosen
+  let filtered = pendingFiles;
+  if (currentFunnelStage !== 'all') {
+    filtered = filtered.filter(f => f.stage === currentFunnelStage);
+  }
+
+  // Update counts
+  document.getElementById('tabCountPending').textContent = filtered.length;
+  document.getElementById('kpiQueueTotal').textContent = filtered.length;
+  document.getElementById('sidebarBadgeCount').textContent = filtered.length;
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="text-align:center;padding:40px;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.1);border-radius:12px;">
+        <div style="font-size:32px;margin-bottom:8px;">🎉</div>
+        <div style="font-size:15px;font-weight:700;color:#f0f4ff;">All Files Cleared in this Stage!</div>
+        <div style="font-size:12px;color:#a8b4cc;margin-top:4px;">No pending actions for this statutory milestone.</div>
+        <button class="btn btn-outline btn-sm" onclick="filterByStage('all')" style="margin-top:12px;">Reset to All Stages</button>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(item => {
+    const isCritical = item.priority === 'critical';
+    const isOverdue = item.daysLeft < 0;
+    const isRoleMatch = (userRole === 'central' || item.assignedRole === userRole);
+
+    let lapseHtml = '';
+    if (isOverdue) {
+      lapseHtml = `<div class="lapse-gauge danger">🚨 ${Math.abs(item.daysLeft)}d Beyond Statutory Limit</div>`;
+    } else if (item.daysLeft <= 5) {
+      lapseHtml = `<div class="lapse-gauge danger">⚠️ ${item.daysLeft}d to Sec 25 Lapse</div>`;
+    } else if (item.daysLeft <= 10) {
+      lapseHtml = `<div class="lapse-gauge warning">⏳ ${item.daysLeft}d to Milestone</div>`;
+    } else {
+      lapseHtml = `<div class="lapse-gauge normal">📅 Due in ${item.daysLeft}d</div>`;
+    }
+
+    return `
+      <div class="card mb-14" style="border-left:4px solid ${isCritical ? '#ef4444' : item.priority === 'high' ? '#f59e0b' : '#3b82f6'};transition:all 0.2s;">
+        <div style="padding:16px 20px;display:flex;align-items:flex-start;gap:18px;">
+          
+          <!-- Stage Badge Icon -->
+          <div style="width:48px;height:48px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;">
+            <span style="font-size:18px;">${item.stage === 'Stage 5' ? '💰' : item.stage === 'Stage 4' ? '📜' : item.stage === 'Stage 2' ? '📰' : item.stage === 'Stage 6' ? '🏠' : item.stage === 'Stage 3' ? '⚖️' : '📝'}</span>
+            <span style="font-size:9px;color:#ff9900;font-weight:700;margin-top:1px;">${item.stage}</span>
+          </div>
+
+          <!-- Main Info -->
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
+              <span style="font-size:15px;font-weight:700;color:#f0f4ff;">${item.action}</span>
+              ${lapseHtml}
+              <span class="badge neutral" style="font-size:10px;">${item.fileNo}</span>
+              ${isRoleMatch ? '<span style="font-size:10px;color:#22c55e;background:rgba(34,197,94,0.1);padding:2px 6px;border-radius:4px;font-weight:700;">★ Your Action</span>' : ''}
+            </div>
+
+            <div style="font-size:13px;color:#ff9900;font-weight:600;margin-bottom:4px;">${item.project}</div>
+            <div style="font-size:12px;color:#a8b4cc;margin-bottom:10px;line-height:1.4;">${item.details}</div>
+
+            <!-- Metadata Chips -->
+            <div style="display:flex;gap:16px;font-size:11px;color:#a8b4cc;flex-wrap:wrap;">
+              <span>📍 <strong>${item.district}, ${item.state}</strong></span>
+              <span>📐 Area: <strong style="color:#f0f4ff;">${item.area}</strong></span>
+              <span>💰 Consideration: <strong style="color:#22c55e;">${item.amount}</strong></span>
+              <span>👤 Authority: <span style="color:#cbd5e1;">${item.authority}</span></span>
+            </div>
+          </div>
+
+          <!-- Quick Action Buttons -->
+          <div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0;min-width:140px;">
+            <button class="btn btn-saffron btn-sm" onclick="openEofficeModal('${item.id}')" style="font-weight:700;padding:8px 14px;">
+              🔍 Scrutinize & Act
+            </button>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-outline btn-sm" onclick="reassignFile('${item.id}')" style="flex:1;font-size:11px;" title="Reassign to Subordinate Officer">🔀 Reassign</button>
+              <button class="btn btn-outline btn-sm" onclick="viewAuditTrail('${item.id}')" style="flex:1;font-size:11px;" title="View Statutory History">📜 History</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Filter by funnel stage
+function filterByStage(stageKey, el) {
+  currentFunnelStage = stageKey;
+  document.querySelectorAll('.funnel-stage').forEach(s => s.classList.remove('active'));
+  if (el) el.classList.add('active');
+  
+  const textEl = document.getElementById('currentStageFilterText');
+  if (textEl) {
+    textEl.textContent = stageKey === 'all' ? 'Showing All Stages' : `Filtered by ${stageKey}`;
+  }
+  renderWorkflowQueue();
+}
+
+// ===== E-OFFICE GREEN NOTING MODAL ENGINE =====
+function openEofficeModal(id) {
+  const item = pendingFiles.find(f => f.id === id);
+  if (!item) return;
+  activeSelectedFile = item;
+
+  const currentRole = getCurrentRole();
+  document.getElementById('modalFileTitle').textContent = `${item.fileNo}`;
+  document.getElementById('mfProject').textContent = item.project;
+  document.getElementById('mfStage').textContent = `${item.stage} - ${item.stageName}`;
+  document.getElementById('mfArea').textContent = item.area;
+  document.getElementById('mfAmount').textContent = item.amount;
+  document.getElementById('notingOfficerTag').textContent = `Officer: ${currentRole.name} (${currentRole.badge})`;
+
+  // Reset digital seal
+  document.getElementById('digitalSealBox').style.display = 'none';
+  document.getElementById('btnSignDSC').textContent = '✍️ Apply Cryptographic e-Sign';
+  document.getElementById('btnSignDSC').disabled = false;
+
+  document.getElementById('eofficeModal').style.display = 'flex';
+}
+
+function closeEofficeModal() {
+  document.getElementById('eofficeModal').style.display = 'none';
+}
+
+// Digital Signature Simulation
+function signWithDSC() {
+  const currentRole = getCurrentRole();
+  const btn = document.getElementById('btnSignDSC');
+  btn.textContent = '⏳ Verifying Cryptographic Token...';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    const seal = document.getElementById('digitalSealBox');
+    const randomHash = 'SHA256: ' + Array.from({length: 16}, () => Math.floor(Math.random()*16).toString(16)).join('');
+    const now = new Date();
+    const timeStr = `${now.toLocaleDateString()} ${now.toLocaleTimeString()} IST`;
+
+    document.getElementById('sealSignerText').textContent = `Signed by: ${currentRole.name} | ${currentRole.badge} | DSC-ID: NIC-${Math.floor(1000+Math.random()*9000)} | ${randomHash}`;
+    document.getElementById('sealTimestampText').textContent = `Statutory Authority: ${currentRole.jurisdictionLevel} &bull; Timestamp: ${timeStr}`;
+
+    seal.style.display = 'flex';
+    btn.textContent = '✅ Token Verified & Sealed';
+    alert(`🔒 Cryptographic e-Sign Applied!\nSigner: ${currentRole.name}\nToken ID: NIC-DSC-VALID\n${randomHash}\n\nAll statutory scrutiny requirements confirmed.`);
+  }, 700);
+}
+
+// Execute Approval
+function executeApproval() {
+  if (!activeSelectedFile) return;
+
+  const currentRole = getCurrentRole();
+  const item = activeSelectedFile;
+
+  // Add to completed audit ledger
+  const auditEntry = {
+    id: `AUD-2026-${Math.floor(1000+Math.random()*9000)}`,
+    file: item.fileNo,
+    project: item.project,
+    milestone: `${item.stage} Approved: ${item.action}`,
+    officer: `${currentRole.name} (${currentRole.badge})`,
+    time: `Today at ${new Date().toLocaleTimeString()} IST`,
+    hash: `SHA256: ${Array.from({length: 12}, () => Math.floor(Math.random()*16).toString(16)).join('')}`,
+    gazette: `G.S.R. ${Math.floor(100+Math.random()*900)}(E)`
+  };
+  auditLedger.unshift(auditEntry);
+
+  // Remove from pending files list
+  pendingFiles = pendingFiles.filter(f => f.id !== item.id);
+
+  closeEofficeModal();
+
+  // Show Toast
+  alert(`✅ Statutory File Approved & Dispatched!\n\nFile No: ${item.fileNo}\nMilestone: ${item.action}\nApprover: ${currentRole.name}\nStatus: Advanced to next statutory stage.\nOfficial Gazette publication initiated.`);
+
+  // Refresh view
+  renderWorkflowQueue();
+  renderAuditTable();
+}
+
+function raiseQueryPrompt() {
+  const remarks = prompt('Enter Statutory Query or Clarification for Field Officer (e.g. "Resurvey boundary overlap with forest corridor within 7 days"):', 'Provide verified 7/12 extract for disputed Khasra plot and resubmit.');
+  if (remarks) {
+    alert(`📨 Query Dispatched to Sub-Divisional Field Officer!\n\nRemarks: "${remarks}"\nFile flagged for clarification under statutory tracking.`);
+    closeEofficeModal();
+  }
+}
+
+function showGazettePreview() {
+  if (!activeSelectedFile) return;
+  alert(`📜 OFFICIAL GAZETTE PREVIEW\n\nThe Gazette of India: Extraordinary (Part II - Sec 3(ii))\nPUBLISHED BY AUTHORITY\nMinistry of Rural Development / DoLR\n\nNotification for Acquisition under RFCTLARR Act 2013\nFile: ${activeSelectedFile.fileNo}\nProject: ${activeSelectedFile.project}\nLand Area: ${activeSelectedFile.area}\n\n"Notice is hereby given that the land specified in the Schedule hereto is required for public infrastructure utility..."`);
+}
+
+function reassignFile(id) {
+  const item = pendingFiles.find(f => f.id === id);
+  const officer = prompt(`Reassign File ${item.fileNo} to subordinate officer:`, 'SDM (Land Acquisition), Sub-Division 2');
+  if (officer) {
+    item.authority = officer;
+    alert(`File reassigned to ${officer}. Email notification and SMS alert sent.`);
+    renderWorkflowQueue();
+  }
+}
+
+function viewAuditTrail(id) {
+  switchWorkflowTab('audit', document.querySelectorAll('.tab-btn')[4]);
+}
+
+// ===== RENDER OTHER TABS =====
+function renderObjectionsTable() {
+  const tbody = document.getElementById('objectionsTableBody');
+  tbody.innerHTML = citizenObjections.map(o => `
+    <tr>
+      <td><code>${o.petitionNo}</code></td>
+      <td class="font-bold" style="color:#f0f4ff;">${o.petitioner}</td>
+      <td>${o.village} &bull; <strong style="color:#ff9900;">${o.khasra}</strong></td>
+      <td style="font-size:12px;color:#a8b4cc;">${o.ground}</td>
+      <td style="color:#f59e0b;font-weight:600;">${o.scheduledDate}</td>
+      <td><span class="badge neutral">${o.bench}</span></td>
+      <td>
+        <button class="btn btn-outline btn-sm" onclick="recordJudicialOrder('${o.petitionNo}')">🏛️ Record Order</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function recordJudicialOrder(pNo) {
+  const ruling = prompt(`Enter Quasi-Judicial Speaking Order for Petition ${pNo}:`, 'Objection examined. Revenue Inspector directed to re-demarcate boundary within 7 days. Hearing adjourned to 18-Sep.');
+  if (ruling) {
+    alert(`⚖️ Quasi-Judicial Order Uploaded to Court Registry!\nPetition: ${pNo}\nOrder: "${ruling}"\nSMS notification dispatched to petitioner.`);
+  }
+}
+
+function renderEscalationsTable() {
+  const tbody = document.getElementById('escalationsTableBody');
+  tbody.innerHTML = statutoryAlarms.map(a => `
+    <tr>
+      <td class="font-bold" style="color:#f0f4ff;">${a.project}</td>
+      <td>${a.district}, ${a.state}</td>
+      <td>${a.sec19Date}</td>
+      <td>${a.statutoryDeadline}</td>
+      <td><span class="badge danger" style="background:${a.color}22;color:${a.color};border:1px solid ${a.color}55;">${a.remaining}</span></td>
+      <td style="color:#cbd5e1;">${a.officer}</td>
+      <td>
+        <button class="btn btn-danger btn-sm" onclick="sendMinisterialShowCause('${a.project}')">⚡ Issue Show-Cause</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function sendMinisterialShowCause(proj) {
+  alert(`⚡ URGENT MINISTERIAL NOTICE ISSUED\n\nTo: District Collector & CALA\nSubject: Show-Cause for Breach of Section 25 Timeline in ${proj}\n\n"You are hereby directed to submit an explanatory report within 72 hours explaining why the Award has not been declared within the statutory 12-month window. Failure to do so will attract departmental proceedings under Central Civil Services Rules."`);
+}
+
+function renderTimeline(projectKey) {
+  const container = document.getElementById('timelineContent');
+  const milestones = timelineData[projectKey] || timelineData["P-17"];
+
+  container.innerHTML = `
+    <div class="timeline" style="margin-top:10px;">
+      ${milestones.map(m => `
+        <div class="timeline-item">
+          <div class="timeline-dot ${m.color === '#22c55e' ? 'done' : m.color === '#ff9900' ? 'active' : 'pending'}"></div>
+          <div class="timeline-date">${m.date}</div>
+          <div class="timeline-title" style="color:${m.color};">${m.title} <span class="badge neutral" style="font-size:10px;margin-left:6px;">${m.badge}</span></div>
+          <div class="timeline-desc">${m.desc}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderAuditTable() {
+  const tbody = document.getElementById('auditTableBody');
+  document.getElementById('tabCountCompleted').textContent = auditLedger.length;
+  tbody.innerHTML = auditLedger.map(a => `
+    <tr>
+      <td><code>${a.id}</code></td>
+      <td class="font-bold">${a.project}</td>
+      <td style="color:#22c55e;font-weight:600;">${a.milestone}</td>
+      <td>${a.officer}</td>
+      <td style="font-size:11px;color:#a8b4cc;">${a.time}</td>
+      <td><code style="font-size:10px;color:#ff9900;">${a.hash}</code></td>
+      <td><span class="badge success">${a.gazette}</span></td>
+    </tr>
+  `).join('');
+}
+
+// Tab Switching
+function switchWorkflowTab(tab, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  ['pending', 'objections', 'escalated', 'timeline', 'audit'].forEach(t => {
+    const el = document.getElementById('tab-' + t);
+    if (el) el.classList.toggle('hidden', t !== tab);
+  });
+}
+
+function exportCabinetBrief() {
+  alert('Exporting Parliamentary Q&A & Cabinet Summary Brief (PDF):\n- Active Pipeline: 23 Files\n- Cleared This Month: 148 Files\n- Section 25 Lapses Prevented: 4\n- Total Consideration Value: ₹1,61,429 Cr');
+}
+
+function openNewFileModal() {
+  const name = prompt('Initiate New Land Acquisition Requisition (Land Requiring Body):', 'NHAI - Vadodara Mumbai Expressway Package 18');
+  if (name) {
+    const newFile = {
+      id: `WF-2026-${Math.floor(100+Math.random()*900)}`,
+      fileNo: `e-File/NHAI/2026/LA-NEW-${Math.floor(100+Math.random()*900)}`,
+      project: name,
+      state: "Maharashtra",
+      district: "Palghar",
+      action: "Project Proposal & SIA Feasibility Study",
+      stage: "Stage 1",
+      stageName: "Proposal & SIA",
+      amount: "₹120.00 Cr",
+      area: "210 Ha",
+      authority: "Joint Secretary, DoLR",
+      assignedRole: "central",
+      priority: "high",
+      daysLeft: 30,
+      lapseDaysElapsed: 0,
+      dueDate: "08-Oct-2026",
+      details: "Requisition proposal initiated. SIA agency empanelment underway."
+    };
+    pendingFiles.unshift(newFile);
+    renderWorkflowQueue();
+    alert(`File ${newFile.fileNo} created and registered in the national digital pipeline.`);
+  }
+}
+
+// Integration with shared-auth.js
+window.onNLAMSRoleChange = function(role) {
+  renderWorkflowQueue();
+};
+
+// Initial Load
+renderWorkflowQueue();
+renderObjectionsTable();
+renderEscalationsTable();
+renderTimeline("P-17");
+renderAuditTable();
+</script>
+</body>
+</html>
