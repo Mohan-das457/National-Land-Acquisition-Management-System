@@ -250,6 +250,10 @@ function injectRoleBar() {
     }
 
     roleBarContainer.innerHTML = `
+      <a href="presentation.html" class="btn btn-outline btn-sm" style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg, rgba(255,122,0,0.25), rgba(255,174,0,0.15));border-color:#ff7a00;color:#ff9e00;font-weight:700;padding:6px 12px;text-decoration:none;border-radius:6px;box-shadow:0 2px 8px rgba(255,122,0,0.2);" title="Launch Tomorrow's Project Review Presentation Deck [Slides, Speaker Notes & Defense]">
+        <span>📽️</span> Review Deck
+      </a>
+
       <button class="btn btn-outline btn-sm" onclick="openExplainerModal()" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,153,0,0.12);border-color:rgba(255,153,0,0.4);color:#ff9900;font-weight:600;padding:6px 12px;cursor:pointer;" title="Understand Problem Statement #26016 & Statutory Workflow">
         <span>📖</span> Project Explainer
       </button>
