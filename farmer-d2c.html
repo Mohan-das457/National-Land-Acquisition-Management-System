@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kisan-Setu – Farmer Direct-to-Consumer Platform & Procurement Schedule | SIH26033</title>
+  <meta name="description" content="AI-powered Direct-to-Consumer agricultural marketplace and government MSP procurement scheduling platform eliminating middlemen and maximizing farmer net income. Smart India Hackathon."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="shared-auth.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --kisan-green: #10b981;
+      --kisan-green-glow: rgba(16, 185, 129, 0.2);
+      --kisan-gold: #f59e0b;
+      --kisan-gold-glow: rgba(245, 158, 11, 0.2);
+    }
+    .kisan-badge {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.1));
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .kisan-tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 24px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .kisan-tab-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .kisan-tab-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+    }
+    .kisan-tab-btn.active {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.15));
+      border-color: #10b981;
+      color: #34d399;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+    .crop-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .crop-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(16, 185, 129, 0.5);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(16, 185, 129, 0.15);
+    }
+    .crop-badge-top {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 2;
+    }
+    .crop-img-wrap {
+      height: 140px;
+      position: relative;
+      background: linear-gradient(135deg, #0d1e16, #091410);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 54px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .price-compare-pill {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin: 10px 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      text-align: center;
+      gap: 6px;
+    }
+    .price-num {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .slot-timeline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      margin: 20px 0;
+    }
+    .slot-timeline::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 20px;
+      right: 20px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      z-index: 0;
+      transform: translateY(-50%);
+    }
+    .slot-step {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+    }
+    .slot-step-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #0d1120;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: #a8b4cc;
+      transition: all 0.3s;
+    }
+    .slot-step.done .slot-step-icon {
+      background: #10b981;
+      border-color: #10b981;
+      color: white;
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.4);
+    }
+    .slot-step.active .slot-step-icon {
+      background: #f59e0b;
+      border-color: #f59e0b;
+      color: #0d1120;
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.5);
+      animation: pulseGold 2s infinite;
+    }
+    @keyframes pulseGold {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+    .qr-card {
+      background: white;
+      padding: 12px;
+      border-radius: 10px;
+      display: inline-block;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 6, 15, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-box {
+      background: #0d1120;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 650px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.8);
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon" style="background: linear-gradient(135deg, #10b981, #059669);">🌾</div>
+      <div>
+        <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;letter-spacing:0.5px;color:#f0f4ff;">KISAN-SETU</div>
+        <div style="font-size:11px;color:#34d399;font-weight:600;">SIH #26033 &bull; Farmer D2C</div>
+      </div>
+    </div>
+
+    <!-- Active Persona Widget -->
+    <div class="sidebar-user" style="margin:12px;padding:12px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.06);">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="user-avatar" style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;font-weight:700;color:white;">RG</div>
+        <div style="flex:1;min-width:0;">
+          <div class="user-name" style="font-size:13px;font-weight:700;color:#f0f4ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Ramu Gowda</div>
+          <div class="user-role" style="font-size:11px;color:#34d399;">👨‍🌾 Verified Farmer &bull; TN</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <!-- Unified Platform Switcher -->
+      <div class="sidebar-nav-heading" style="color:#ff9900;">PRITHVI-SETU 360 GRID</div>
+      <a href="unified-platform.html" target="_top" class="nav-item" style="color:#ffaa33;background:rgba(255,153,0,0.1);border-left:2px solid #ff9900;">
+        <span class="nav-icon">🌐</span>
+        <span>Unified Command Suite</span>
+      </a>
+      <a href="farmer-d2c.html" class="nav-item active" style="background:rgba(16,185,129,0.15);color:#34d399;border-left:3px solid #10b981;">
+        <span class="nav-icon">🌾</span>
+        <span>Farmer D2C &amp; Procurement</span>
+        <span class="badge" style="background:#10b981;color:#0d1120;margin-left:auto;font-size:10px;">SIH26033</span>
+      </a>
+      <a href="landslide-ner.html" onclick="handleCrossAppNav(event, 'drishti', 'landslide-ner.html')" class="nav-item">
+        <span class="nav-icon">⛰️</span>
+        <span>Landslide AI Warning (NER)</span>
+        <span class="badge" style="background:#e53935;color:white;margin-left:auto;font-size:10px;">AI/ML</span>
+      </a>
+      <a href="dashboard.html" onclick="handleCrossAppNav(event, 'nlams', 'dashboard.html')" class="nav-item">
+        <span class="nav-icon">🏛️</span>
+        <span>NLAMS Land Acquisition</span>
+      </a>
+      <a href="gis-map.html" onclick="handleCrossAppNav(event, 'nlams', 'gis-map.html')" class="nav-item">
+        <span class="nav-icon">🗺️</span>
+        <span>Unified Cadastral GIS Map</span>
+      </a>
+      
+      <div class="sidebar-nav-heading">SIH26033 MODULES</div>
+      <a href="#marketplace" class="nav-item" onclick="switchKisanTab('marketplace')">
+        <span class="nav-icon">🛒</span>
+        <span>D2C Harvest Market</span>
+      </a>
+      <a href="#procurement" class="nav-item" onclick="switchKisanTab('procurement')">
+        <span class="nav-icon">📅</span>
+        <span>MSP Mandi E-Tokens</span>
+      </a>
+      <a href="#calculator" class="nav-item" onclick="switchKisanTab('calculator')">
+        <span class="nav-icon">📈</span>
+        <span>Farmer Margin Calculator</span>
+      </a>
+      <a href="#logistics" class="nav-item" onclick="switchKisanTab('logistics')">
+        <span class="nav-icon">🚚</span>
+        <span>Cold Chain &amp; Logistics</span>
+      </a>
+
+      <div class="sidebar-nav-heading">LAND ACQUISITION (NLAMS)</div>
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span>NLAMS Dashboard</span>
+      </a>
+      <a href="workflow.html" class="nav-item">
+        <span class="nav-icon">🔄</span>
+        <span>RFCTLARR Workflow</span>
+      </a>
+      <a href="compensation.html" class="nav-item">
+        <span class="nav-icon">💰</span>
+        <span>DBT Compensation Ledger</span>
+      </a>
+      <a href="presentation.html" class="nav-item">
+        <span class="nav-icon">📽️</span>
+        <span>SIH Jury Review Deck</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <div class="main-wrapper" style="margin-left: var(--sidebar-width); flex: 1; min-height: 100vh; background: var(--bg-primary); display: flex; flex-direction: column;">
+    
+    <!-- TOP HEADER -->
+    <header class="top-header" style="height:64px;padding:0 24px;border-bottom:1px solid var(--border-subtle);background:rgba(10,14,26,0.92);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:90;">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <span style="font-size:24px;">🌾</span>
+        <div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:#f0f4ff;display:flex;align-items:center;gap:8px;">
+            Farmer Direct-to-Consumer Platform &amp; Procurement Grid
+            <span class="kisan-badge">SIH26033</span>
+          </div>
+          <div style="font-size:11px;color:#a8b4cc;">
+            Eliminating Middlemen &bull; Fair Direct Pricing &bull; FCI/NAFED Live Mandi Slot Booking &bull; PFMS DBT
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="btn btn-outline btn-sm" onclick="alert('Cart is empty. Click Direct Buy on any produce.')" style="display:inline-flex;align-items:center;gap:6px;border-color:rgba(16,185,129,0.4);color:#34d399;">
+          <span>🛒</span> Buyer Cart (<span id="cartCount">0</span>)
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="openNewProduceModal()" style="background:linear-gradient(135deg,#10b981,#059669);border:none;display:inline-flex;align-items:center;gap:6px;">
+          <span>➕</span> Post Fresh Harvest
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTENT AREA -->
+    <div style="padding: 24px; flex: 1; max-width: 1400px; margin: 0 auto; width: 100%;">
+
+      <!-- PROBLEM STATEMENT BANNER -->
+      <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(5, 150, 105, 0.05)); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 14px; padding: 18px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px;">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); display: flex; align-items: center; justify-content: center; font-size: 24px;">🇮🇳</div>
+          <div>
+            <div style="font-size: 12px; text-transform: uppercase; color: #34d399; font-weight: 700; letter-spacing: 0.5px;">Smart India Hackathon 2026 | Problem Statement SIH26033</div>
+            <h2 style="font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 700; color: #f0f4ff; margin: 2px 0;">Farmer Direct-to-Consumer Platform &amp; Procurement Schedule / Status</h2>
+            <div style="font-size: 13px; color: #a8b4cc;">
+              Target: Eliminate 3 to 5 layers of commission agents, boost farmer farmgate realization by <strong>+28% to +35%</strong>, and eliminate 8-hour Mandi queues with algorithmic slot scheduling.
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 12px; flex-shrink: 0;">
+          <div style="text-align: right; border-right: 1px solid rgba(255,255,255,0.1); padding-right: 14px;">
+            <div style="font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; color: #34d399;">+31.4%</div>
+            <div style="font-size: 11px; color: #a8b4cc;">Avg. Farmer Income Gain</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; color: #f59e0b;">28 Mins</div>
+            <div style="font-size: 11px; color: #a8b4cc;">Mandi Queue Wait Time</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KEY STATS METRICS -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+        <div class="card" style="padding: 16px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 12px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <span style="font-size: 11px; text-transform: uppercase; color: #a8b4cc; font-weight: 600;">Verified Farmers</span>
+            <span style="font-size: 16px;">👨‍🌾</span>
+          </div>
+          <div style="font-family: 'Rajdhani', sans-serif; font-size: 26px; font-weight: 700; color: #f0f4ff;">48,290</div>
+          <div style="font-size: 11px; color: #34d399; margin-top: 4px;">✔ 100% Land Patta/Webland Verified</div>
+        </div>
+
+        <div class="card" style="padding: 16px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 12px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <span style="font-size: 11px; text-transform: uppercase; color: #a8b4cc; font-weight: 600;">Direct D2C Volume</span>
+            <span style="font-size: 16px;">📦</span>
+          </div>
+          <div style="font-family: 'Rajdhani', sans-serif; font-size: 26px; font-weight: 700; color: #34d399;">₹38.45 Cr</div>
+          <div style="font-size: 11px; color: #a8b4cc; margin-top: 4px;">Zero Middleman Deductions</div>
+        </div>
+
+        <div class="card" style="padding: 16px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 12px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <span style="font-size: 11px; text-transform: uppercase; color: #a8b4cc; font-weight: 600;">MSP E-Tokens Issued</span>
+            <span style="font-size: 16px;">🎟️</span>
+          </div>
+          <div style="font-family: 'Rajdhani', sans-serif; font-size: 26px; font-weight: 700; color: #f59e0b;">14,820</div>
+          <div style="font-size: 11px; color: #34d399; margin-top: 4px;">FCI / NAFED Mandi Centers</div>
+        </div>
+
+        <div class="card" style="padding: 16px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 12px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <span style="font-size: 11px; text-transform: uppercase; color: #a8b4cc; font-weight: 600;">PFMS DBT Disbursed</span>
+            <span style="font-size: 16px;">🏦</span>
+          </div>
+          <div style="font-family: 'Rajdhani', sans-serif; font-size: 26px; font-weight: 700; color: #60a5fa;">₹124.6 Cr</div>
+          <div style="font-size: 11px; color: #34d399; margin-top: 4px;">Direct to Aadhaar Bank Accts</div>
+        </div>
+      </div>
+
+      <!-- NAVIGATION TABS -->
+      <div class="kisan-tabs">
+        <button class="kisan-tab-btn active" id="tabBtnMarketplace" onclick="switchKisanTab('marketplace')">
+          <span>🛒</span> Direct-to-Consumer (D2C) Marketplace
+        </button>
+        <button class="kisan-tab-btn" id="tabBtnProcurement" onclick="switchKisanTab('procurement')">
+          <span>📅</span> Mandi Procurement Schedule &amp; Live Queue
+        </button>
+        <button class="kisan-tab-btn" id="tabBtnCalculator" onclick="switchKisanTab('calculator')">
+          <span>📈</span> Intermediary Cut Elimination Calculator
+        </button>
+        <button class="kisan-tab-btn" id="tabBtnLogistics" onclick="switchKisanTab('logistics')">
+          <span>🚚</span> Farmgate Logistics &amp; Cold Storage
+        </button>
+      </div>
+
+      <!-- TAB 1: D2C MARKETPLACE -->
+      <div id="sectionMarketplace">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 12px; color: #a8b4cc; font-weight: 600;">Category:</span>
+            <button class="btn btn-sm btn-outline filter-btn active" onclick="filterProduce('all', this)" style="border-color:#10b981; color:#34d399;">All Crops</button>
+            <button class="btn btn-sm btn-outline filter-btn" onclick="filterProduce('grains', this)">Grains &amp; Cereals</button>
+            <button class="btn btn-sm btn-outline filter-btn" onclick="filterProduce('spices', this)">Spices &amp; GI Crops</button>
+            <button class="btn btn-sm btn-outline filter-btn" onclick="filterProduce('fruits', this)">Fruits &amp; Veg</button>
+            <button class="btn btn-sm btn-outline filter-btn" onclick="filterProduce('tea', this)">Specialty / Organic</button>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <input type="text" id="cropSearchInput" onkeyup="searchProduce()" placeholder="Search crop, farmer or village..." style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 7px 14px; font-size: 12px; color: white; width: 240px;"/>
+          </div>
+        </div>
+
+        <!-- CROPS GRID -->
+        <div id="cropsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 20px;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- TAB 2: MSP PROCUREMENT SCHEDULE & LIVE QUEUE -->
+      <div id="sectionProcurement" style="display: none;">
+        <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 24px; align-items: start;">
+          
+          <!-- LEFT: BOOK PROCUREMENT SLOT -->
+          <div class="card" style="padding: 20px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+              <h3 style="font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: #f0f4ff;">📅 Book Mandi Procurement Slot</h3>
+              <span class="kisan-badge">FCI / NAFED e-Gate</span>
+            </div>
+            
+            <form id="procurementBookingForm" onsubmit="handleBookSlot(event)">
+              <div style="margin-bottom: 14px;">
+                <label style="display: block; font-size: 11px; color: #a8b4cc; text-transform: uppercase; margin-bottom: 4px;">Designated Mandi Procurement Center</label>
+                <select id="slotCenter" required style="width: 100%; background: #0d1120; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 12px; color: white; font-size: 13px;">
+                  <option value="FCI-TN-01">FCI Regulated Market — Sriperumbudur, Tiruvallur (TN)</option>
+                  <option value="NAFED-AP-04">NAFED Cotton &amp; Grain Hub — Thullur, Amaravati (AP)</option>
+                  <option value="FCI-AS-02">FCI Depo — Haflong, Dima Hasao (Assam)</option>
+                  <option value="APMC-MH-09">Nashik Agricultural Produce Market Committee (MH)</option>
+                  <option value="FCI-SK-01">Sikkim Organic Procurement Depo — Gangtok (SK)</option>
+                </select>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+                <div>
+                  <label style="display: block; font-size: 11px; color: #a8b4cc; text-transform: uppercase; margin-bottom: 4px;">Crop Type</label>
+                  <select id="slotCrop" required style="width: 100%; background: #0d1120; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 12px; color: white; font-size: 13px;">
+                    <option value="Paddy (Grade A)">Paddy (Grade A) - MSP ₹2,320/Qtl</option>
+                    <option value="Paddy (Common)">Paddy (Common) - MSP ₹2,300/Qtl</option>
+                    <option value="Wheat (Kharif)">Wheat (Kharif) - MSP ₹2,275/Qtl</option>
+                    <option value="Maize (Hybrid)">Maize (Hybrid) - MSP ₹2,090/Qtl</option>
+                    <option value="Soybean Yellow">Soybean Yellow - MSP ₹4,892/Qtl</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="display: block; font-size: 11px; color: #a8b4cc; text-transform: uppercase; margin-bottom: 4px;">Est. Quantity (Quintals)</label>
+                  <input type="number" id="slotQty" required min="5" max="500" value="45" style="width: 100%; background: #0d1120; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 12px; color: white; font-size: 13px;"/>
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px; margin-bottom: 14px;">
+                <div>
+                  <label style="display: block; font-size: 11px; color: #a8b4cc; text-transform: uppercase; margin-bottom: 4px;">Preferred Date</label>
+                  <input type="date" id="slotDate" required style="width: 100%; background: #0d1120; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 12px; color: white; font-size: 13px;"/>
+                </div>
+                <div>
+                  <label style="display: block; font-size: 11px; color: #a8b4cc; text-transform: uppercase; margin-bottom: 4px;">Time Window</label>
+                  <select id="slotTime" required style="width: 100%; background: #0d1120; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 12px; color: white; font-size: 13px;">
+                    <option value="08:00 AM - 10:00 AM">08:00 - 10:00 AM</option>
+                    <option value="10:00 AM - 12:00 PM">10:00 - 12:00 PM</option>
+                    <option value="01:00 PM - 03:00 PM">01:00 - 03:00 PM</option>
+                    <option value="03:00 PM - 05:00 PM">03:00 - 05:00 PM</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                  <span style="color: #a8b4cc;">Farmer Patta Record:</span>
+                  <span style="color: #34d399; font-weight: 600;">TN-TP-142/1A (Nemili Village)</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                  <span style="color: #a8b4cc;">Est. MSP Payout:</span>
+                  <span style="color: #34d399; font-weight: 700; font-family: 'Rajdhani', sans-serif; font-size: 15px;" id="slotEstPayout">₹1,04,400</span>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="width: 100%; background: linear-gradient(135deg, #10b981, #059669); border: none; padding: 10px; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span>🎟️</span> Generate Digital Mandi Token &amp; QR Pass
+              </button>
+            </form>
+          </div>
+
+          <!-- RIGHT: LIVE MANDI QUEUE & SERVICING RADAR -->
+          <div>
+            <!-- ACTIVE ISSUED TOKEN PREVIEW -->
+            <div id="activeTokenBox" class="card" style="padding: 20px; background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(13,17,32,0.95)); border: 1px solid rgba(16,185,129,0.4); border-radius: 14px; margin-bottom: 20px;">
+              <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+                <div>
+                  <span class="kisan-badge" style="background:#10b981; color:#0d1120;">OFFICIAL GATE PASS</span>
+                  <div style="font-family: 'Rajdhani', sans-serif; font-size: 24px; font-weight: 700; color: #f0f4ff; margin: 6px 0 2px;" id="passTokenNum">Token #FCI-TN-2026-8842</div>
+                  <div style="font-size: 12px; color: #a8b4cc;">Center: <strong>FCI Sriperumbudur Depo</strong> &bull; Gate 2</div>
+                </div>
+                <div class="qr-card">
+                  <div style="width: 64px; height: 64px; background: #111; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; font-size: 8px; font-family: monospace; text-align: center; border-radius: 4px; padding: 4px;">
+                    <div style="font-size: 24px;">🏁</div>
+                    <span>QR VERIFIED</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TIMELINE -->
+              <div class="slot-timeline">
+                <div class="slot-step done">
+                  <div class="slot-step-icon">✔</div>
+                  <div style="font-size: 10px; color: #34d399; font-weight: 600;">1. E-Token</div>
+                </div>
+                <div class="slot-step active">
+                  <div class="slot-step-icon">⚖️</div>
+                  <div style="font-size: 10px; color: #f59e0b; font-weight: 600;">2. Moisture Test</div>
+                </div>
+                <div class="slot-step">
+                  <div class="slot-step-icon">🚛</div>
+                  <div style="font-size: 10px; color: #a8b4cc;">3. Weighbridge</div>
+                </div>
+                <div class="slot-step">
+                  <div class="slot-step-icon">📦</div>
+                  <div style="font-size: 10px; color: #a8b4cc;">4. Unloading</div>
+                </div>
+                <div class="slot-step">
+                  <div class="slot-step-icon">💳</div>
+                  <div style="font-size: 10px; color: #a8b4cc;">5. PFMS DBT</div>
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px; text-align: center;">
+                <div>
+                  <div style="font-size: 10px; color: #a8b4cc;">Current Queue Position</div>
+                  <div style="font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: #f59e0b;">#3 in Queue</div>
+                </div>
+                <div>
+                  <div style="font-size: 10px; color: #a8b4cc;">Est. Gate Entry</div>
+                  <div style="font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: #34d399;">09:15 AM</div>
+                </div>
+                <div>
+                  <div style="font-size: 10px; color: #a8b4cc;">Moisture Reading</div>
+                  <div style="font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: #60a5fa;">14.2% (Grade A)</div>
+                </div>
+              </div>
+
+              <div style="margin-top: 14px; display: flex; gap: 10px;">
+                <button class="btn btn-outline btn-sm" onclick="printPass()" style="flex:1; border-color:rgba(255,255,255,0.2); color:white;">🖨️ Print Gate Slip</button>
+                <button class="btn btn-sm" onclick="simulateMandiAdvance()" style="flex:1; background:rgba(245,158,11,0.2); border:1px solid #f59e0b; color:#f59e0b;">⚡ Advance Queue Step</button>
+              </div>
+            </div>
+
+            <!-- FAIR AVERAGE QUALITY (FAQ) COMPLIANCE CHECKLIST -->
+            <div class="card" style="padding: 16px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 12px;">
+              <h4 style="font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 700; color: #f0f4ff; margin-bottom: 10px;">
+                🌾 Fair Average Quality (FAQ) Standards Checklist
+              </h4>
+              <div style="font-size: 12px; color: #a8b4cc; line-height: 1.6;">
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 4px 0;">
+                  <span>Max Permissible Moisture:</span>
+                  <span style="color: #34d399; font-weight: 600;">17.0% (Current Batch: 14.2% ✔)</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 4px 0;">
+                  <span>Foreign Matter Tolerance:</span>
+                  <span style="color: #34d399; font-weight: 600;">Max 1.0% (Current: 0.3% ✔)</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 4px 0;">
+                  <span>Damaged / Discolored Grains:</span>
+                  <span style="color: #34d399; font-weight: 600;">Max 3.0% (Current: 0.8% ✔)</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                  <span>PFMS DBT Settlement SLA:</span>
+                  <span style="color: #60a5fa; font-weight: 600;">Within 24 Hours of Weighbridge Receipt</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: INTERMEDIARY CUT ELIMINATION CALCULATOR -->
+      <div id="sectionCalculator" style="display: none;">
+        <div class="card" style="padding: 24px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px; margin-bottom: 24px;">
+          <div style="max-width: 800px; margin: 0 auto;">
+            <div style="text-align: center; margin-bottom: 24px;">
+              <span class="kisan-badge">ECONOMIC IMPACT ENGINE</span>
+              <h2 style="font-family: 'Rajdhani', sans-serif; font-size: 24px; font-weight: 700; color: #f0f4ff; margin: 6px 0;">
+                Middleman Margin Elimination &amp; Farmer Gain Simulator
+              </h2>
+              <p style="font-size: 13px; color: #a8b4cc;">
+                In traditional mandi chains, 3 to 5 intermediaries (village dalal, commission agent, wholesaler, sub-wholesaler) take 25% to 40% of the consumer rupee. See how Kisan-Setu transfers that wealth directly back to the farmer.
+              </p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+              <div>
+                <label style="display: block; font-size: 12px; color: #a8b4cc; text-transform: uppercase; font-weight: 600; margin-bottom: 8px;">Select Crop</label>
+                <select id="calcCropSelect" onchange="updateCalculator()" style="width: 100%; background: #0d1120; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 10px 14px; color: white; font-size: 14px;">
+                  <option value="rice">Ponni Organic Rice (Tiruvallur, TN)</option>
+                  <option value="chilli">Guntur Teja Chilli (Amaravati, AP)</option>
+                  <option value="tea">Assam Orthodox Tea (Dima Hasao, AS)</option>
+                  <option value="cardamom">Hill Cardamom (Mangan, Sikkim)</option>
+                  <option value="onion">Nashik Red Onion (Maharashtra)</option>
+                </select>
+              </div>
+
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                  <label style="font-size: 12px; color: #a8b4cc; text-transform: uppercase; font-weight: 600;">Harvest Yield (Quintals)</label>
+                  <span id="calcYieldVal" style="font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700; color: #34d399;">50 Quintals</span>
+                </div>
+                <input type="range" id="calcYieldSlider" min="5" max="200" value="50" step="5" oninput="updateCalculator()" style="width: 100%; accent-color: #10b981; cursor: pointer;"/>
+              </div>
+            </div>
+
+            <!-- COMPARISON CARDS -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
+              
+              <!-- TRADITIONAL CHAIN -->
+              <div style="background: rgba(229, 57, 53, 0.05); border: 1px solid rgba(229, 57, 53, 0.3); border-radius: 12px; padding: 20px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                  <span style="font-size: 12px; font-weight: 700; color: #ef4444; text-transform: uppercase;">Traditional APMC / Dalal Route</span>
+                  <span style="font-size: 16px;">❌</span>
+                </div>
+                <div style="font-size: 12px; color: #a8b4cc; margin-bottom: 12px;">Net Farmer Realization:</div>
+                <div style="font-family: 'Rajdhani', sans-serif; font-size: 32px; font-weight: 700; color: #ef4444;" id="tradNetFarmer">₹1,25,000</div>
+                <div style="margin-top: 14px; font-size: 12px; color: #a8b4cc; line-height: 1.8;">
+                  <div>• Farmgate price received: <strong id="tradPricePerKg">₹25 / kg</strong></div>
+                  <div>• Dalal commission: <strong style="color:#ef4444;">-8.5%</strong></div>
+                  <div>• Market mandi cess &amp; handling: <strong style="color:#ef4444;">-5.2%</strong></div>
+                  <div>• Retail consumer paid: <strong id="tradConsumerPaid">₹52 / kg</strong></div>
+                </div>
+              </div>
+
+              <!-- KISAN-SETU DIRECT CHAIN -->
+              <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 12px; padding: 20px; box-shadow: 0 8px 30px rgba(16, 185, 129, 0.15);">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                  <span style="font-size: 12px; font-weight: 700; color: #34d399; text-transform: uppercase;">Kisan-Setu D2C Direct Route</span>
+                  <span style="font-size: 16px;">✔</span>
+                </div>
+                <div style="font-size: 12px; color: #a8b4cc; margin-bottom: 12px;">Net Farmer Realization:</div>
+                <div style="font-family: 'Rajdhani', sans-serif; font-size: 32px; font-weight: 700; color: #34d399;" id="kisanNetFarmer">₹1,75,000</div>
+                <div style="margin-top: 14px; font-size: 12px; color: #a8b4cc; line-height: 1.8;">
+                  <div>• Direct price received: <strong id="kisanPricePerKg" style="color:#34d399;">₹35 / kg (+40%)</strong></div>
+                  <div>• Intermediary commission: <strong style="color:#34d399;">0.0% (Zero!)</strong></div>
+                  <div>• Direct logistics &amp; escrow: <strong>Fixed 2.5%</strong></div>
+                  <div>• Retail consumer paid: <strong id="kisanConsumerPaid" style="color:#34d399;">₹42 / kg (Saves 19%)</strong></div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- NET GAIN CALLOUT -->
+            <div style="background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(245,158,11,0.1)); border: 1px solid #10b981; border-radius: 12px; padding: 18px; text-align: center;">
+              <div style="font-size: 13px; color: #a8b4cc;">Direct Farmer Income Enhancement for this Harvest:</div>
+              <div style="font-family: 'Rajdhani', sans-serif; font-size: 36px; font-weight: 700; color: #34d399; margin: 4px 0;" id="calcNetGain">
+                +₹50,000 (+40.0% Higher Cash in Hand)
+              </div>
+              <div style="font-size: 12px; color: #f0f4ff;">
+                Plus the consumer saves <span id="calcConsumerSavings" style="color: #f59e0b; font-weight: 700;">₹50,000</span> compared to retail supermarkets. A true win-win for Bharat!
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: FARMGATE LOGISTICS & COLD STORAGE -->
+      <div id="sectionLogistics" style="display: none;">
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px;">
+          
+          <div class="card" style="padding: 20px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+              <h3 style="font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: #f0f4ff;">🚚 Shared Farmgate Aggregate Transport</h3>
+              <span class="kisan-badge">-45% Freight Cost</span>
+            </div>
+            <p style="font-size: 13px; color: #a8b4cc; margin-bottom: 16px;">
+              Small and marginal farmers aggregate their dispatch into shared reefer and freight trucks directly from the village aggregation point to urban distribution hubs.
+            </p>
+
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-weight: 700; color: #f0f4ff; font-size: 14px;">Route: Sriperumbudur Firka &rarr; Koyambedu Wholesale / Chennai Hub</span>
+                  <span style="background: #10b981; color: #0d1120; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px;">Dispatches 06:00 AM Daily</span>
+                </div>
+                <div style="font-size: 12px; color: #a8b4cc;">Capacity: 14.5 / 20 MT booked &bull; Reefer Temp: +4°C (Vegetables &amp; Fruits)</div>
+                <div style="margin-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-family: 'Rajdhani', sans-serif; font-size: 15px; color: #34d399; font-weight: 700;">Freight Rate: ₹1.40 / kg</span>
+                  <button class="btn btn-sm btn-outline" onclick="alert('Slot booked on Freight Truck #TN-04-AK-9821. Driver contact: +91 98402 11984')" style="border-color:#10b981; color:#34d399;">Book Space (Quintals)</button>
+                </div>
+              </div>
+
+              <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-weight: 700; color: #f0f4ff; font-size: 14px;">Route: Thullur Mandal &rarr; Vijayawada Hub &rarr; Hyderabad B2B</span>
+                  <span style="background: #f59e0b; color: #0d1120; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px;">Departs Today 08:30 PM</span>
+                </div>
+                <div style="font-size: 12px; color: #a8b4cc;">Capacity: 18.2 / 25 MT booked &bull; Dry Grain &amp; Spices (Chilli/Cotton)</div>
+                <div style="margin-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-family: 'Rajdhani', sans-serif; font-size: 15px; color: #34d399; font-weight: 700;">Freight Rate: ₹2.10 / kg</span>
+                  <button class="btn btn-sm btn-outline" onclick="alert('Slot booked on Freight Truck #AP-16-TX-4402')" style="border-color:#10b981; color:#34d399;">Book Space (Quintals)</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="padding: 20px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+              <h3 style="font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: #f0f4ff;">❄️ Nearest District Cold Storage</h3>
+              <span class="kisan-badge">Live Space</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 12px; border-left: 3px solid #10b981;">
+                <div style="font-weight: 700; color: #f0f4ff; font-size: 13px;">Tiruvallur District Co-op Cold Warehouse</div>
+                <div style="font-size: 11px; color: #a8b4cc; margin-top: 2px;">Distance: 8.4 km from Sriperumbudur &bull; Available: 480 MT (42% vacant)</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+                  <span style="font-size: 11px; color: #34d399; font-weight: 600;">Subsidized Rate: ₹18 / bag / month</span>
+                  <button class="btn btn-sm btn-outline" onclick="alert('Cold Locker Token Generated: #COLD-TN-482')">Reserve</button>
+                </div>
+              </div>
+
+              <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 12px; border-left: 3px solid #60a5fa;">
+                <div style="font-weight: 700; color: #f0f4ff; font-size: 13px;">Amaravati Agri Cold Complex — Velagapudi</div>
+                <div style="font-size: 11px; color: #a8b4cc; margin-top: 2px;">Distance: 4.2 km from Thullur &bull; Available: 1,200 MT (Chilli &amp; Turmeric)</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+                  <span style="font-size: 11px; color: #60a5fa; font-weight: 600;">Controlled Atmosphere (-2°C to 4°C)</span>
+                  <button class="btn btn-sm btn-outline" onclick="alert('Cold Locker Token Generated: #COLD-AP-891')">Reserve</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODAL 1: BUY PRODUCE & ESCROW CHECKOUT -->
+<div id="buyModal" class="modal-overlay">
+  <div class="modal-box">
+    <div style="padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; background: linear-gradient(90deg, rgba(16,185,129,0.1), transparent);">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 24px;">🛒</span>
+        <div>
+          <h3 style="font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: #f0f4ff; margin: 0;" id="modalCropTitle">Buy Produce</h3>
+          <div style="font-size: 11px; color: #34d399;" id="modalCropFarmer">Direct Contract with Farmer</div>
+        </div>
+      </div>
+      <button onclick="closeBuyModal()" style="background: rgba(255,255,255,0.08); border: none; color: #a8b4cc; width: 30px; height: 30px; border-radius: 6px; cursor: pointer;">✕</button>
+    </div>
+
+    <div style="padding: 20px 24px;">
+      <div style="display: flex; gap: 16px; align-items: center; margin-bottom: 20px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px;">
+        <div id="modalCropEmoji" style="font-size: 40px; width: 60px; height: 60px; border-radius: 8px; background: rgba(16,185,129,0.1); display: flex; align-items: center; justify-content: center;">🌾</div>
+        <div style="flex: 1;">
+          <div style="font-size: 12px; color: #a8b4cc;">Verified Land Record:</div>
+          <div style="font-size: 13px; font-weight: 700; color: #34d399;" id="modalCropPatta">Patta #142/1A &bull; Sriperumbudur</div>
+          <div style="font-size: 11px; color: #a8b4cc; margin-top: 2px;" id="modalStock">Available: 80 Quintals</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+          <label style="font-size: 12px; color: #a8b4cc; text-transform: uppercase;">Select Quantity</label>
+          <span style="font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700; color: #34d399;" id="modalQtyDisplay">5 Quintals (500 kg)</span>
+        </div>
+        <input type="range" id="modalQtySlider" min="1" max="50" value="5" oninput="updateBuyModalPrice()" style="width: 100%; accent-color: #10b981;"/>
+      </div>
+
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 14px; margin-bottom: 20px; font-size: 13px; line-height: 1.8;">
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: #a8b4cc;">Farmgate Direct Price:</span>
+          <span style="color: #f0f4ff; font-weight: 600;" id="modalItemPrice">₹35 / kg</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: #a8b4cc;">Total Produce Cost:</span>
+          <span style="color: #f0f4ff; font-weight: 600;" id="modalSubtotal">₹17,500</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: #a8b4cc;">Platform Logistics &amp; Escrow Fee (2.0%):</span>
+          <span style="color: #34d399; font-weight: 600;" id="modalFee">₹350</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 6px; padding-top: 6px; font-size: 15px;">
+          <span style="font-weight: 700; color: #f0f4ff;">Total Escrow Payable:</span>
+          <span style="font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 700; color: #34d399;" id="modalGrandTotal">₹17,850</span>
+        </div>
+      </div>
+
+      <div style="background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.3); border-radius: 8px; padding: 10px; margin-bottom: 20px; font-size: 11px; color: #f59e0b;">
+        🔒 <strong>Smart Escrow Guarantee:</strong> Payment is held securely by RBI-authorized digital escrow. Funds are automatically transferred to the farmer's verified bank account via PFMS upon delivery confirmation.
+      </div>
+
+      <button onclick="completeDirectPurchase()" class="btn btn-primary" style="width: 100%; background: linear-gradient(135deg, #10b981, #059669); border: none; padding: 12px; font-size: 14px; font-weight: 700;">
+        Deposit to Escrow &amp; Generate Direct Contract
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL 2: POST NEW FRESH HARVEST -->
+<div id="newProduceModal" class="modal-overlay">
+  <div class="modal-box">
+    <div style="padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between;">
+      <h3 style="font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: #f0f4ff; margin: 0;">🌾 List Fresh Harvest for Direct Sale</h3>
+      <button onclick="closeNewProduceModal()" style="background: rgba(255,255,255,0.08); border: none; color: #a8b4cc; width: 30px; height: 30px; border-radius: 6px; cursor: pointer;">✕</button>
+    </div>
+
+    <form onsubmit="handlePostProduce(event)" style="padding: 20px 24px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+        <div>
+          <label style="display: block; font-size: 11px; color: #a8b4cc; text-transform: uppercase; margin-bottom: 4px;">Crop Name &amp; Variety</label>
+          <input type="text" id="newCropName" required placeholder="e.g. Organic Black Wheat" style="width: 100%; background: #0d1120; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 12px; color: white; font-size: 13px;"/>
+        </div>
+        <div>
+          <label style="display: block; font-size: 11px; color: #a8b4cc; text-transform: uppercase; margin-bottom: 4px;">Category</label>
+          <select id="newCropCategory" style="width: 100%; background: #0d1120; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 12px; color: white; font-size: 13px;">
+            <option value="grains">Grains &amp; Cereals</option>
+            <option value="spices">Spices &amp; GI Crops</option>
+            <option value="fruits">Fruits &amp; Vegetables</option>
+            <option value="tea">Specialty / Organic</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+        <div>
+          <label style="display: block; font-size: 11px; color: #a8b4cc; text-transform: uppercase; margin-bottom: 4px;">Direct Price (₹ / kg)</label>
+          <input type="number" id="newCropPrice" required min="5" max="5000" placeholder="e.g. 42" style="width: 100%; background: #0d1120; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 12px; color: white; font-size: 13px;"/>
+        </div>
+        <div>
+          <label style="display: block; font-size: 11px; color: #a8b4cc; text-transform: uppercase; margin-bottom: 4px;">Available Harvest (Quintals)</label>
+          <input type="number" id="newCropStock" required min="1" max="1000" placeholder="e.g. 40" style="width: 100%; background: #0d1120; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 12px; color: white; font-size: 13px;"/>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 14px;">
+        <label style="display: block; font-size: 11px; color: #a8b4cc; text-transform: uppercase; margin-bottom: 4px;">Verified Cadastral Land Parcel</label>
+        <select id="newCropLand" style="width: 100%; background: #0d1120; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 12px; color: white; font-size: 13px;">
+          <option value="Patta #142/1A - Nemili (1.8 Ha Nanja)">Patta #142/1A - Nemili Village (1.8 Ha Nanja Wet Land)</option>
+          <option value="Patta #144/1 - Thandalam (2.4 Ha Punja)">Patta #144/1 - Thandalam Village (2.4 Ha Punja)</option>
+          <option value="Khata #204 - Thullur (Amaravati Alluvial)">AP Webland Khata #204 - Thullur (3.1 Ha Alluvial)</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; background: linear-gradient(135deg, #10b981, #059669); border: none; padding: 10px; font-weight: 700;">
+        Publish Direct Harvest Listing
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- JAVASCRIPT LOGIC -->
+<script>
+// Crop Dataset
+let CROPS = [
+  {
+    id: 'crop-1',
+    name: 'Thandalam Organic Ponni Rice',
+    farmer: 'Ramu Gowda',
+    village: 'Nemili, Tiruvallur (TN)',
+    category: 'grains',
+    patta: 'Patta #142/1A (NLAMS Linked)',
+    directPrice: 38,
+    mandiPrice: 26,
+    retailPrice: 56,
+    stockQuintals: 120,
+    minOrderKg: 50,
+    harvestDate: 'Oct 2026',
+    emoji: '🌾',
+    badge: 'GI Protected &bull; Organic'
+  },
+  {
+    id: 'crop-2',
+    name: 'Assam Orthodox Golden Tea',
+    farmer: 'Biren Das',
+    village: 'Haflong, Dima Hasao (AS)',
+    category: 'tea',
+    patta: 'Khasra #88 - Hill Slopes',
+    directPrice: 340,
+    mandiPrice: 220,
+    retailPrice: 580,
+    stockQuintals: 35,
+    minOrderKg: 10,
+    harvestDate: 'Sep 2026',
+    emoji: '🍃',
+    badge: 'First Flush &bull; High Altitude'
+  },
+  {
+    id: 'crop-3',
+    name: 'Guntur Teja S17 Stemless Chilli',
+    farmer: 'Venkateswara Rao',
+    village: 'Thullur, Guntur (AP)',
+    category: 'spices',
+    patta: 'Webland 1B Khata #204',
+    directPrice: 165,
+    mandiPrice: 110,
+    retailPrice: 245,
+    stockQuintals: 85,
+    minOrderKg: 25,
+    harvestDate: 'Nov 2026',
+    emoji: '🌶️',
+    badge: 'High SHU &bull; Export Grade'
+  },
+  {
+    id: 'crop-4',
+    name: 'Sikkim Large Hill Cardamom',
+    farmer: 'Pemba Lepcha',
+    village: 'Mangan, North Sikkim (SK)',
+    category: 'spices',
+    patta: 'Sikkim Survey #12/B',
+    directPrice: 920,
+    mandiPrice: 650,
+    retailPrice: 1450,
+    stockQuintals: 18,
+    minOrderKg: 5,
+    harvestDate: 'Oct 2026',
+    emoji: '🌿',
+    badge: '100% Certified Organic'
+  },
+  {
+    id: 'crop-5',
+    name: 'Nashik Export Red Onions',
+    farmer: 'Sanjay Patil',
+    village: 'Niphad, Nashik (MH)',
+    category: 'fruits',
+    patta: '7/12 Gat #312',
+    directPrice: 22,
+    mandiPrice: 13,
+    retailPrice: 38,
+    stockQuintals: 300,
+    minOrderKg: 100,
+    harvestDate: 'Immediate',
+    emoji: '🧅',
+    badge: 'Dry Cured &bull; Grade A'
+  },
+  {
+    id: 'crop-6',
+    name: 'Ratnagiri GI Alphonso Mango',
+    farmer: 'Ashok Desai',
+    village: 'Devgad, Ratnagiri (MH)',
+    category: 'fruits',
+    patta: '7/12 Gat #84 - Coastal',
+    directPrice: 450,
+    mandiPrice: 280,
+    retailPrice: 750,
+    stockQuintals: 45,
+    minOrderKg: 12,
+    harvestDate: 'Pre-Booking Zaid',
+    emoji: '🥭',
+    badge: 'GI Tagged &bull; Naturally Ripened'
+  }
+];
+
+let cart = [];
+let activeBuyCrop = null;
+
+// Tab switcher
+function switchKisanTab(tabId) {
+  const tabs = ['marketplace', 'procurement', 'calculator', 'logistics'];
+  tabs.forEach(t => {
+    const sec = document.getElementById('section' + t.charAt(0).toUpperCase() + t.slice(1));
+    const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
+    if (sec) sec.style.display = (t === tabId) ? 'block' : 'none';
+    if (btn) {
+      if (t === tabId) btn.classList.add('active');
+      else btn.classList.remove('active');
+    }
+  });
+
+  if (tabId === 'calculator') {
+    updateCalculator();
+  }
+}
+
+// Render Crops
+function renderCrops(items) {
+  const container = document.getElementById('cropsGrid');
+  if (!container) return;
+  container.innerHTML = '';
+
+  items.forEach(c => {
+    const gainPct = Math.round(((c.directPrice - c.mandiPrice) / c.mandiPrice) * 100);
+    const card = document.createElement('div');
+    card.className = 'crop-card';
+    card.innerHTML = `
+      <div class="crop-badge-top">
+        <span class="kisan-badge">${c.badge}</span>
+      </div>
+      <div class="crop-img-wrap">
+        ${c.emoji}
+      </div>
+      <div style="padding: 16px; display: flex; flex-direction: column; flex: 1;">
+        <div style="font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; color:#f0f4ff; margin-bottom:2px;">${c.name}</div>
+        <div style="font-size:12px; color:#a8b4cc;">Farmer: <strong>${c.farmer}</strong> &bull; ${c.village}</div>
+        <div style="font-size:11px; color:#34d399; margin-top:2px;">✔ ${c.patta}</div>
+
+        <div class="price-compare-pill">
+          <div>
+            <div style="font-size:9px; color:#ef4444; text-transform:uppercase;">Mandi Broker</div>
+            <div class="price-num" style="color:#ef4444;">₹${c.mandiPrice}/kg</div>
+          </div>
+          <div style="background:rgba(16,185,129,0.15); border-radius:6px; padding:2px;">
+            <div style="font-size:9px; color:#34d399; font-weight:700; text-transform:uppercase;">Direct Farm</div>
+            <div class="price-num" style="color:#34d399;">₹${c.directPrice}/kg</div>
+          </div>
+          <div>
+            <div style="font-size:9px; color:#a8b4cc; text-transform:uppercase;">Retail Super</div>
+            <div class="price-num" style="color:#a8b4cc;">₹${c.retailPrice}/kg</div>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; font-size:11px; color:#a8b4cc; margin-bottom:12px;">
+          <span>Stock: <strong>${c.stockQuintals} Qtl</strong></span>
+          <span style="color:#34d399; font-weight:700;">+${gainPct}% Farmer Gain</span>
+        </div>
+
+        <div style="margin-top:auto; display:flex; gap:8px;">
+          <button class="btn btn-outline btn-sm" onclick="alert('${c.name} is grown in ${c.village} under organic soil conditions. Land Record verified with DoLR registry.')" style="flex:1; border-color:rgba(255,255,255,0.15); color:#a8b4cc;">Inspect</button>
+          <button class="btn btn-primary btn-sm" onclick="initiateBuy('${c.id}')" style="flex:1.4; background:linear-gradient(135deg,#10b981,#059669); border:none; color:white; font-weight:700;">Direct Buy</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+// Filters
+function filterProduce(category, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.remove('active');
+    b.style.borderColor = 'rgba(255,255,255,0.15)';
+    b.style.color = '#a8b4cc';
+  });
+  if (btn) {
+    btn.classList.add('active');
+    btn.style.borderColor = '#10b981';
+    btn.style.color = '#34d399';
+  }
+  if (category === 'all') {
+    renderCrops(CROPS);
+  } else {
+    renderCrops(CROPS.filter(c => c.category === category));
+  }
+}
+
+function searchProduce() {
+  const q = document.getElementById('cropSearchInput').value.toLowerCase();
+  renderCrops(CROPS.filter(c => 
+    c.name.toLowerCase().includes(q) || 
+    c.farmer.toLowerCase().includes(q) || 
+    c.village.toLowerCase().includes(q)
+  ));
+}
+
+// Buy Modal Logic
+function initiateBuy(cropId) {
+  const crop = CROPS.find(c => c.id === cropId);
+  if (!crop) return;
+  activeBuyCrop = crop;
+
+  document.getElementById('modalCropTitle').textContent = crop.name;
+  document.getElementById('modalCropFarmer').textContent = `Direct Contract with Farmer: ${crop.farmer}`;
+  document.getElementById('modalCropEmoji').textContent = crop.emoji;
+  document.getElementById('modalCropPatta').textContent = `${crop.patta} • ${crop.village}`;
+  document.getElementById('modalStock').textContent = `Available: ${crop.stockQuintals} Quintals (MOQ: ${crop.minOrderKg} kg)`;
+  document.getElementById('modalItemPrice').textContent = `₹${crop.directPrice} / kg`;
+
+  const slider = document.getElementById('modalQtySlider');
+  slider.value = 5;
+  updateBuyModalPrice();
+
+  document.getElementById('buyModal').style.display = 'flex';
+}
+
+function updateBuyModalPrice() {
+  if (!activeBuyCrop) return;
+  const qtl = parseInt(document.getElementById('modalQtySlider').value, 10);
+  const kg = qtl * 100;
+  document.getElementById('modalQtyDisplay').textContent = `${qtl} Quintals (${kg} kg)`;
+
+  const subtotal = kg * activeBuyCrop.directPrice;
+  const fee = Math.round(subtotal * 0.02);
+  const grandTotal = subtotal + fee;
+
+  document.getElementById('modalSubtotal').textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+  document.getElementById('modalFee').textContent = `₹${fee.toLocaleString('en-IN')}`;
+  document.getElementById('modalGrandTotal').textContent = `₹${grandTotal.toLocaleString('en-IN')}`;
+}
+
+function closeBuyModal() {
+  document.getElementById('buyModal').style.display = 'none';
+  activeBuyCrop = null;
+}
+
+function completeDirectPurchase() {
+  if (!activeBuyCrop) return;
+  const qtl = parseInt(document.getElementById('modalQtySlider').value, 10);
+  cart.push({ crop: activeBuyCrop, qtl });
+  document.getElementById('cartCount').textContent = cart.length;
+
+  alert(`✅ SMART ESCROW CONTRACT GENERATED!\n\nContract ID: #ESCROW-2026-${Math.floor(1000 + Math.random() * 9000)}\nProduce: ${activeBuyCrop.name}\nQuantity: ${qtl} Quintals\nFarmer: ${activeBuyCrop.farmer}\nLand Parcel: ${activeBuyCrop.patta}\n\nFunds deposited into Escrow Vault. Farmer notified for dispatch via shared freight truck.`);
+  closeBuyModal();
+}
+
+// Modal for Posting New Produce
+function openNewProduceModal() {
+  document.getElementById('newProduceModal').style.display = 'flex';
+}
+function closeNewProduceModal() {
+  document.getElementById('newProduceModal').style.display = 'none';
+}
+function handlePostProduce(e) {
+  e.preventDefault();
+  const name = document.getElementById('newCropName').value;
+  const cat = document.getElementById('newCropCategory').value;
+  const price = parseInt(document.getElementById('newCropPrice').value, 10);
+  const stock = parseInt(document.getElementById('newCropStock').value, 10);
+  const land = document.getElementById('newCropLand').value;
+
+  const newCrop = {
+    id: 'crop-' + (CROPS.length + 1),
+    name: name,
+    farmer: 'Ramu Gowda',
+    village: 'Nemili, Tiruvallur (TN)',
+    category: cat,
+    patta: land,
+    directPrice: price,
+    mandiPrice: Math.round(price * 0.72),
+    retailPrice: Math.round(price * 1.45),
+    stockQuintals: stock,
+    minOrderKg: 20,
+    harvestDate: 'Live Listing',
+    emoji: cat === 'grains' ? '🌾' : (cat === 'spices' ? '🌶️' : '🥦'),
+    badge: 'Farmer Direct &bull; Verified Title'
+  };
+
+  CROPS.unshift(newCrop);
+  renderCrops(CROPS);
+  closeNewProduceModal();
+  alert('🎉 Harvest Successfully Listed on National Kisan-Setu Grid with zero middleman deductions!');
+}
+
+// Mandi Slot Booking Form
+function handleBookSlot(e) {
+  e.preventDefault();
+  const center = document.getElementById('slotCenter').value;
+  const crop = document.getElementById('slotCrop').value;
+  const qty = document.getElementById('slotQty').value;
+  const date = document.getElementById('slotDate').value;
+  const time = document.getElementById('slotTime').value;
+
+  const tokenNum = `Token #FCI-TN-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+  document.getElementById('passTokenNum').textContent = tokenNum;
+
+  alert(`🎟️ DIGITAL MANDI E-GATE PASS GENERATED!\n\n${tokenNum}\nCenter: ${center}\nCrop: ${crop} (${qty} Quintals)\nWindow: ${date} [${time}]\nEstimated Payout: ${document.getElementById('slotEstPayout').textContent}\n\nPlease proceed directly to Weighbridge Gate 2 at your appointed slot.`);
+}
+
+function simulateMandiAdvance() {
+  const steps = document.querySelectorAll('.slot-timeline .slot-step');
+  let activeIdx = -1;
+  steps.forEach((s, i) => {
+    if (s.classList.contains('active')) activeIdx = i;
+  });
+
+  if (activeIdx >= 0 && activeIdx < steps.length - 1) {
+    steps[activeIdx].classList.remove('active');
+    steps[activeIdx].classList.add('done');
+    steps[activeIdx].querySelector('.slot-step-icon').textContent = '✔';
+    
+    steps[activeIdx + 1].classList.add('active');
+    steps[activeIdx + 1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    
+    if (activeIdx + 1 === steps.length - 1) {
+      setTimeout(() => {
+        alert('🎉 PFMS DIRECT BENEFIT TRANSFER COMPLETE!\n\nAmount: ₹1,04,400 credited to Ramu Gowda\nAadhaar Linked Bank: State Bank of India (A/C ending in 4902)\nUTR Ref: PFMS20260922894120');
+      }, 500);
+    }
+  }
+}
+
+function printPass() {
+  window.print();
+}
+
+// Calculator Logic
+function updateCalculator() {
+  const cropType = document.getElementById('calcCropSelect').value;
+  const qty = parseInt(document.getElementById('calcYieldSlider').value, 10);
+  document.getElementById('calcYieldVal').textContent = `${qty} Quintals (${qty * 100} kg)`;
+
+  let baseMandi = 25;
+  let baseDirect = 35;
+  let baseRetail = 50;
+
+  if (cropType === 'rice') { baseMandi = 26; baseDirect = 38; baseRetail = 56; }
+  else if (cropType === 'chilli') { baseMandi = 110; baseDirect = 165; baseRetail = 245; }
+  else if (cropType === 'tea') { baseMandi = 220; baseDirect = 340; baseRetail = 580; }
+  else if (cropType === 'cardamom') { baseMandi = 650; baseDirect = 920; baseRetail = 1450; }
+  else if (cropType === 'onion') { baseMandi = 13; baseDirect = 22; baseRetail = 38; }
+
+  const totalKg = qty * 100;
+  const tradNet = totalKg * baseMandi;
+  const kisanNet = totalKg * baseDirect;
+  const gain = kisanNet - tradNet;
+  const gainPct = Math.round((gain / tradNet) * 100);
+
+  const tradConsumerTotal = totalKg * baseRetail;
+  const kisanConsumerTotal = totalKg * Math.round(baseDirect * 1.15);
+  const consumerSave = tradConsumerTotal - kisanConsumerTotal;
+
+  document.getElementById('tradNetFarmer').textContent = `₹${tradNet.toLocaleString('en-IN')}`;
+  document.getElementById('tradPricePerKg').textContent = `₹${baseMandi} / kg`;
+  document.getElementById('tradConsumerPaid').textContent = `₹${baseRetail} / kg`;
+
+  document.getElementById('kisanNetFarmer').textContent = `₹${kisanNet.toLocaleString('en-IN')}`;
+  document.getElementById('kisanPricePerKg').textContent = `₹${baseDirect} / kg (+${gainPct}%)`;
+  document.getElementById('kisanConsumerPaid').textContent = `₹${Math.round(baseDirect * 1.15)} / kg (Saves ${Math.round((consumerSave / tradConsumerTotal) * 100)}%)`;
+
+  document.getElementById('calcNetGain').textContent = `+₹${gain.toLocaleString('en-IN')} (+${gainPct}% Higher Cash in Hand)`;
+  document.getElementById('calcConsumerSavings').textContent = `₹${consumerSave.toLocaleString('en-IN')}`;
+}
+
+// Initial Setup
+document.addEventListener('DOMContentLoaded', () => {
+  renderCrops(CROPS);
+  const today = new Date().toISOString().split('T')[0];
+  const dateInput = document.getElementById('slotDate');
+  if (dateInput) dateInput.value = today;
+  updateCalculator();
+});
+</script>
+</body>
+</html>

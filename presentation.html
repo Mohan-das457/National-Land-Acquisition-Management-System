@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Review Presentation | NLAMS (Problem Statement #26016)</title>
+  <title>PRITHVI-SETU 360 – SIH 2026 Jury Review Deck | Farmer D2C × Landslide AI × NLAMS</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -426,28 +426,34 @@
   <!-- Presentation Header -->
   <header class="pres-header">
     <div class="pres-logo-area">
-      <span class="pres-logo-badge">PS #26016</span>
-      <span class="pres-title">NLAMS Executive Review Deck</span>
+      <span class="pres-logo-badge" style="background: linear-gradient(135deg, #10b981, #ff8c00); color: #000;">SIH 2026 GRAND FINALE</span>
+      <span class="pres-title">PRITHVI-SETU 360: Triple-Impact Prototype Review Deck</span>
       <span style="color: rgba(255,255,255,0.4); font-size: 12px;">|</span>
-      <span style="color: var(--text-muted); font-size: 13px;">Ministry of Rural Development &amp; DoLR</span>
+      <span style="color: var(--text-muted); font-size: 13px;">Land Acquisition &bull; Farmer D2C (SIH26033) &bull; Landslide AI (NER)</span>
     </div>
 
     <div class="pres-controls">
+      <a href="unified-platform.html" target="_top" class="pres-btn" style="background: linear-gradient(135deg, #ff9900, #138808); border:none; color:#fff; font-weight:700;" title="Launch All-In-One Unified Command Suite">
+        <i class="fa-solid fa-globe"></i> Unified Grid
+      </a>
+      <a href="farmer-d2c.html" onclick="if(window.self!==window.top){event.preventDefault();window.top.postMessage({type:'NAVIGATE_APP',appId:'kisan',url:'farmer-d2c.html'},'*');}" class="pres-btn" style="background: rgba(16,185,129,0.2); border-color:#10b981; color:#34d399;" title="Open Farmer D2C & Mandi Prototype">
+        <i class="fa-solid fa-wheat-awn"></i> Farmer D2C
+      </a>
+      <a href="landslide-ner.html" onclick="if(window.self!==window.top){event.preventDefault();window.top.postMessage({type:'NAVIGATE_APP',appId:'drishti',url:'landslide-ner.html'},'*');}" class="pres-btn" style="background: rgba(239,68,68,0.2); border-color:#ef4444; color:#f87171;" title="Open Landslide AI Prototype">
+        <i class="fa-solid fa-mountain"></i> Landslide AI
+      </a>
       <span class="slide-timer" id="presTimer" title="Elapsed presentation time">⏱️ 00:00</span>
       <button class="pres-btn" onclick="toggleSpeakerNotes()" title="Press 'N' to toggle speaker script">
         <i class="fa-solid fa-microphone-lines"></i> Notes [N]
       </button>
-      <a href="NLAMS_Project_Review_Presentation.pptx" download class="pres-btn" title="Download PowerPoint Deck">
-        <i class="fa-solid fa-file-powerpoint" style="color: #ea580c;"></i> Download .PPTX
-      </a>
       <button class="pres-btn" onclick="window.print()" title="Print or Save as PDF Slide Deck">
         <i class="fa-solid fa-print"></i> Print PDF
       </button>
       <button class="pres-btn primary" onclick="toggleFullScreen()" title="Press 'F' for Fullscreen">
         <i class="fa-solid fa-expand"></i> Fullscreen [F]
       </button>
-      <a href="index.html" class="pres-btn emerald" title="Go to Main Application Portal">
-        <i class="fa-solid fa-house"></i> Exit to App
+      <a href="index.html" class="pres-btn emerald" title="Go to Main Unified Application Portal">
+        <i class="fa-solid fa-house"></i> Master Portal
       </a>
     </div>
   </header>
@@ -456,48 +462,48 @@
   <main class="slide-stage" id="slideStage">
 
     <!-- SLIDE 1: Title & Vision -->
-    <div class="slide-card active" data-slide="1" data-notes="Respected review panel, welcome to the official presentation for Problem Statement 26016: The Real-Time National Land Acquisition &amp; Management System (NLAMS). Land acquisition is the most critical bottleneck for India's 4.5 Lakh Crore infrastructure pipeline. Today, we demonstrate a production-ready, sub-meter GIS and statutory workflow engine built for the Ministry of Rural Development and Department of Land Resources.">
-      <div class="slide-eyebrow"><i class="fa-solid fa-landmark"></i> MoRD / DoLR • Smart India Hackathon &amp; Ministry Review</div>
-      <h1 class="slide-heading" style="font-size: 34px; margin-bottom: 12px;">
-        National Land Acquisition &amp; Management System (NLAMS)
+    <div class="slide-card active" data-slide="1" data-notes="Respected review panel and hackathon evaluators, welcome to the official presentation of PRITHVI-SETU 360. We have successfully synthesized and built complete working prototypes for three mission-critical national challenges: First, SIH26033: Farmer Direct-to-Consumer Platform &amp; Mandi Procurement Scheduling; Second, AI-Based Early Warning &amp; Landslide Risk Monitoring for the North Eastern Region; and Third, the National Land Acquisition &amp; Management System under RFCTLARR Act 2013. Today, we demonstrate full end-to-end working software for all three.">
+      <div class="slide-eyebrow"><i class="fa-solid fa-landmark"></i> Smart India Hackathon 2026 • Unified National Grid Prototype</div>
+      <h1 class="slide-heading" style="font-size: 32px; margin-bottom: 8px;">
+        PRITHVI-SETU 360: Unified National Land, Agri-Commerce &amp; Geo-Risk Grid
       </h1>
-      <p style="font-size: 18px; color: var(--gold-bright); margin: 0 0 28px 0; font-weight: 500;">
-        Real-Time End-to-End Digital Monitoring, Cadastral GIS &amp; Decision Support under RFCTLARR Act, 2013
+      <p style="font-size: 16px; color: var(--gold-bright); margin: 0 0 24px 0; font-weight: 500;">
+        Three Integrated High-Impact Prototypes: Farmer D2C (SIH26033) + Landslide AI (NER) + Land Acquisition (NLAMS)
       </p>
 
       <div class="grid-3" style="margin-top: 10px;">
+        <div class="feature-card success" style="border-color: rgba(16,185,129,0.4);">
+          <h3 style="color: var(--emerald-bright);"><i class="fa-solid fa-wheat-awn"></i> 1. Farmer D2C (SIH26033)</h3>
+          <ul>
+            <li><strong>Zero Middlemen:</strong> Direct consumer &amp; bulk institutional marketplace saving 25-40% broker margin.</li>
+            <li><strong>Farmer Income Boost:</strong> Real-time price realization engine showing <strong>+31.4%</strong> higher farmgate earnings.</li>
+            <li><strong>MSP Procurement E-Tokens:</strong> FCI/NAFED live mandi queue tracking, moisture FAQ grading &amp; instant PFMS DBT.</li>
+          </ul>
+        </div>
+
+        <div class="feature-card danger" style="border-color: rgba(239,68,68,0.4);">
+          <h3 style="color: #f87171;"><i class="fa-solid fa-mountain"></i> 2. Landslide AI (NER)</h3>
+          <ul>
+            <li><strong>8 NER States:</strong> 31 high-risk hill zones &amp; 52 IoT sensors (rain gauges, tilt meters, pore pressure).</li>
+            <li><strong>AI Simulation Sandbox:</strong> Real-time ML slope collapse model with interactive rainfall/seismic sliders.</li>
+            <li><strong>Emergency Dispatch:</strong> Automated NDMA wireless siren, cell SMS blast &amp; road detour rerouting.</li>
+          </ul>
+        </div>
+
         <div class="feature-card highlight">
-          <h3 style="color: var(--saffron-bright);"><i class="fa-solid fa-rocket"></i> Key Innovations</h3>
+          <h3 style="color: var(--saffron-bright);"><i class="fa-solid fa-landmark-dome"></i> 3. Land Acquisition (NLAMS)</h3>
           <ul>
-            <li><strong>Sub-Meter Cadastral GIS:</strong> Real farm parcel polygons for <em>Tamil Nadu (CPRR)</em> &amp; <em>Andhra Pradesh (Amaravati)</em>.</li>
-            <li><strong>6-Stage Statutory Funnel:</strong> RFCTLARR Act 2013 from Sec 4 SIA to Sec 38 Possession.</li>
-            <li><strong>e-Office Green-Noting:</strong> Cryptographic DSC / Aadhaar e-Sign with SHA-256 audit stamps.</li>
-          </ul>
-        </div>
-
-        <div class="feature-card success">
-          <h3 style="color: var(--emerald-bright);"><i class="fa-solid fa-scale-balanced"></i> Statutory Safeguards</h3>
-          <ul>
-            <li><strong>Sec 25 Statutory Lapse Alarm:</strong> 12-month automated countdown clock preventing multi-crore lapses.</li>
-            <li><strong>100% Solatium (Sec 30):</strong> Mandatory 100% solatium + 12% interest automated formula.</li>
-            <li><strong>Direct Benefit Transfer:</strong> PFMS / CFMS Aadhaar bank credit eliminating cash middlemen.</li>
-          </ul>
-        </div>
-
-        <div class="feature-card">
-          <h3 style="color: var(--cyan-bright);"><i class="fa-solid fa-server"></i> Production Readiness</h3>
-          <ul>
-            <li><strong>Federated Role Engine:</strong> Central Ministry, State Nodal, District CALA, Field Surveyor.</li>
-            <li><strong>Live Production Deployment:</strong> Hosted publicly on GitHub Pages &amp; verified.</li>
-            <li><strong>Mobile DGPS Demarcation:</strong> In-field survey tool with instant Acre / Cent acreage math.</li>
+            <li><strong>Sub-Meter Cadastral GIS:</strong> Real Patta &amp; Webland 1B parcels for Tamil Nadu (CPRR) &amp; AP (Amaravati).</li>
+            <li><strong>6-Stage RFCTLARR Workflow:</strong> Proposal to Sec 38 Possession with e-Office green-noting &amp; DSC e-Sign.</li>
+            <li><strong>Sec 25 Lapse Radar:</strong> 12-month statutory countdown preventing catastrophic project lapses.</li>
           </ul>
         </div>
       </div>
 
       <div style="margin-top: auto; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px;">
-        <span style="font-size: 13px; color: var(--text-muted);"><i class="fa-solid fa-user-shield" style="color: var(--saffron-bright);"></i> Presenter: <strong>Bala murugun Mohan (Lead Developer)</strong></span>
-        <span style="font-size: 13px; color: var(--text-muted);"><i class="fa-solid fa-clock"></i> Local Server: <code>http://localhost:8000/</code></span>
-        <span style="font-size: 13px; color: #34d399;"><i class="fa-solid fa-circle-check"></i> 100% PS #26016 Requirements Compliant</span>
+        <span style="font-size: 13px; color: var(--text-muted);"><i class="fa-solid fa-user-shield" style="color: var(--saffron-bright);"></i> Presenter: <strong>Mohan &amp; Team (SIH 2026)</strong></span>
+        <span style="font-size: 13px; color: var(--text-muted);"><i class="fa-solid fa-laptop-code"></i> Live Local Server: <code>http://localhost:8000/</code></span>
+        <span style="font-size: 13px; color: #34d399;"><i class="fa-solid fa-circle-check"></i> 100% Functional Prototypes for All 3 Problem Statements</span>
       </div>
     </div>
 

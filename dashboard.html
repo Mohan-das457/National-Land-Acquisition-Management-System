@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Executive Dashboard – NLAMS | DoLR</title>
+  <title>PRITHVI-SETU 360 – Unified Command Dashboard | SIH 2026</title>
   <meta name="description" content="National Land Acquisition Management System – Executive Dashboard with real-time KPIs, state-wise analytics, and project progress." />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
@@ -16,10 +16,10 @@
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-logo">
-      <div class="sidebar-logo-icon">N</div>
+      <div class="sidebar-logo-icon" style="background:linear-gradient(135deg,#ff9900,#138808);font-size:14px;">P</div>
       <div class="sidebar-logo-text">
-        <div class="sidebar-logo-title">NLAMS</div>
-        <div class="sidebar-logo-sub">Land Acquisition System</div>
+        <div class="sidebar-logo-title" style="font-size:13px;letter-spacing:0.3px;">PRITHVI-SETU 360</div>
+        <div class="sidebar-logo-sub">National Unified Grid · SIH 2026</div>
       </div>
     </div>
 
@@ -32,58 +32,64 @@
     </div>
 
     <nav class="sidebar-nav">
-      <div class="nav-section-label">Core</div>
+      <div class="nav-section-label">🏛️ NLAMS – Land Acquisition</div>
       <a href="dashboard.html" class="nav-item active">
-        <span class="nav-item-icon">📊</span> Dashboard
+        <span class="nav-item-icon">📊</span> Command Dashboard
       </a>
       <a href="projects.html" class="nav-item">
         <span class="nav-item-icon">🏗️</span> Projects
         <span class="nav-item-badge">2,847</span>
       </a>
       <a href="gis-map.html" class="nav-item">
-        <span class="nav-item-icon">🗺️</span> GIS Map View
+        <span class="nav-item-icon">🗺️</span> Unified GIS Map
       </a>
       <a href="workflow.html" class="nav-item">
         <span class="nav-item-icon">🔄</span> Workflow & Approvals
         <span class="nav-item-badge warning">23</span>
       </a>
-
-      <div class="nav-section-label">Land & Compensation</div>
       <a href="compensation.html" class="nav-item">
         <span class="nav-item-icon">💰</span> Compensation Tracker
       </a>
       <a href="documents.html" class="nav-item">
-        <span class="nav-item-icon">📁</span> Document Repository
+        <span class="nav-item-icon">📁</span> Documents
       </a>
-
-      <div class="nav-section-label">Analytics</div>
       <a href="reports.html" class="nav-item">
         <span class="nav-item-icon">📈</span> MIS Reports
       </a>
-      <a href="#" class="nav-item">
-        <span class="nav-item-icon">🤖</span> AI Predictions
-      </a>
-      <a href="#" class="nav-item">
-        <span class="nav-item-icon">🔔</span> Notifications
-        <span class="nav-item-badge">7</span>
+
+      <div class="nav-section-label" style="color:#ff9900;">🌐 All-in-One Suite</div>
+      <a href="unified-platform.html" target="_top" class="nav-item" style="color:#ffaa33;background:rgba(255,153,0,0.1);border-left:2px solid #ff9900;">
+        <span class="nav-item-icon">🌐</span> Unified Command Suite
       </a>
 
-      <div class="nav-section-label">Administration</div>
-      <a href="#" class="nav-item">
-        <span class="nav-item-icon">👥</span> User Management
+      <div class="nav-section-label" style="color:#34d399;">🌾 Kisan-Setu (SIH26033)</div>
+      <a href="farmer-d2c.html" onclick="handleCrossAppNav(event, 'kisan', 'farmer-d2c.html')" class="nav-item" style="border-left:2px solid rgba(16,185,129,0.4);">
+        <span class="nav-item-icon">🛒</span> D2C Marketplace
       </a>
-      <a href="#" class="nav-item">
-        <span class="nav-item-icon">🔐</span> Audit Logs
+      <a href="farmer-d2c.html#procurement" onclick="handleCrossAppNav(event, 'kisan', 'farmer-d2c.html#procurement')" class="nav-item">
+        <span class="nav-item-icon">🪪</span> Mandi Gate Pass
+        <span class="nav-item-badge" style="background:#10b981;color:#0d1120;">14.8k</span>
       </a>
-      <a href="#" class="nav-item">
-        <span class="nav-item-icon">⚙️</span> Settings
+
+      <div class="nav-section-label" style="color:#f87171;">⛰️ Drishti-NER (Landslide)</div>
+      <a href="landslide-ner.html" onclick="handleCrossAppNav(event, 'drishti', 'landslide-ner.html')" class="nav-item" style="border-left:2px solid rgba(239,68,68,0.4);">
+        <span class="nav-item-icon">🚨</span> Alert Command Centre
+      </a>
+      <a href="landslide-ner.html#simulation" onclick="handleCrossAppNav(event, 'drishti', 'landslide-ner.html#simulation')" class="nav-item">
+        <span class="nav-item-icon">🧠</span> AI Risk Sandbox
+        <span class="nav-item-badge" style="background:#ef4444;">LIVE</span>
+      </a>
+
+      <div class="nav-section-label">Platform</div>
+      <a href="presentation.html" onclick="handleCrossAppNav(event, 'deck', 'presentation.html')" class="nav-item" style="color:#f59e0b;">
+        <span class="nav-item-icon">📽️</span> SIH Jury Deck
       </a>
     </nav>
 
     <div class="sidebar-footer">
       <div class="sidebar-footer-links">
-        <a href="index.html" class="sidebar-footer-link">← Logout</a>
-        <span class="sidebar-footer-link" style="margin-left:auto;">v2.0.1</span>
+        <a href="index.html" class="sidebar-footer-link">← Home</a>
+        <span class="sidebar-footer-link" style="margin-left:auto;">v3.0 · SIH 2026</span>
       </div>
     </div>
   </aside>
@@ -93,9 +99,9 @@
     <!-- Header -->
     <header class="top-header">
       <div>
-        <div class="header-title">Executive Dashboard</div>
+        <div class="header-title">Unified Command Dashboard</div>
         <div class="header-breadcrumb">
-          <span>NLAMS</span><span class="breadcrumb-sep">/</span><span>Dashboard</span>
+          <span>PRITHVI-SETU 360</span><span class="breadcrumb-sep">/</span><span>Dashboard</span>
         </div>
       </div>
       <div class="header-spacer"></div>
@@ -198,6 +204,109 @@
           <div class="kpi-header"><div class="kpi-label">Active Projects</div><div class="kpi-icon">🏗️</div></div>
           <div class="kpi-value">2,847</div>
           <div class="kpi-meta"><span class="kpi-change up">↑ 127 new</span><span class="kpi-period">this fiscal year</span></div>
+        </div>
+      </div>
+
+      <!-- CROSS-PLATFORM TRI-PILLAR SECTION -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+          <div style="height:3px;flex:1;background:linear-gradient(90deg,#ff9900,#10b981,#ef4444);border-radius:2px;"></div>
+          <span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#a8b4cc;white-space:nowrap;">PRITHVI-SETU 360 · Cross-Platform Live Metrics</span>
+          <div style="height:3px;flex:1;background:linear-gradient(90deg,#ef4444,#10b981,#ff9900);border-radius:2px;"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+
+          <!-- PILLAR 1: NLAMS Summary -->
+          <div style="background:linear-gradient(135deg,rgba(255,153,0,0.1),rgba(10,14,26,0.8));border:1px solid rgba(255,153,0,0.3);border-radius:14px;padding:18px;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+              <div style="width:38px;height:38px;border-radius:10px;background:rgba(255,153,0,0.2);display:flex;align-items:center;justify-content:center;font-size:18px;">🏛️</div>
+              <div>
+                <div style="font-size:11px;font-weight:700;color:#ff9900;text-transform:uppercase;letter-spacing:0.5px;">NLAMS · Land Acquisition</div>
+                <div style="font-size:10px;color:#5a6478;">RFCTLARR 2013 · DoLR</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:10px;">
+                <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#ff9900;">₹48,250 Cr</div>
+                <div style="font-size:10px;color:#5a6478;">Compensation Disbursed</div>
+              </div>
+              <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:10px;">
+                <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#ff9900;">98,420 Ha</div>
+                <div style="font-size:10px;color:#5a6478;">Land Possessed</div>
+              </div>
+              <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:10px;">
+                <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#22c55e;">0</div>
+                <div style="font-size:10px;color:#5a6478;">Sec. 25 Lapses</div>
+              </div>
+              <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:10px;">
+                <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#ff9900;">2,847</div>
+                <div style="font-size:10px;color:#5a6478;">Active Projects</div>
+              </div>
+            </div>
+            <a href="projects.html" style="display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(255,153,0,0.15);border:1px solid rgba(255,153,0,0.3);color:#ff9900;text-decoration:none;padding:8px;border-radius:8px;font-size:12px;font-weight:700;margin-top:12px;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,153,0,0.25)'" onmouseout="this.style.background='rgba(255,153,0,0.15)'">View NLAMS →</a>
+          </div>
+
+          <!-- PILLAR 2: Kisan-Setu D2C -->
+          <div style="background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(10,14,26,0.8));border:1px solid rgba(16,185,129,0.3);border-radius:14px;padding:18px;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+              <div style="width:38px;height:38px;border-radius:10px;background:rgba(16,185,129,0.2);display:flex;align-items:center;justify-content:center;font-size:18px;">🌾</div>
+              <div>
+                <div style="font-size:11px;font-weight:700;color:#10b981;text-transform:uppercase;letter-spacing:0.5px;">Kisan-Setu · SIH26033</div>
+                <div style="font-size:10px;color:#5a6478;">Farmer D2C & Procurement</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:10px;">
+                <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#10b981;">₹38.45 Cr</div>
+                <div style="font-size:10px;color:#5a6478;">Direct Farmgate Volume</div>
+              </div>
+              <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:10px;">
+                <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#10b981;">+31.4%</div>
+                <div style="font-size:10px;color:#5a6478;">Farmer Net Income Gain</div>
+              </div>
+              <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:10px;">
+                <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#10b981;">14,820</div>
+                <div style="font-size:10px;color:#5a6478;">E-Mandi Gate Passes</div>
+              </div>
+              <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:10px;">
+                <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#10b981;">98.6%</div>
+                <div style="font-size:10px;color:#5a6478;">PFMS DBT Success</div>
+              </div>
+            </div>
+            <a href="farmer-d2c.html" style="display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);color:#10b981;text-decoration:none;padding:8px;border-radius:8px;font-size:12px;font-weight:700;margin-top:12px;transition:all 0.2s;" onmouseover="this.style.background='rgba(16,185,129,0.25)'" onmouseout="this.style.background='rgba(16,185,129,0.15)'">Launch Farmer Portal →</a>
+          </div>
+
+          <!-- PILLAR 3: Drishti-NER Landslide -->
+          <div style="background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(10,14,26,0.8));border:1px solid rgba(239,68,68,0.3);border-radius:14px;padding:18px;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+              <div style="width:38px;height:38px;border-radius:10px;background:rgba(239,68,68,0.2);display:flex;align-items:center;justify-content:center;font-size:18px;">⛰️</div>
+              <div>
+                <div style="font-size:11px;font-weight:700;color:#ef4444;text-transform:uppercase;letter-spacing:0.5px;">Drishti-NER · Geohazard</div>
+                <div style="font-size:10px;color:#5a6478;">Landslide AI Early Warning</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:10px;">
+                <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#ef4444;">31 Zones</div>
+                <div style="font-size:10px;color:#5a6478;">NER Hill Monitoring</div>
+              </div>
+              <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:10px;">
+                <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#f97316;">52 Active</div>
+                <div style="font-size:10px;color:#5a6478;">IoT Sensor Stations</div>
+              </div>
+              <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:10px;">
+                <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#22c55e;">94.2%</div>
+                <div style="font-size:10px;color:#5a6478;">AI Prediction Accuracy</div>
+              </div>
+              <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:10px;position:relative;">
+                <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#22c55e;">0</div>
+                <div style="font-size:10px;color:#5a6478;">Casualties 2026</div>
+                <span style="position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite;"></span>
+              </div>
+            </div>
+            <a href="landslide-ner.html" style="display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444;text-decoration:none;padding:8px;border-radius:8px;font-size:12px;font-weight:700;margin-top:12px;transition:all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.15)'">Open Alert Centre →</a>
+          </div>
+
         </div>
       </div>
 
@@ -346,14 +455,16 @@
           </div>
         </div>
 
-        <!-- Notifications Panel -->
+        <!-- Unified Alerts Panel -->
         <div class="card">
           <div class="card-header">
             <span style="font-size:16px;">🔔</span>
-            <span class="card-title">Critical Alerts & Notifications</span>
-            <span class="badge danger" style="margin-left:auto;">7 Urgent</span>
+            <span class="card-title">Unified Platform Alerts</span>
+            <span class="badge danger" style="margin-left:auto;">9 Urgent</span>
           </div>
           <div class="card-body">
+            <!-- NLAMS Alerts -->
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#ff9900;margin-bottom:8px;">🏛️ NLAMS</div>
             <div class="alert danger mb-12">
               <span class="alert-icon">🚨</span>
               <div class="alert-content">
@@ -364,29 +475,34 @@
             <div class="alert warning mb-12">
               <span class="alert-icon">⏰</span>
               <div class="alert-content">
-                <div class="alert-title">Pending Section 11 Approvals</div>
-                <div class="alert-desc">14 notifications awaiting District Collector approval in Madhya Pradesh.</div>
+                <div class="alert-title">14 Section 11 Approvals Pending</div>
+                <div class="alert-desc">Awaiting District Collector digital approval in Madhya Pradesh.</div>
               </div>
             </div>
-            <div class="alert warning mb-12">
+            <!-- Kisan-Setu Alerts -->
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#10b981;margin:12px 0 8px;">🌾 Kisan-Setu</div>
+            <div class="alert info mb-12" style="border-color:rgba(16,185,129,0.3);background:rgba(16,185,129,0.05);">
+              <span class="alert-icon">🏷️</span>
+              <div class="alert-content">
+                <div class="alert-title" style="color:#34d399;">842 Mandi Gate Passes Today</div>
+                <div class="alert-desc">FCI-TN procurement centre: 842 new queue tokens issued. MSP ₹2,183/qtl for paddy.</div>
+              </div>
+            </div>
+            <div class="alert success mb-12" style="border-color:rgba(16,185,129,0.3);">
               <span class="alert-icon">💸</span>
               <div class="alert-content">
-                <div class="alert-title">Compensation Disbursement Delay</div>
-                <div class="alert-desc">₹847 Cr for Yamuna Expressway pending bank account verification for 2,341 families.</div>
+                <div class="alert-title" style="color:#34d399;">₹4.82 Cr DBT Cleared Today</div>
+                <div class="alert-desc">PFMS direct payout to 2,140 farmer accounts via Aadhaar bridge – zero intermediaries.</div>
               </div>
             </div>
-            <div class="alert info mb-12">
-              <span class="alert-icon">📋</span>
+            <!-- Drishti NER Alerts -->
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#ef4444;margin:12px 0 8px;">⛰️ Drishti-NER</div>
+            <div class="alert danger" style="border-color:rgba(239,68,68,0.5);background:rgba(239,68,68,0.08);">
+              <span class="alert-icon">🌧️</span>
               <div class="alert-content">
-                <div class="alert-title">R&R Plan Submission Due</div>
-                <div class="alert-desc">Polavaram Irrigation Project R&R plan update due in 7 days per NHRC directions.</div>
-              </div>
-            </div>
-            <div class="alert success">
-              <span class="alert-icon">✅</span>
-              <div class="alert-content">
-                <div class="alert-title">Rajasthan Solar Park – Possession Complete</div>
-                <div class="alert-desc">12,450 Ha possession transferred. All 4,821 families rehabilitated successfully.</div>
+                <div class="alert-title" style="color:#f87171;">ORANGE ALERT – Haflong, Assam</div>
+                <div class="alert-desc">Rainfall: 187mm/24h. Soil moisture: 89%. Hazard Index: 74/100. Evacuation on standby.</div>
+                <a href="landslide-ner.html" style="font-size:11px;color:#ef4444;font-weight:700;">View in Drishti-NER →</a>
               </div>
             </div>
           </div>

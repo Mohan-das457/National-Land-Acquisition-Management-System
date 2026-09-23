@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cadastral GIS – Tamil Nadu & Andhra Pradesh Corridors | NLAMS</title>
+  <title>PRITHVI-SETU 360 – Unified Tri-Layer GIS Command Map | SIH 2026</title>
   <meta name="description" content="High-precision cadastral land parcel GIS map for Tamil Nadu (Chennai Peripheral Ring Road) and Andhra Pradesh (Amaravati Capital Region) with Patta / Webland 1B records and 60m RoW corridor."/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
@@ -11,6 +11,8 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="shared-auth.js"></script>
   <script src="cadastral-data.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/ai-engine.js"></script>
   <style>
     #map { width: 100%; height: calc(100vh - 60px); }
     .map-overlay {
@@ -152,10 +154,10 @@
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-logo">
-      <div class="sidebar-logo-icon">N</div>
+      <div class="sidebar-logo-icon" style="background:linear-gradient(135deg,#ff9900,#138808);font-size:14px;">P</div>
       <div class="sidebar-logo-text">
-        <div class="sidebar-logo-title">NLAMS</div>
-        <div class="sidebar-logo-sub">Land Acquisition System</div>
+        <div class="sidebar-logo-title" style="font-size:13px;letter-spacing:0.3px;">PRITHVI-SETU 360</div>
+        <div class="sidebar-logo-sub">Unified GIS Grid · SIH 2026</div>
       </div>
     </div>
 
@@ -169,16 +171,27 @@
     </div>
 
     <nav class="sidebar-nav">
-      <div class="nav-section-label">Core</div>
+      <div class="nav-section-label" style="color:#ff9900;">PRITHVI-SETU 360 GRID</div>
+      <a href="index.html" class="nav-item">
+        <span class="nav-item-icon">🏛️</span> Unified Portal
+      </a>
+      <a href="farmer-d2c.html" class="nav-item" style="color:#34d399;">
+        <span class="nav-item-icon">🌾</span> Farmer D2C (SIH26033)
+      </a>
+      <a href="landslide-ner.html" class="nav-item" style="color:#f87171;">
+        <span class="nav-item-icon">⛰️</span> Landslide AI (NER)
+      </a>
+      <a href="gis-map.html" class="nav-item active">
+        <span class="nav-item-icon">🗺️</span> Unified GIS Map
+      </a>
+
+      <div class="nav-section-label">NLAMS Land Acquisition</div>
       <a href="dashboard.html" class="nav-item">
         <span class="nav-item-icon">📊</span> Dashboard
       </a>
       <a href="projects.html" class="nav-item">
         <span class="nav-item-icon">🏗️</span> Projects
         <span class="nav-item-badge">2,847</span>
-      </a>
-      <a href="gis-map.html" class="nav-item active">
-        <span class="nav-item-icon">🗺️</span> GIS Map View
       </a>
       <a href="workflow.html" class="nav-item">
         <span class="nav-item-icon">🔄</span> Workflow & Approvals
@@ -216,8 +229,8 @@
 
     <div class="sidebar-footer">
       <div class="sidebar-footer-links">
-        <a href="index.html" class="sidebar-footer-link">← Logout</a>
-        <span class="sidebar-footer-link" style="margin-left:auto;">v2.0.1</span>
+        <a href="index.html" class="sidebar-footer-link">← Home</a>
+        <span class="sidebar-footer-link" style="margin-left:auto;">v3.0 · SIH 2026</span>
       </div>
     </div>
   </aside>
@@ -227,8 +240,8 @@
     <!-- Top Header -->
     <header class="top-header">
       <div>
-        <div class="header-title" id="gisHeaderTitle">Cadastral GIS: Tamil Nadu & Andhra Pradesh Corridors</div>
-        <div class="header-breadcrumb"><span>NLAMS</span><span class="breadcrumb-sep">/</span><span id="gisBreadcrumb">Tamil Nadu (CPRR) & AP (Amaravati)</span></div>
+        <div class="header-title" id="gisHeaderTitle">PRITHVI-SETU 360 – Unified Tri-Layer GIS Map</div>
+        <div class="header-breadcrumb"><span>PRITHVI-SETU 360</span><span class="breadcrumb-sep">/</span><span id="gisBreadcrumb">Cadastral + Agri Hubs + Landslide Zones</span></div>
       </div>
       <div class="header-spacer"></div>
       <div style="display:flex;gap:8px;">
@@ -294,9 +307,10 @@
         <button class="corridor-btn" id="btnCorridorUP" onclick="switchCorridor('UP')">🚜 Uttar Pradesh (Ganga Exp &amp; Jewar)</button>
         <button class="corridor-btn" id="btnCorridorKA" onclick="switchCorridor('KA')">🏙️ Karnataka (Bengaluru STRR)</button>
         <button class="corridor-btn" id="btnCorridorMH" onclick="switchCorridor('MH')">⚡ Maharashtra (NE-4 / Samruddhi)</button>
-        <button class="corridor-btn" id="btnCorridorGJ" onclick="switchCorridor('GJ')">🏭 Gujarat (Dholera SIR)</button>
         <button class="corridor-btn" id="btnCorridorWB" onclick="switchCorridor('WB')">🌾 West Bengal (Kolkata Freight)</button>
         <button class="corridor-btn" id="btnCorridorAS" onclick="switchCorridor('AS')">🌿 Assam &amp; NE (Guwahati)</button>
+        <button class="corridor-btn" id="btnCorridorAgri" onclick="switchCorridor('agri')" style="background:rgba(16,185,129,0.2); border-color:#10b981; color:#34d399;">🌾 Kisan-Setu Agri Hubs (SIH26033)</button>
+        <button class="corridor-btn" id="btnCorridorLandslide" onclick="switchCorridor('ner_landslide')" style="background:rgba(239,68,68,0.2); border-color:#ef4444; color:#f87171;">⛰️ NER Landslide Geo-Hazards</button>
       </div>
 
       <!-- Search Bar -->
@@ -361,6 +375,44 @@
           </div>
 
           <div style="margin-top:12px; padding-top:10px; border-top: 1px solid rgba(255,255,255,0.06);">
+            <div style="font-size:10.5px;color:#10b981;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">🌾 Kisan-Setu Agri Layers</div>
+            <div class="layer-toggle">
+              <label class="toggle-switch"><input type="checkbox" checked id="chkAgriHubs" onchange="toggleLayer('agriHubs', this.checked)"><span class="toggle-slider" style=""></span></label>
+              <div class="layer-color" style="background:#10b981;"></div>
+              <span class="layer-label">Farmgate Agri Collection Hubs</span>
+            </div>
+            <div class="layer-toggle">
+              <label class="toggle-switch"><input type="checkbox" checked id="chkMandiCentres" onchange="toggleLayer('mandiCentres', this.checked)"><span class="toggle-slider"></span></label>
+              <div class="layer-color" style="background:#f59e0b;"></div>
+              <span class="layer-label">FCI/NAFED Mandi Procurement Centres</span>
+            </div>
+            <div class="layer-toggle">
+              <label class="toggle-switch"><input type="checkbox" id="chkFarmLand" onchange="toggleLayer('farmLand', this.checked)"><span class="toggle-slider"></span></label>
+              <div class="layer-color" style="background:#86efac;border-radius:2px;"></div>
+              <span class="layer-label">Verified Patta Farmland Parcels</span>
+            </div>
+          </div>
+
+          <div style="margin-top:12px; padding-top:10px; border-top: 1px solid rgba(255,255,255,0.06);">
+            <div style="font-size:10.5px;color:#ef4444;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">⛰️ Drishti-NER Geo-Hazard Layers</div>
+            <div class="layer-toggle">
+              <label class="toggle-switch"><input type="checkbox" checked id="chkLandslideZones" onchange="toggleLayer('landslideZones', this.checked)"><span class="toggle-slider"></span></label>
+              <div class="layer-color" style="background:#ef4444;opacity:0.7;"></div>
+              <span class="layer-label">Landslide Susceptibility Zones</span>
+            </div>
+            <div class="layer-toggle">
+              <label class="toggle-switch"><input type="checkbox" checked id="chkIoTSensors" onchange="toggleLayer('iotSensors', this.checked)"><span class="toggle-slider"></span></label>
+              <div class="layer-color" style="background:#f97316;border-radius:50%;"></div>
+              <span class="layer-label">IoT Sensor Stations (52 Live)</span>
+            </div>
+            <div class="layer-toggle">
+              <label class="toggle-switch"><input type="checkbox" id="chkRoadBlock" onchange="toggleLayer('roadBlock', this.checked)"><span class="toggle-slider"></span></label>
+              <div class="layer-color" style="background:#dc2626;height:3px;"></div>
+              <span class="layer-label">🚫 Road Blockage / Detour Routes</span>
+            </div>
+          </div>
+
+          <div style="margin-top:12px; padding-top:10px; border-top: 1px solid rgba(255,255,255,0.06);">
             <div style="font-size:10.5px;color:#5a6478;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">Satellite Basemap Imagery</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
               <button class="btn btn-outline btn-sm" onclick="setMapStyle('satellite')" style="font-size:11px;padding:4px 8px;">🛰️ Satellite High-Res</button>
@@ -374,12 +426,19 @@
 
       <!-- Legend -->
       <div class="map-overlay map-legend">
-        <div style="font-size:11px;font-weight:700;color:#f0f4ff;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.8px;">Cadastral Legend</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#22c55e;"></div>Sec 38 - Physical Possession (DBT Paid)</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#f59e0b;"></div>Sec 23 - Award Declared (100% Solatium)</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#3b82f6;"></div>Sec 19 - Final Declaration Published</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#ef4444;"></div>⚠️ High Court Stay / Valuation Dispute</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#ff9900;height:3px;"></div>60-Meter Statutory Alignment Corridor</div>
+        <div style="font-size:11px;font-weight:700;color:#f0f4ff;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.8px;">PRITHVI-SETU 360 · Legend</div>
+        <div style="font-size:10px;color:#ff9900;font-weight:700;margin-bottom:4px;text-transform:uppercase;">🏛️ NLAMS (Land)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#22c55e;"></div>Sec 38 - Possession (DBT Paid)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f59e0b;"></div>Sec 23 - Award (100% Solatium)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#3b82f6;"></div>Sec 19 - Final Declaration</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ef4444;"></div>⚠️ High Court Stay / Dispute</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff9900;height:3px;"></div>60m Statutory Alignment</div>
+        <div style="font-size:10px;color:#10b981;font-weight:700;margin:6px 0 4px;text-transform:uppercase;">🌾 Kisan-Setu (Agri)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#10b981;"></div>Farmgate Agri Hubs</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#fbbf24;"></div>FCI/NAFED Mandi Centres</div>
+        <div style="font-size:10px;color:#ef4444;font-weight:700;margin:6px 0 4px;text-transform:uppercase;">⛰️ Drishti-NER (Landslide)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ef4444;opacity:0.7;"></div>Landslide Susceptibility Zone</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f97316;border-radius:50%;"></div>IoT Sensor Station (Live)</div>
       </div>
 
       <!-- Map Stats Strip -->
@@ -568,6 +627,28 @@ function loadCorridorData(region) {
     document.getElementById('gisHeaderTitle').textContent = 'Cadastral GIS: Assam & North-East (Guwahati Ring Road)';
     document.getElementById('lblParcels').textContent = `Dharitree Myadi Parcels (${parcels.length})`;
     document.getElementById('lblRow').textContent = 'Guwahati Ring Road RoW';
+  } else if (region === 'agri') {
+    map.flyTo([13.00, 80.00], 10, { duration: 1.2 });
+    document.getElementById('statCorridorName').textContent = 'Kisan-Setu: Agricultural Clusters & Mandi Depots';
+    document.getElementById('statParcelsInView').textContent = '6 Harvest Clusters';
+    document.getElementById('statAreaInView').textContent = '685 Quintals';
+    document.getElementById('statCompInView').textContent = '₹38.45 Cr Volume';
+    document.getElementById('gisHeaderTitle').textContent = 'Geospatial Grid: Kisan-Setu Agricultural Procurement & Farmgate Logistics';
+    document.getElementById('lblParcels').textContent = 'Verified Farm Plots (Patta Linked)';
+    document.getElementById('lblRow').textContent = 'Farmgate Logistics Transit Corridors';
+    renderAgriMarkers();
+    return;
+  } else if (region === 'ner_landslide') {
+    map.flyTo([25.8, 93.0], 7, { duration: 1.2 });
+    document.getElementById('statCorridorName').textContent = 'Drishti-NER: Landslide Early Warning Network';
+    document.getElementById('statParcelsInView').textContent = '31 Monitored Hill Zones';
+    document.getElementById('statAreaInView').textContent = '52 IoT Telemetry Sensors';
+    document.getElementById('statCompInView').textContent = '1.34L Pop. at Risk';
+    document.getElementById('gisHeaderTitle').textContent = 'Geospatial Grid: AI Landslide Early Warning & Multi-Sensor Telemetry (NER)';
+    document.getElementById('lblParcels').textContent = 'Hill Risk Zones (Critical/High/Mod)';
+    document.getElementById('lblRow').textContent = 'Strategic Highway Blockage Network';
+    renderLandslideMarkers();
+    return;
   } else if (region === 'national') {
     map.flyTo([22.5937, 78.9629], 5, { duration: 1.2 });
     document.getElementById('statCorridorName').textContent = 'Pan-India National Overview (36 States & UTs)';
@@ -694,14 +775,92 @@ function renderNationalMegaprojects() {
   }
 }
 
+function renderAgriMarkers() {
+  layerGroupParcels.clearLayers();
+  layerGroupRow.clearLayers();
+  layerGroupGcps.clearLayers();
+  layerGroupNational.clearLayers();
+
+  const agriClusters = [
+    { name: 'Ponni Organic Rice Cluster', village: 'Nemili / Thandalam, Tiruvallur (TN)', farmer: 'Ramu Gowda', patta: 'Patta #142/1A (NLAMS Linked)', lat: 12.985, lng: 79.945, price: '₹38/kg (Direct)', stock: '120 Quintals', mandi: 'FCI Sriperumbudur Hub', gain: '+31.4%' },
+    { name: 'Guntur Teja S17 Chilli Cluster', village: 'Thullur, Amaravati (AP)', farmer: 'Venkateswara Rao', patta: 'Webland Khata #204', lat: 16.535, lng: 80.515, price: '₹165/kg (Direct)', stock: '85 Quintals', mandi: 'NAFED Guntur Grain & Cotton Hub', gain: '+50.0%' },
+    { name: 'Assam Orthodox Golden Tea', village: 'Haflong, Dima Hasao (Assam)', farmer: 'Biren Das', patta: 'Khasra #88 - Hill Terrace', lat: 25.166, lng: 93.016, price: '₹340/kg (Direct)', stock: '35 Quintals', mandi: 'Assam State Civil Supplies Depo', gain: '+54.5%' },
+    { name: 'Sikkim Organic Hill Cardamom', village: 'Mangan, North Sikkim (SK)', farmer: 'Pemba Lepcha', patta: 'Sikkim Cadastral #12/B', lat: 27.510, lng: 88.530, price: '₹920/kg (Direct)', stock: '18 Quintals', mandi: 'Sikkim Organic Board Depo', gain: '+41.5%' },
+    { name: 'Nashik Export Red Onions', village: 'Niphad, Nashik (Maharashtra)', farmer: 'Sanjay Patil', patta: '7/12 Gat #312', lat: 20.080, lng: 74.110, price: '₹22/kg (Direct)', stock: '300 Quintals', mandi: 'Nashik APMC Onion Yard', gain: '+69.2%' }
+  ];
+
+  agriClusters.forEach(ag => {
+    const marker = L.circleMarker([ag.lat, ag.lng], {
+      radius: 12, fillColor: '#10b981', color: '#ffffff', weight: 2, fillOpacity: 0.9
+    });
+    marker.bindPopup(`
+      <div style="font-family:'Inter',sans-serif;min-width:240px;color:#f0f4ff;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;border-bottom:1px solid rgba(16,185,129,0.3);padding-bottom:4px;">
+          <strong style="color:#34d399;font-size:13px;">🌾 ${ag.name}</strong>
+          <span style="background:rgba(16,185,129,0.2);color:#34d399;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700;">SIH26033</span>
+        </div>
+        <div style="font-size:11px;color:#cbd5e1;margin-bottom:3px;"><strong>Farmer:</strong> ${ag.farmer}</div>
+        <div style="font-size:11px;color:#34d399;margin-bottom:3px;">✔ ${ag.patta}</div>
+        <div style="font-size:11px;color:#cbd5e1;margin-bottom:3px;"><strong>Location:</strong> ${ag.village}</div>
+        <div style="font-size:11px;color:#f59e0b;margin-bottom:3px;"><strong>Direct Price:</strong> ${ag.price} (${ag.gain} Farmer Net Gain)</div>
+        <div style="font-size:11px;color:#a8b4cc;margin-bottom:8px;"><strong>Mandi Center:</strong> ${ag.mandi}</div>
+        <a href="farmer-d2c.html" style="display:block;width:100%;background:#10b981;color:#080c18;font-weight:700;text-align:center;text-decoration:none;padding:6px;border-radius:6px;font-size:11px;">🛒 Open Farmer D2C Marketplace &rarr;</a>
+      </div>
+    `, { className: 'parcel-popup' });
+    layerGroupParcels.addLayer(marker);
+  });
+  layerGroupParcels.addTo(map);
+}
+
+function renderLandslideMarkers() {
+  layerGroupParcels.clearLayers();
+  layerGroupRow.clearLayers();
+  layerGroupGcps.clearLayers();
+  layerGroupNational.clearLayers();
+
+  const zones = window.DataModule ? window.DataModule.NER_ZONES : [];
+  zones.forEach(z => {
+    const score = window.AIEngine ? window.AIEngine.calculateRiskScore(z) : 68;
+    let color = '#10b981';
+    let label = 'LOW';
+    if (score >= 80) { color = '#ef4444'; label = 'CRITICAL'; }
+    else if (score >= 60) { color = '#f97316'; label = 'HIGH'; }
+    else if (score >= 40) { color = '#f59e0b'; label = 'MODERATE'; }
+
+    const marker = L.circleMarker([z.lat, z.lng], {
+      radius: score >= 80 ? 14 : (score >= 60 ? 11 : 8),
+      fillColor: color,
+      color: '#ffffff',
+      weight: 2,
+      fillOpacity: 0.85
+    });
+
+    marker.bindPopup(`
+      <div style="font-family:'Inter',sans-serif;min-width:240px;color:#f0f4ff;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;border-bottom:1px solid rgba(239,68,68,0.3);padding-bottom:4px;">
+          <strong style="color:${color};font-size:14px;">⛰️ ${z.name} (${z.state})</strong>
+          <span style="background:${color}33;color:${color};font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700;">${label}</span>
+        </div>
+        <div style="font-size:11px;color:#cbd5e1;margin-bottom:3px;"><strong>LSI Risk Index:</strong> <span style="color:${color};font-weight:700;">${score} / 100</span></div>
+        <div style="font-size:11px;color:#cbd5e1;margin-bottom:3px;"><strong>Rainfall:</strong> ${z.rainfall} mm/day &bull; <strong>Moisture:</strong> ${z.soilMoisture}%</div>
+        <div style="font-size:11px;color:#cbd5e1;margin-bottom:3px;"><strong>Slope Angle:</strong> ${z.slope}° (${z.soilType})</div>
+        <div style="font-size:11px;color:#cbd5e1;margin-bottom:8px;"><strong>Population At Risk:</strong> ${z.population.toLocaleString('en-IN')}</div>
+        <a href="landslide-ner.html" style="display:block;width:100%;background:${color};color:${score>=80?'#fff':'#080c18'};font-weight:700;text-align:center;text-decoration:none;padding:6px;border-radius:6px;font-size:11px;">🚨 Open Early Warning Center &rarr;</a>
+      </div>
+    `, { className: 'parcel-popup' });
+    layerGroupParcels.addLayer(marker);
+  });
+  layerGroupParcels.addTo(map);
+}
+
 // Switch Corridor Button Handler
 function switchCorridor(region) {
   document.querySelectorAll('.corridor-btn').forEach(b => b.classList.remove('active'));
-  const btnId = region === 'TN' ? 'btnCorridorTN' : region === 'AP' ? 'btnCorridorAP' : region === 'UP' ? 'btnCorridorUP' : region === 'KA' ? 'btnCorridorKA' : region === 'MH' ? 'btnCorridorMH' : region === 'GJ' ? 'btnCorridorGJ' : region === 'WB' ? 'btnCorridorWB' : region === 'AS' ? 'btnCorridorAS' : 'btnCorridorNational';
+  const btnId = region === 'TN' ? 'btnCorridorTN' : region === 'AP' ? 'btnCorridorAP' : region === 'UP' ? 'btnCorridorUP' : region === 'KA' ? 'btnCorridorKA' : region === 'MH' ? 'btnCorridorMH' : region === 'WB' ? 'btnCorridorWB' : region === 'AS' ? 'btnCorridorAS' : (region === 'agri' ? 'btnCorridorAgri' : (region === 'ner_landslide' ? 'btnCorridorLandslide' : 'btnCorridorNational'));
   const el = document.getElementById(btnId);
   if (el) el.classList.add('active');
   const sel = document.getElementById('mapStateSelect');
-  if (sel) sel.value = region;
+  if (sel && ['TN','AP','UP','KA','MH','WB','AS','national'].includes(region)) sel.value = region;
   loadCorridorData(region);
 }
 

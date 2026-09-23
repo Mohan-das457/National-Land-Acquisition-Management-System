@@ -20,16 +20,24 @@ Furthermore, under **Section 25 of the RFCTLARR Act 2013**, if the Collector doe
 
 ## 🚀 Live Demo & Navigation Links
 
-| Module | URL | Description |
+### 🌐 PRITHVI-SETU 360 — Master Unified All-in-One Command Suite
+> **All Applications in One Workspace**: [**`unified-platform.html`**](unified-platform.html) or [**`app.html`**](app.html)  
+> *Clicking any application activates only that application with zero script collisions, full runtime isolation, and instant state-preserving switching.*
+
+| Application / Module | Primary URL | Core Features & Statutory Mandate |
 |---|---|---|
-| **🏛️ Public Portal & Login** | [`index.html`](index.html) | National statistics ticker, public Khasra search, and multi-role login |
-| **📊 Executive Dashboard** | [`dashboard.html`](dashboard.html) | Real-time KPIs, RFCTLARR timeline radar, and state-wise metrics |
-| **🗺️ Cadastral GIS Map** | [`gis-map.html`](gis-map.html) | Sub-meter parcel boundaries for Tamil Nadu & Andhra Pradesh corridors |
-| **🔄 Digital Workflow & Approvals** | [`workflow.html`](workflow.html) | 6-stage funnel, e-Office green-noting, and cryptographic DSC e-Sign |
-| **🏗️ Projects Pipeline** | [`projects.html`](projects.html) | Multi-parameter filtering, statutory stages, and proposal submission |
-| **💰 DBT Compensation Tracker** | [`compensation.html`](compensation.html) | Family-wise ledger, 100% Solatium calculation, and PFMS tracking |
-| **📈 MIS Reports & AI Radar** | [`reports.html`](reports.html) | Timeline compliance heatmaps, predictive dispute radar, PDF/Excel export |
-| **📁 Document Vault** | [`documents.html`](documents.html) | Version-controlled gazette archives, JMS maps, and SHA-256 audit trail |
+| **🌐 PRITHVI-SETU 360 (All-in-One Suite)** | [`unified-platform.html`](unified-platform.html) | **Single-pane-of-glass super-app** unifying NLAMS, Kisan-Setu, Drishti-NER, and Jury Presentation with active status telemetry and persona synchronization. |
+| **🏛️ NLAMS: Executive Dashboard** | [`dashboard.html`](dashboard.html) | Section 25 countdown radar, RFCTLARR 2013 timeline alerts, national KPIs (2,847 projects), and state-level performance. |
+| **🗺️ NLAMS: Cadastral GIS Map** | [`gis-map.html`](gis-map.html) | High-precision sub-meter parcel boundaries for Tamil Nadu CPRR (Package 2) & Andhra Pradesh Amaravati Capital Seed Axis. |
+| **🔄 NLAMS: Workflow & DSC Approvals** | [`workflow.html`](workflow.html) | 6-stage statutory state machine, e-Office green-noting, and SHA-256 digital signature token e-Sign stamping. |
+| **🏗️ NLAMS: Projects Pipeline** | [`projects.html`](projects.html) | National infrastructure pipeline tracking (Highways, Rail, Solar, Water). |
+| **💰 NLAMS: Compensation DBT Tracker** | [`compensation.html`](compensation.html) | Direct Benefit Transfer ledger with 100% Solatium (Sec 30(1)) and PFMS bank credit auditing. |
+| **📈 NLAMS: MIS Reports & AI Radar** | [`reports.html`](reports.html) | Statutory SLA heatmaps, AI dispute risk radar, and official gazette exports. |
+| **📁 NLAMS: Legal Document Vault** | [`documents.html`](documents.html) | Version-controlled gazette archives, joint measurement surveys, and audit logs. |
+| **🌾 Kisan-Setu: Farmer D2C Platform** | [`farmer-d2c.html`](farmer-d2c.html) | **SIH #26033**: Eliminates middlemen via direct D2C trade contracts (+31.4% farmer gain) & APMC Mandi MSP e-token slot booking. |
+| **⛰️ Drishti-NER: Landslide AI Early Warning** | [`landslide-ner.html`](landslide-ner.html) | Real-time geohazard monitoring network for 8 North Eastern States with 50+ IoT sensors, ML risk sandbox, and CAP emergency sirens. |
+| **📽️ Grand Finale Review Deck** | [`presentation.html`](presentation.html) | Interactive 15-slide jury presentation detailing problem statements, architectures, and national impact. |
+| **🏛️ Citizen Portal & Khasra Registry** | [`index.html`](index.html) | Public Khasra land search, national statistics ticker, and multi-stakeholder role gateway. |
 
 ---
 

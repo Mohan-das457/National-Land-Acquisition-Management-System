@@ -271,6 +271,60 @@ const NLAMS_ROLES = {
     mapCenter: [19.9725, 72.9180],
     mapZoom: 14,
     description: 'Monitors Mumbai-Nagpur Samruddhi Mahamarg, Delhi-Mumbai Expressway Package 17 (Palghar/Thane), and MahaBhumi 7/12 land records.'
+  },
+
+  farmer: {
+    id: 'farmer',
+    name: 'Ramu Gowda',
+    title: 'Verified Landowner & Producer',
+    dept: 'Kisan-Setu D2C Platform & Tiruvallur Farmers Co-op',
+    badge: 'Verified Farmer (TN)',
+    badgeColor: '#10b981',
+    avatar: 'RG',
+    scope: 'Patta #142/1A (Nemili Village)',
+    jurisdictionLevel: 'Sriperumbudur Firka, Tiruvallur',
+    stateCode: 'TN',
+    stats: {
+      projects: 'Kisan-Setu D2C',
+      landProposed: '1.8 Ha (Farmland)',
+      landAcquired: '0.6 Ha Acquired for CPRR',
+      landAcquiredPct: '100%',
+      compDisbursed: '₹1.84 Cr (Paid)',
+      compTotal: '₹1.84 Cr',
+      pendingApprovals: 0,
+      slaBreaches: 0,
+      disputes: 0
+    },
+    mapCenter: [12.9950, 79.9550],
+    mapZoom: 15,
+    description: 'Verified landowner with 1.8 Ha wet land (Nanja). Lists organic Ponni rice on Kisan-Setu D2C marketplace (+31.4% gain) and tracks RFCTLARR compensation via PFMS.'
+  },
+
+  disaster_ner: {
+    id: 'disaster_ner',
+    name: 'Dr. Anurag Phukan',
+    title: 'State Disaster Early Warning Officer',
+    dept: 'State Disaster Response Force (SDRF) & NESAC Hub',
+    badge: 'Disaster Officer (NER)',
+    badgeColor: '#ef4444',
+    avatar: 'AP',
+    scope: '8 North Eastern States (31 Landslide Zones)',
+    jurisdictionLevel: 'NER Emergency Operations Center - Guwahati',
+    stateCode: 'NER',
+    stats: {
+      projects: '31 Monitored Zones',
+      landProposed: '52 IoT Telemetry Sensors',
+      landAcquired: '94.2% Sensor Uptime',
+      landAcquiredPct: '100%',
+      compDisbursed: '1,34,000 Pop. at Risk',
+      compTotal: '2 Evacuations Complete',
+      pendingApprovals: 2,
+      slaBreaches: 0,
+      disputes: 0
+    },
+    mapCenter: [25.8, 93.0],
+    mapZoom: 7,
+    description: 'Monitors real-time IoT telemetry and AI slope collapse predictions across Assam, Meghalaya, Sikkim, and Mizoram. Broadcasts multi-channel evacuation warnings to hill settlements.'
   }
 };
 
@@ -340,6 +394,19 @@ function updateUIPersona(role) {
   }
 }
 
+// Cross-Application Navigation Dispatcher (Communicates with Master Unified Platform shell)
+function handleCrossAppNav(event, appId, targetUrl) {
+  if (window.self !== window.top) {
+    if (event) event.preventDefault();
+    try {
+      window.top.postMessage({ type: 'NAVIGATE_APP', appId: appId, url: targetUrl }, '*');
+      return false;
+    } catch (e) {
+      console.warn('Cross-frame navigation failed, falling back to location change:', e);
+    }
+  }
+}
+
 // Injects top role switcher bar and project explainer button
 function injectRoleBar() {
   const currentRole = getCurrentRole();
@@ -361,18 +428,34 @@ function injectRoleBar() {
     }
 
     roleBarContainer.innerHTML = `
-      <a href="presentation.html" class="btn btn-outline btn-sm" style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg, rgba(255,122,0,0.25), rgba(255,174,0,0.15));border-color:#ff7a00;color:#ff9e00;font-weight:700;padding:6px 12px;text-decoration:none;border-radius:6px;box-shadow:0 2px 8px rgba(255,122,0,0.2);" title="Launch Tomorrow's Project Review Presentation Deck [Slides, Speaker Notes & Defense]">
+      <a href="unified-platform.html" target="_top" class="btn btn-primary btn-sm" style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#ff9900,#138808);border:none;color:#fff;font-weight:700;padding:6px 11px;text-decoration:none;border-radius:6px;box-shadow:0 2px 8px rgba(255,153,0,0.3);" title="Launch PRITHVI-SETU 360: All-In-One Unified Command Suite">
+        <span>🌐</span> Unified Grid
+      </a>
+
+      <a href="farmer-d2c.html" onclick="handleCrossAppNav(event, 'kisan', 'farmer-d2c.html')" class="btn btn-outline btn-sm" style="display:inline-flex;align-items:center;gap:6px;background:rgba(16,185,129,0.15);border-color:#10b981;color:#34d399;font-weight:700;padding:6px 10px;text-decoration:none;border-radius:6px;" title="Launch SIH26033: Farmer Direct-to-Consumer Platform & MSP Mandi E-Gate">
+        <span>🌾</span> Farmer D2C
+      </a>
+
+      <a href="landslide-ner.html" onclick="handleCrossAppNav(event, 'drishti', 'landslide-ner.html')" class="btn btn-outline btn-sm" style="display:inline-flex;align-items:center;gap:6px;background:rgba(239,68,68,0.15);border-color:#ef4444;color:#f87171;font-weight:700;padding:6px 10px;text-decoration:none;border-radius:6px;" title="Launch AI-Based Early Warning & Landslide Risk Monitoring (NER)">
+        <span>⛰️</span> Landslide AI
+      </a>
+
+      <a href="presentation.html" onclick="handleCrossAppNav(event, 'deck', 'presentation.html')" class="btn btn-outline btn-sm" style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg, rgba(255,122,0,0.25), rgba(255,174,0,0.15));border-color:#ff7a00;color:#ff9e00;font-weight:700;padding:6px 12px;text-decoration:none;border-radius:6px;box-shadow:0 2px 8px rgba(255,122,0,0.2);" title="Launch SIH Grand Finale Review Presentation Deck">
         <span>📽️</span> Review Deck
       </a>
 
-      <button class="btn btn-outline btn-sm" onclick="openExplainerModal()" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,153,0,0.12);border-color:rgba(255,153,0,0.4);color:#ff9900;font-weight:600;padding:6px 12px;cursor:pointer;" title="Understand Problem Statement #26016 & Statutory Workflow">
-        <span>📖</span> Project Explainer
+      <button class="btn btn-outline btn-sm" onclick="openExplainerModal()" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,153,0,0.12);border-color:rgba(255,153,0,0.4);color:#ff9900;font-weight:600;padding:6px 10px;cursor:pointer;" title="Understand Problem Statements & Unified Architecture">
+        <span>📖</span> Explainer
       </button>
 
       <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);padding:4px 10px;border-radius:8px;">
         <span style="font-size:11px;color:#a8b4cc;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Persona:</span>
         <select id="nlamsRoleSelect" onchange="switchRole(this.value)" style="background:transparent;border:none;color:#f0f4ff;font-size:12px;font-weight:700;cursor:pointer;outline:none;font-family:'Inter',sans-serif;">
-          <option value="central" style="background:#0d1120;color:#f0f4ff;" ${currentRole.id==='central'?'selected':''}>🏛️ Central Ministry (Pan-India MoRD/DoLR HQ)</option>
+          <optgroup label="SIH 2026 Unified Stakeholders">
+            <option value="farmer" style="background:#0d1120;color:#34d399;" ${currentRole.id==='farmer'?'selected':''}>🌾 Ramu Gowda (Verified Landowner &amp; Farmer)</option>
+            <option value="disaster_ner" style="background:#0d1120;color:#f87171;" ${currentRole.id==='disaster_ner'?'selected':''}>🚨 Dr. Anurag Phukan (Disaster Warning Officer, NER)</option>
+            <option value="central" style="background:#0d1120;color:#f0f4ff;" ${currentRole.id==='central'?'selected':''}>🏛️ Central Ministry (DoLR/MoRD National HQ)</option>
+          </optgroup>
           <optgroup label="Southern Zone">
             <option value="district_tn" style="background:#0d1120;color:#f0f4ff;" ${currentRole.id==='district_tn'?'selected':''}>🌊 CALA Tiruvallur (Tamil Nadu - CPRR)</option>
             <option value="state_tn" style="background:#0d1120;color:#f0f4ff;" ${currentRole.id==='state_tn'?'selected':''}>🏢 State Govt (Tamil Nadu Secretariat)</option>

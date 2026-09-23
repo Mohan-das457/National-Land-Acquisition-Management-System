@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Drishti-NER – AI-Based Early Warning & Landslide Risk Monitoring System | North Eastern Region</title>
+  <meta name="description" content="AI/ML powered real-time landslide early warning and geohazard risk monitoring network for the 8 North Eastern States of India. NDMA, SDRF & NESAC compliant."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="shared-auth.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/ai-engine.js"></script>
+  <script src="js/i18n.js"></script>
+
+  <style>
+    :root {
+      --ner-red: #ef4444;
+      --ner-red-glow: rgba(239, 68, 68, 0.25);
+      --ner-orange: #f97316;
+      --ner-amber: #f59e0b;
+      --ner-green: #10b981;
+    }
+    .ner-badge {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.1));
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #f87171;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .ner-tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 24px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .ner-tab-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .ner-tab-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+    }
+    .ner-tab-btn.active {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(185, 28, 28, 0.15));
+      border-color: #ef4444;
+      color: #f87171;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+    }
+    #nerMap {
+      width: 100%;
+      height: 520px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 10;
+    }
+    .risk-pill-critical {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid #ef4444;
+      color: #f87171;
+    }
+    .risk-pill-high {
+      background: rgba(249, 115, 22, 0.15);
+      border: 1px solid #f97316;
+      color: #fb923c;
+    }
+    .risk-pill-moderate {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid #f59e0b;
+      color: #fbbf24;
+    }
+    .risk-pill-low {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10b981;
+      color: #34d399;
+    }
+    .risk-gauge {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin: 0 auto;
+      box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+      border: 6px solid #ef4444;
+      background: rgba(10, 14, 26, 0.9);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .siren-active {
+      animation: flashSiren 1s infinite alternate;
+    }
+    @keyframes flashSiren {
+      from { box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); border-color: #ef4444; }
+      to { box-shadow: 0 0 40px rgba(239, 68, 68, 0.9), 0 0 60px rgba(239, 68, 68, 0.5); border-color: #ff0000; }
+    }
+    .sensor-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon" style="background: linear-gradient(135deg, #ef4444, #b91c1c);">⛰️</div>
+      <div>
+        <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;letter-spacing:0.5px;color:#f0f4ff;">DRISHTI-NER</div>
+        <div style="font-size:11px;color:#f87171;font-weight:600;">Landslide Early Warning &bull; NER</div>
+      </div>
+    </div>
+
+    <!-- Active Persona Widget -->
+    <div class="sidebar-user" style="margin:12px;padding:12px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.06);">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="user-avatar" style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#ef4444,#b91c1c);display:flex;align-items:center;justify-content:center;font-weight:700;color:white;">AP</div>
+        <div style="flex:1;min-width:0;">
+          <div class="user-name" style="font-size:13px;font-weight:700;color:#f0f4ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Dr. Anurag Phukan</div>
+          <div class="user-role" style="font-size:11px;color:#f87171;">🚨 Disaster Officer &bull; SDRF NER</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <!-- Unified Platform Switcher -->
+      <div class="sidebar-nav-heading" style="color:#ff9900;">PRITHVI-SETU 360 GRID</div>
+      <a href="unified-platform.html" target="_top" class="nav-item" style="color:#ffaa33;background:rgba(255,153,0,0.1);border-left:2px solid #ff9900;">
+        <span class="nav-icon">🌐</span>
+        <span>Unified Command Suite</span>
+      </a>
+      <a href="farmer-d2c.html" onclick="handleCrossAppNav(event, 'kisan', 'farmer-d2c.html')" class="nav-item">
+        <span class="nav-icon">🌾</span>
+        <span>Farmer D2C &amp; Procurement</span>
+        <span class="badge" style="background:#10b981;color:#0d1120;margin-left:auto;font-size:10px;">SIH26033</span>
+      </a>
+      <a href="landslide-ner.html" class="nav-item active" style="background:rgba(239,68,68,0.15);color:#f87171;border-left:3px solid #ef4444;">
+        <span class="nav-icon">⛰️</span>
+        <span>Landslide AI Warning (NER)</span>
+        <span class="badge" style="background:#e53935;color:white;margin-left:auto;font-size:10px;">AI/ML</span>
+      </a>
+      <a href="dashboard.html" onclick="handleCrossAppNav(event, 'nlams', 'dashboard.html')" class="nav-item">
+        <span class="nav-icon">🏛️</span>
+        <span>NLAMS Land Acquisition</span>
+      </a>
+      <a href="gis-map.html" onclick="handleCrossAppNav(event, 'nlams', 'gis-map.html')" class="nav-item">
+        <span class="nav-icon">🗺️</span>
+        <span>Unified Cadastral GIS Map</span>
+      </a>
+      
+      <div class="sidebar-nav-heading">DRISHTI-NER MODULES</div>
+      <a href="#map" class="nav-item" onclick="switchNerTab('map')">
+        <span class="nav-icon">🗺️</span>
+        <span>Regional GIS &amp; Sensors</span>
+      </a>
+      <a href="#simulation" class="nav-item" onclick="switchNerTab('simulation')">
+        <span class="nav-icon">🧠</span>
+        <span>AI Risk Simulator Sandbox</span>
+      </a>
+      <a href="#alerts" class="nav-item" onclick="switchNerTab('alerts')">
+        <span class="nav-icon">🚨</span>
+        <span>Emergency Broadcast Hub</span>
+      </a>
+      <a href="#roads" class="nav-item" onclick="switchNerTab('roads')">
+        <span class="nav-icon">🛣️</span>
+        <span>Road Status &amp; Detours</span>
+      </a>
+      <a href="#historical" class="nav-item" onclick="switchNerTab('historical')">
+        <span class="nav-icon">📜</span>
+        <span>Historical GSI Landslides</span>
+      </a>
+
+      <div class="sidebar-nav-heading">LAND ACQUISITION (NLAMS)</div>
+      <a href="dashboard.html" class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span>NLAMS Dashboard</span>
+      </a>
+      <a href="workflow.html" class="nav-item">
+        <span class="nav-icon">🔄</span>
+        <span>RFCTLARR Workflow</span>
+      </a>
+      <a href="compensation.html" class="nav-item">
+        <span class="nav-icon">💰</span>
+        <span>DBT Compensation Ledger</span>
+      </a>
+      <a href="presentation.html" class="nav-item">
+        <span class="nav-icon">📽️</span>
+        <span>SIH Jury Review Deck</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <div class="main-wrapper" style="margin-left: var(--sidebar-width); flex: 1; min-height: 100vh; background: var(--bg-primary); display: flex; flex-direction: column;">
+    
+    <!-- TOP HEADER -->
+    <header class="top-header" style="height:64px;padding:0 24px;border-bottom:1px solid var(--border-subtle);background:rgba(10,14,26,0.92);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:90;">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <span style="font-size:24px;">⛰️</span>
+        <div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:#f0f4ff;display:flex;align-items:center;gap:8px;">
+            AI-Based Early Warning &amp; Landslide Risk Monitoring System
+            <span class="ner-badge">NER States</span>
+          </div>
+          <div style="font-size:11px;color:#a8b4cc;">
+            Assam &bull; Meghalaya &bull; Sikkim &bull; Mizoram &bull; Nagaland &bull; Manipur &bull; Tripura &bull; Arunachal Pradesh
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:12px;">
+        <!-- Language Switcher -->
+        <select id="nerLangSelect" onchange="changeLanguage(this.value)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:5px 10px;color:white;font-size:12px;cursor:pointer;">
+          <option value="en">English</option>
+          <option value="hi">हिंदी (Hindi)</option>
+          <option value="as">অসমীয়া (Assamese)</option>
+          <option value="mz">Mizo ṭawng</option>
+        </select>
+
+        <!-- Siren Button -->
+        <button id="sirenBtn" onclick="toggleAudioSiren()" class="btn btn-outline btn-sm" style="display:inline-flex;align-items:center;gap:6px;border-color:#ef4444;color:#f87171;font-weight:700;">
+          <span id="sirenIcon">📢</span> <span id="sirenText">Evacuation Siren</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTENT AREA -->
+    <div style="padding: 24px; flex: 1; max-width: 1400px; margin: 0 auto; width: 100%;">
+
+      <!-- PROBLEM STATEMENT BANNER -->
+      <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(185, 28, 28, 0.05)); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 14px; padding: 18px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px;">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); display: flex; align-items: center; justify-content: center; font-size: 24px;">📡</div>
+          <div>
+            <div style="font-size: 12px; text-transform: uppercase; color: #f87171; font-weight: 700; letter-spacing: 0.5px;">Smart India Hackathon 2026 | Disaster Management &amp; Geohazard Grid</div>
+            <h2 style="font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 700; color: #f0f4ff; margin: 2px 0;">AI-Based Early Warning &amp; Landslide Risk Monitoring System — NER</h2>
+            <div style="font-size: 13px; color: #a8b4cc;">
+              Multi-sensor IoT telemetry (Rain gauges, Tilt meters, Soil moisture, Piezometers) + Machine Learning susceptibility models predicting slope collapse up to <strong>6 to 12 hours in advance</strong>.
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 14px; flex-shrink: 0;">
+          <div style="text-align: right; border-right: 1px solid rgba(255,255,255,0.1); padding-right: 14px;">
+            <div style="font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; color: #ef4444;" id="topCritCount">2 Critical</div>
+            <div style="font-size: 11px; color: #a8b4cc;">Immediate Evacuation</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; color: #10b981;" id="topSensorOnline">52 Online</div>
+            <div style="font-size: 11px; color: #a8b4cc;">IoT Telemetry Stations</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KEY DISASTER METRICS STRIP -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+        <div class="card" style="padding: 16px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 12px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <span style="font-size: 11px; text-transform: uppercase; color: #a8b4cc; font-weight: 600;">Monitored Hill Zones</span>
+            <span style="font-size: 16px;">📍</span>
+          </div>
+          <div style="font-family: 'Rajdhani', sans-serif; font-size: 26px; font-weight: 700; color: #f0f4ff;">31 Zones</div>
+          <div style="font-size: 11px; color: #60a5fa; margin-top: 4px;">Across 8 North-East States</div>
+        </div>
+
+        <div class="card" style="padding: 16px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 12px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <span style="font-size: 11px; text-transform: uppercase; color: #a8b4cc; font-weight: 600;">Population At Risk</span>
+            <span style="font-size: 16px;">👥</span>
+          </div>
+          <div style="font-family: 'Rajdhani', sans-serif; font-size: 26px; font-weight: 700; color: #f87171;" id="statPopRisk">1,34,000</div>
+          <div style="font-size: 11px; color: #a8b4cc; margin-top: 4px;">In High &amp; Critical Corridors</div>
+        </div>
+
+        <div class="card" style="padding: 16px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 12px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <span style="font-size: 11px; text-transform: uppercase; color: #a8b4cc; font-weight: 600;">Active IoT Sensors</span>
+            <span style="font-size: 16px;">📡</span>
+          </div>
+          <div style="font-family: 'Rajdhani', sans-serif; font-size: 26px; font-weight: 700; color: #10b981;">52 / 55</div>
+          <div style="font-size: 11px; color: #34d399; margin-top: 4px;">94.5% Telemetry Uptime</div>
+        </div>
+
+        <div class="card" style="padding: 16px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 12px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <span style="font-size: 11px; text-transform: uppercase; color: #a8b4cc; font-weight: 600;">Highway Status</span>
+            <span style="font-size: 16px;">🛣️</span>
+          </div>
+          <div style="font-family: 'Rajdhani', sans-serif; font-size: 26px; font-weight: 700; color: #f59e0b;" id="statRoadClosed">3 Blocked</div>
+          <div style="font-size: 11px; color: #a8b4cc; margin-top: 4px;">NH-54, Sohra Pass, Mangan Rd</div>
+        </div>
+      </div>
+
+      <!-- NAVIGATION TABS -->
+      <div class="ner-tabs">
+        <button class="ner-tab-btn active" id="tabBtnMap" onclick="switchNerTab('map')">
+          <span>🗺️</span> Real-Time Regional GIS Map &amp; Sensors
+        </button>
+        <button class="ner-tab-btn" id="tabBtnSimulation" onclick="switchNerTab('simulation')">
+          <span>🧠</span> AI Risk Simulator Sandbox
+        </button>
+        <button class="ner-tab-btn" id="tabBtnAlerts" onclick="switchNerTab('alerts')">
+          <span>🚨</span> Emergency Evacuation Hub
+        </button>
+        <button class="ner-tab-btn" id="tabBtnRoads" onclick="switchNerTab('roads')">
+          <span>🛣️</span> Road Status &amp; Detours
+        </button>
+        <button class="ner-tab-btn" id="tabBtnHistorical" onclick="switchNerTab('historical')">
+          <span>📜</span> Historical GSI Disasters
+        </button>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 1: REAL-TIME REGIONAL GIS RISK MAP -->
+      <!-- ========================================================================= -->
+      <div id="sectionMap">
+        <div style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 20px; align-items: start;">
+          
+          <!-- MAP CONTAINER -->
+          <div class="card" style="padding: 16px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 18px;">🌐</span>
+                <span style="font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 16px; color: #f0f4ff;">North Eastern Region Landslide GIS Grid</span>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-sm btn-outline" onclick="jumpToZone('Cherrapunji')" style="font-size: 11px;">Cherrapunji</button>
+                <button class="btn btn-sm btn-outline" onclick="jumpToZone('Haflong')" style="font-size: 11px;">Haflong</button>
+                <button class="btn btn-sm btn-outline" onclick="jumpToZone('Gangtok')" style="font-size: 11px;">Gangtok</button>
+                <button class="btn btn-sm btn-outline" onclick="jumpToZone('Aizawl')" style="font-size: 11px;">Aizawl</button>
+              </div>
+            </div>
+
+            <!-- LEAFLET MAP -->
+            <div id="nerMap"></div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 11px; color: #a8b4cc;">
+              <div>Legend: <span style="color:#ef4444;">● Critical (&gt;75)</span> &bull; <span style="color:#f97316;">● High (60-75)</span> &bull; <span style="color:#f59e0b;">● Moderate (40-60)</span> &bull; <span style="color:#10b981;">● Low (&lt;40)</span></div>
+              <div>Tiles: CartoDB Dark Matter &bull; Auto-refresh every 30s</div>
+            </div>
+          </div>
+
+          <!-- RIGHT: LIVE ZONE TELEMETRY INSPECTOR -->
+          <div class="card" style="padding: 18px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+              <h3 style="font-family: 'Rajdhani', sans-serif; font-size: 17px; font-weight: 700; color: #f0f4ff;">📡 Zone Telemetry Inspector</h3>
+              <span id="inspectBadge" class="ner-badge">SELECT ZONE</span>
+            </div>
+
+            <div id="zoneInspectContent">
+              <div style="text-align: center; padding: 30px 10px; color: #a8b4cc; font-size: 13px;">
+                Click any zone marker on the GIS map or select below to view live sensor telemetry and AI risk parameters.
+              </div>
+            </div>
+
+            <div style="margin-top: 16px;">
+              <label style="display: block; font-size: 11px; color: #a8b4cc; text-transform: uppercase; margin-bottom: 4px;">Quick Zone Selector</label>
+              <select id="quickZoneSelect" onchange="inspectSelectedZone(this.value)" style="width: 100%; background: #0d1120; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 12px; color: white; font-size: 12px;">
+                <!-- Populated by JS -->
+              </select>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 2: AI RISK SIMULATOR SANDBOX -->
+      <!-- ========================================================================= -->
+      <div id="sectionSimulation" style="display: none;">
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px;">
+          
+          <!-- LEFT: SLIDERS & MULTI-FACTOR INPUTS -->
+          <div class="card" style="padding: 22px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+              <h3 style="font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: #f0f4ff;">🧪 Multi-Factor Slope Stability Simulator</h3>
+              <span class="ner-badge" style="background:rgba(96,165,250,0.2); border-color:#60a5fa; color:#93c5fd;">ML MODEL RUNNING</span>
+            </div>
+            
+            <p style="font-size: 13px; color: #a8b4cc; margin-bottom: 20px;">
+              Adjust rainfall, soil moisture, and geological parameters to simulate an extreme monsoon surge or seismic trigger. The AI susceptibility algorithm will recalculate the Risk Score in real time.
+            </p>
+
+            <div style="margin-bottom: 18px;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                <label style="font-size: 12px; color: #a8b4cc; text-transform: uppercase; font-weight: 600;">24-Hour Rainfall Intensity</label>
+                <span id="simRainVal" style="font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700; color: #60a5fa;">210 mm (Torrential)</span>
+              </div>
+              <input type="range" id="simRainSlider" min="0" max="400" value="210" oninput="runAiSimulation()" style="width: 100%; accent-color: #60a5fa; cursor: pointer;"/>
+              <div style="display: flex; justify-content: space-between; font-size: 10px; color: #5a6478; margin-top: 2px;">
+                <span>0 mm (Dry)</span>
+                <span>65 mm (Moderate)</span>
+                <span>200 mm (Heavy)</span>
+                <span>400 mm (Cloudburst)</span>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 18px;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                <label style="font-size: 12px; color: #a8b4cc; text-transform: uppercase; font-weight: 600;">Soil Pore Saturation Level</label>
+                <span id="simMoistVal" style="font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700; color: #34d399;">84% (Near Liquefaction)</span>
+              </div>
+              <input type="range" id="simMoistSlider" min="10" max="100" value="84" oninput="runAiSimulation()" style="width: 100%; accent-color: #10b981; cursor: pointer;"/>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px;">
+              <div>
+                <label style="display: block; font-size: 11px; color: #a8b4cc; text-transform: uppercase; margin-bottom: 4px;">Hill Slope Angle</label>
+                <select id="simSlopeSelect" onchange="runAiSimulation()" style="width: 100%; background: #0d1120; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 12px; color: white; font-size: 13px;">
+                  <option value="28">28° — Gentle Hill Slope</option>
+                  <option value="38">38° — Moderate Ridge</option>
+                  <option value="48" selected>48° — Steep Escarpment</option>
+                  <option value="55">55° — Critical Cliff Face</option>
+                </select>
+              </div>
+
+              <div>
+                <label style="display: block; font-size: 11px; color: #a8b4cc; text-transform: uppercase; margin-bottom: 4px;">Soil &amp; Bedrock Geology</label>
+                <select id="simSoilSelect" onchange="runAiSimulation()" style="width: 100%; background: #0d1120; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 12px; color: white; font-size: 13px;">
+                  <option value="Clay">Clay / Shale (Highly Unstable)</option>
+                  <option value="Laterite" selected>Laterite (Weathered Tropics)</option>
+                  <option value="Sandy Loam">Sandy Loam</option>
+                  <option value="Rocky">Rocky Basalt (Stable)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.3); border-radius: 10px; padding: 14px; display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <div style="font-weight: 700; color: #f0f4ff; font-size: 13px;">Simulate Seismic Tremor (Richter 5.1)</div>
+                <div style="font-size: 11px; color: #a8b4cc;">Induces instantaneous pore pressure surge and ground vibration</div>
+              </div>
+              <button class="btn btn-sm" onclick="triggerEarthquakeSimulation()" style="background: #ef4444; color: white; border: none; font-weight: 700;">
+                ⚡ Trigger Tremor
+              </button>
+            </div>
+          </div>
+
+          <!-- RIGHT: LIVE AI HAZARD OUTPUT GAUGE & PREDICTION -->
+          <div class="card" style="padding: 22px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+            <div style="font-size: 11px; color: #a8b4cc; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin-bottom: 12px;">
+              Landslide Susceptibility Index (LSI)
+            </div>
+
+            <!-- GAUGE -->
+            <div class="risk-gauge" id="simGauge">
+              <div style="font-family: 'Rajdhani', sans-serif; font-size: 44px; font-weight: 700; color: #ef4444; line-height: 1;" id="simScoreDisplay">84</div>
+              <div style="font-size: 10px; color: #f87171; font-weight: 700; text-transform: uppercase; margin-top: 2px;" id="simLevelDisplay">CRITICAL RISK</div>
+            </div>
+
+            <!-- PREDICTED FAILURE TIME -->
+            <div style="margin-top: 20px; background: rgba(0,0,0,0.4); border-radius: 10px; padding: 12px 18px; width: 100%;">
+              <div style="font-size: 11px; color: #a8b4cc;">Predicted Time to Slope Failure:</div>
+              <div style="font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 700; color: #f87171; margin: 2px 0;" id="simTimeDisplay">
+                ⚡ ~3.8 Hours (Imminent Risk)
+              </div>
+              <div style="font-size: 11px; color: #a8b4cc;">Recommended Action: Immediate Red Alert Evacuation of Downslope Settlements</div>
+            </div>
+
+            <!-- FACTOR WEIGHT BREAKDOWN -->
+            <div style="margin-top: 16px; width: 100%; text-align: left; font-size: 11px; color: #a8b4cc;">
+              <div style="display: flex; justify-content: space-between; padding: 3px 0;">
+                <span>Rainfall Contribution (Weight 0.28):</span>
+                <span id="wtRain" style="color: #60a5fa; font-weight: 600;">88 / 100</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding: 3px 0;">
+                <span>Soil Moisture (Weight 0.22):</span>
+                <span id="wtMoist" style="color: #34d399; font-weight: 600;">84 / 100</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding: 3px 0;">
+                <span>Slope Angle (Weight 0.20):</span>
+                <span id="wtSlope" style="color: #f59e0b; font-weight: 600;">80 / 100</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding: 3px 0;">
+                <span>Geology &amp; Seismic Proximity (0.30):</span>
+                <span id="wtGeo" style="color: #ef4444; font-weight: 600;">85 / 100</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 3: EMERGENCY EVACUATION HUB -->
+      <!-- ========================================================================= -->
+      <div id="sectionAlerts" style="display: none;">
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px;">
+          
+          <!-- INCIDENT COMMAND & BROADCAST FORM -->
+          <div class="card" style="padding: 20px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+              <h3 style="font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: #f0f4ff;">🚨 SDRF / NDMA Citizen Emergency Dispatch</h3>
+              <span class="ner-badge" style="background:#ef4444; color:white;">RED ALERT BROADCAST</span>
+            </div>
+
+            <div style="margin-bottom: 14px;">
+              <label style="display: block; font-size: 11px; color: #a8b4cc; text-transform: uppercase; margin-bottom: 4px;">Target Danger Sector</label>
+              <select id="alertSectorSelect" style="width: 100%; background: #0d1120; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 12px; color: white; font-size: 13px;">
+                <option value="Haflong">Haflong &amp; NH-54 Corridor — Dima Hasao, Assam (34,000 residents)</option>
+                <option value="Cherrapunji">Cherrapunji &amp; Sohra Valley — Meghalaya (12,000 residents)</option>
+                <option value="Mangan">Mangan &amp; Teesta Basin — North Sikkim (10,000 residents)</option>
+                <option value="Aizawl">Aizawl West Slope Settlement — Mizoram (95,000 residents)</option>
+              </select>
+            </div>
+
+            <div style="margin-bottom: 14px;">
+              <label style="display: block; font-size: 11px; color: #a8b4cc; text-transform: uppercase; margin-bottom: 4px;">Simulated Broadcast Message</label>
+              <textarea id="alertMessageText" rows="4" style="width: 100%; background: #0d1120; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 10px; color: white; font-size: 12px; font-family: monospace;">[URGENT EVACUATION BULLETIN - NDMA/SDRF]
+High probability of major debris flow along NH-54 sector within next 3 to 6 hours due to continuous 210mm rainfall. All residents of Haflong Lower Ridge are instructed to move immediately to Government Higher Secondary Relief Shelter. Avoid NH-54.</textarea>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+              <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #a8b4cc;">
+                <input type="checkbox" checked/> SMS Emergency Push (Cell Broadcast)
+              </label>
+              <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #a8b4cc;">
+                <input type="checkbox" checked/> WhatsApp Community Alerts
+              </label>
+              <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #a8b4cc;">
+                <input type="checkbox" checked/> District Siren Triggers
+              </label>
+            </div>
+
+            <button onclick="dispatchEmergencyBroadcast()" class="btn btn-primary" style="width: 100%; background: linear-gradient(135deg, #ef4444, #b91c1c); border: none; padding: 12px; font-size: 14px; font-weight: 700;">
+              🚀 Transmit Emergency Multi-Channel Broadcast
+            </button>
+          </div>
+
+          <!-- MOCK CITIZEN PHONE PREVIEW -->
+          <div class="card" style="padding: 20px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px; display: flex; flex-direction: column; align-items: center;">
+            <div style="font-size: 12px; color: #a8b4cc; margin-bottom: 12px; text-transform: uppercase; font-weight: 600;">Citizen Handset Cell Broadcast Preview</div>
+            
+            <div style="width: 280px; background: #000; border: 4px solid #333; border-radius: 24px; padding: 16px; box-shadow: 0 16px 40px rgba(0,0,0,0.8); position: relative;">
+              <div style="width: 60px; height: 4px; background: #555; border-radius: 2px; margin: 0 auto 14px;"></div>
+              
+              <div style="background: rgba(239,68,68,0.25); border: 1px solid #ef4444; border-radius: 12px; padding: 12px; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 6px; color: #ef4444; font-weight: 700; font-size: 11px; text-transform: uppercase;">
+                  <span>⚠️ EMERGENCY ALERT</span>
+                </div>
+                <div style="font-size: 11px; color: #fff; margin-top: 6px; line-height: 1.4;" id="phoneAlertContent">
+                  High probability of debris flow in Haflong sector. Evacuate to Gov HSS Relief Shelter immediately.
+                </div>
+                <div style="font-size: 9px; color: #a8b4cc; margin-top: 8px; text-align: right;">NDMA-SDRF-NER &bull; Just Now</div>
+              </div>
+
+              <div style="text-align: center; font-size: 10px; color: #5a6478;">Govt of India Wireless Emergency System</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 4: ROAD CONNECTIVITY & DETOUR ROUTER -->
+      <!-- ========================================================================= -->
+      <div id="sectionRoads" style="display: none;">
+        <div class="card" style="padding: 20px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px;">
+          <h3 style="font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: #f0f4ff; margin-bottom: 14px;">
+            🛣️ Strategic Highway Corridors &amp; Landslide Blockage Status
+          </h3>
+          <div id="roadListContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px;">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 5: HISTORICAL GSI DISASTERS -->
+      <!-- ========================================================================= -->
+      <div id="sectionHistorical" style="display: none;">
+        <div class="card" style="padding: 20px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+            <h3 style="font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: #f0f4ff;">
+              📜 Geological Survey of India (GSI) Historical Landslide Repository
+            </h3>
+            <span class="ner-badge" style="background:#10b981; color:#0d1120;">94.2% AI ACCURACY (AUC)</span>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+              <thead>
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); text-align: left; color: #a8b4cc;">
+                  <th style="padding: 10px;">Date</th>
+                  <th style="padding: 10px;">Location &amp; State</th>
+                  <th style="padding: 10px;">Severity</th>
+                  <th style="padding: 10px;">Impact</th>
+                  <th style="padding: 10px;">Description</th>
+                </tr>
+              </thead>
+              <tbody id="historicalTableBody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- JAVASCRIPT LOGIC -->
+<script>
+let map = null;
+let zoneMarkers = [];
+let audioContext = null;
+let sirenOscillator = null;
+let isSirenPlaying = false;
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  initMap();
+  populateQuickZoneSelector();
+  renderRoads();
+  renderHistorical();
+  runAiSimulation();
+});
+
+// Switch Tabs
+function switchNerTab(tabId) {
+  const tabs = ['map', 'simulation', 'alerts', 'roads', 'historical'];
+  tabs.forEach(t => {
+    const sec = document.getElementById('section' + t.charAt(0).toUpperCase() + t.slice(1));
+    const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
+    if (sec) sec.style.display = (t === tabId) ? 'block' : 'none';
+    if (btn) {
+      if (t === tabId) btn.classList.add('active');
+      else btn.classList.remove('active');
+    }
+  });
+
+  if (tabId === 'map' && map) {
+    setTimeout(() => { map.invalidateSize(); }, 200);
+  }
+}
+
+// Leaflet Map Init
+function initMap() {
+  const mapEl = document.getElementById('nerMap');
+  if (!mapEl) return;
+
+  // Center on North-East India
+  map = L.map('nerMap').setView([25.8, 93.0], 7);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; CartoDB &copy; OpenStreetMap',
+    maxZoom: 18
+  }).addTo(map);
+
+  // Render Zones from data.js
+  const zones = window.DataModule ? window.DataModule.NER_ZONES : [];
+  zones.forEach(zone => {
+    // Calculate risk
+    const score = window.AIEngine ? window.AIEngine.calculateRiskScore(zone) : 65;
+    zone.riskScore = score;
+    let color = '#10b981';
+    if (score >= 80) color = '#ef4444';
+    else if (score >= 60) color = '#f97316';
+    else if (score >= 40) color = '#f59e0b';
+
+    const circle = L.circleMarker([zone.lat, zone.lng], {
+      radius: score > 75 ? 12 : 9,
+      fillColor: color,
+      color: '#fff',
+      weight: 1.5,
+      opacity: 0.9,
+      fillOpacity: 0.75
+    }).addTo(map);
+
+    circle.bindPopup(`
+      <div style="font-family:'Inter',sans-serif; color:#fff; min-width:180px;">
+        <div style="font-weight:700; font-size:14px; color:#f0f4ff;">${zone.name} (${zone.state})</div>
+        <div style="font-size:11px; color:#a8b4cc; margin-top:2px;">Elevation: ${zone.elevation}m &bull; Slope: ${zone.slope}°</div>
+        <hr style="border:none; border-top:1px solid rgba(255,255,255,0.15); margin:6px 0;"/>
+        <div style="display:flex; justify-content:space-between; font-size:12px;">
+          <span>Risk Index:</span>
+          <strong style="color:${color};">${score} / 100</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:11px; margin-top:2px;">
+          <span>Rainfall:</span>
+          <span>${zone.rainfall} mm/day</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:11px; margin-top:2px;">
+          <span>Soil Moisture:</span>
+          <span>${zone.soilMoisture}%</span>
+        </div>
+        <div style="margin-top:8px;">
+          <button onclick="inspectSelectedZone('${zone.id}')" style="width:100%; background:${color}; border:none; border-radius:4px; padding:4px 8px; color:#0d1120; font-weight:700; font-size:11px; cursor:pointer;">Inspect Telemetry</button>
+        </div>
+      </div>
+    `);
+
+    circle.on('click', () => {
+      inspectSelectedZone(zone.id);
+    });
+
+    zoneMarkers.push({ id: zone.id, name: zone.name, marker: circle, lat: zone.lat, lng: zone.lng });
+  });
+}
+
+function jumpToZone(zoneName) {
+  const item = zoneMarkers.find(m => m.name.toLowerCase() === zoneName.toLowerCase());
+  if (item && map) {
+    map.setView([item.lat, item.lng], 10, { animate: true });
+    item.marker.openPopup();
+    inspectSelectedZone(item.id);
+  }
+}
+
+function populateQuickZoneSelector() {
+  const sel = document.getElementById('quickZoneSelect');
+  if (!sel || !window.DataModule) return;
+  sel.innerHTML = '<option value="">Select a Monitored Zone...</option>';
+  window.DataModule.NER_ZONES.forEach(z => {
+    sel.innerHTML += `<option value="${z.id}">${z.name} — ${z.state} (${z.slope}° slope)</option>`;
+  });
+}
+
+function inspectSelectedZone(zoneId) {
+  if (!window.DataModule) return;
+  const zone = window.DataModule.NER_ZONES.find(z => z.id === zoneId);
+  if (!zone) return;
+
+  const score = window.AIEngine ? window.AIEngine.calculateRiskScore(zone) : 70;
+  let level = 'LOW';
+  let badgeClass = 'risk-pill-low';
+  if (score >= 80) { level = 'CRITICAL'; badgeClass = 'risk-pill-critical'; }
+  else if (score >= 60) { level = 'HIGH'; badgeClass = 'risk-pill-high'; }
+  else if (score >= 40) { level = 'MODERATE'; badgeClass = 'risk-pill-moderate'; }
+
+  document.getElementById('inspectBadge').className = 'ner-badge ' + badgeClass;
+  document.getElementById('inspectBadge').textContent = `${level} RISK (${score}/100)`;
+
+  const sensorsInZone = window.DataModule.SENSORS.filter(s => s.zoneId === zone.id);
+
+  let sensorHtml = '';
+  sensorsInZone.forEach(s => {
+    sensorHtml += `
+      <div class="sensor-item">
+        <div>
+          <div style="font-weight:700; font-size:12px; color:#f0f4ff;">${s.type.replace('_', ' ').toUpperCase()}</div>
+          <div style="font-size:10px; color:#a8b4cc;">ID: ${s.id} &bull; Batt: ${s.battery}%</div>
+        </div>
+        <span style="font-size:10px; padding:2px 6px; border-radius:4px; font-weight:700; background:${s.status==='active'?'rgba(16,185,129,0.2)':'rgba(239,68,68,0.2)'}; color:${s.status==='active'?'#34d399':'#f87171'};">
+          ${s.status.toUpperCase()}
+        </span>
+      </div>
+    `;
+  });
+
+  document.getElementById('zoneInspectContent').innerHTML = `
+    <div style="margin-bottom:12px;">
+      <div style="font-family:'Rajdhani',sans-serif; font-size:20px; font-weight:700; color:#f0f4ff;">${zone.name}</div>
+      <div style="font-size:12px; color:#a8b4cc;">${zone.state} &bull; Population at Risk: <strong>${zone.population.toLocaleString('en-IN')}</strong></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; font-size:11px;">
+      <div style="background:rgba(0,0,0,0.3); padding:8px; border-radius:6px;">
+        <div style="color:#a8b4cc;">Rainfall (24h)</div>
+        <div style="font-weight:700; font-size:14px; color:#60a5fa;">${zone.rainfall} mm</div>
+      </div>
+      <div style="background:rgba(0,0,0,0.3); padding:8px; border-radius:6px;">
+        <div style="color:#a8b4cc;">Soil Moisture</div>
+        <div style="font-weight:700; font-size:14px; color:#34d399;">${zone.soilMoisture}%</div>
+      </div>
+      <div style="background:rgba(0,0,0,0.3); padding:8px; border-radius:6px;">
+        <div style="color:#a8b4cc;">Slope Angle</div>
+        <div style="font-weight:700; font-size:14px; color:#f59e0b;">${zone.slope}° (${zone.soilType})</div>
+      </div>
+      <div style="background:rgba(0,0,0,0.3); padding:8px; border-radius:6px;">
+        <div style="color:#a8b4cc;">Historical Landslides</div>
+        <div style="font-weight:700; font-size:14px; color:#ef4444;">${zone.historicalCount} recorded</div>
+      </div>
+    </div>
+
+    <div style="font-size:11px; text-transform:uppercase; color:#a8b4cc; font-weight:700; margin-bottom:6px;">
+      Connected IoT Sensors (${sensorsInZone.length})
+    </div>
+    ${sensorHtml || '<div style="font-size:11px; color:#a8b4cc;">No sensors active in this node.</div>'}
+
+    <div style="margin-top:14px; display:flex; gap:8px;">
+      <button class="btn btn-sm btn-outline" onclick="triggerAlertFromZone('${zone.name}')" style="flex:1; border-color:#ef4444; color:#f87171;">Issue Evacuation</button>
+      <button class="btn btn-sm btn-outline" onclick="triggerAgriSync('${zone.name}')" style="flex:1; border-color:#10b981; color:#34d399;">🌾 Agri PMFBY Sync</button>
+    </div>
+  `;
+}
+
+function triggerAlertFromZone(zoneName) {
+  switchNerTab('alerts');
+  document.getElementById('alertSectorSelect').value = zoneName;
+}
+
+function triggerAgriSync(zoneName) {
+  alert(`🌾 CROSS-PILLAR GEO-INTELLIGENCE SYNC:\n\nTriggered automated calamity relief notification for agricultural parcels registered under Kisan-Setu in ${zoneName}.\n\nPMFBY (Pradhan Mantri Fasal Bima Yojana) expedited claims docket initiated with Collector CALA & Agricultural Director.`);
+}
+
+// AI Simulation Sandbox
+function runAiSimulation() {
+  const rain = parseInt(document.getElementById('simRainSlider').value, 10);
+  const moist = parseInt(document.getElementById('simMoistSlider').value, 10);
+  const slope = parseInt(document.getElementById('simSlopeSelect').value, 10);
+  const soil = document.getElementById('simSoilSelect').value;
+
+  document.getElementById('simRainVal').textContent = `${rain} mm (${rain > 200 ? 'Torrential' : (rain > 100 ? 'Heavy' : 'Moderate')})`;
+  document.getElementById('simMoistVal').textContent = `${moist}% (${moist > 80 ? 'Liquefaction Risk' : 'Saturated'})`;
+
+  // Simulated AI scoring logic matching weights
+  const rainScore = Math.min(100, Math.round((rain / 300) * 100));
+  const moistScore = moist;
+  const slopeScore = Math.min(100, Math.round((slope / 60) * 100));
+  const soilScore = soil === 'Clay' ? 90 : (soil === 'Laterite' ? 80 : 50);
+
+  const finalScore = Math.round(
+    rainScore * 0.28 +
+    moistScore * 0.22 +
+    slopeScore * 0.20 +
+    soilScore * 0.30
+  );
+
+  document.getElementById('simScoreDisplay').textContent = finalScore;
+  document.getElementById('wtRain').textContent = `${rainScore} / 100`;
+  document.getElementById('wtMoist').textContent = `${moistScore} / 100`;
+  document.getElementById('wtSlope').textContent = `${slopeScore} / 100`;
+  document.getElementById('wtGeo').textContent = `${soilScore} / 100`;
+
+  const gauge = document.getElementById('simGauge');
+  const levelEl = document.getElementById('simLevelDisplay');
+  const timeEl = document.getElementById('simTimeDisplay');
+
+  if (finalScore >= 75) {
+    gauge.style.borderColor = '#ef4444';
+    levelEl.textContent = 'CRITICAL RISK';
+    levelEl.style.color = '#f87171';
+    timeEl.textContent = `⚡ ~${(10 - (finalScore - 75) * 0.3).toFixed(1)} Hours (Imminent Risk)`;
+    timeEl.style.color = '#ef4444';
+  } else if (finalScore >= 55) {
+    gauge.style.borderColor = '#f97316';
+    levelEl.textContent = 'HIGH RISK';
+    levelEl.style.color = '#fb923c';
+    timeEl.textContent = '⚠️ ~12 to 18 Hours Warning Window';
+    timeEl.style.color = '#f97316';
+  } else {
+    gauge.style.borderColor = '#10b981';
+    levelEl.textContent = 'STABLE SLOPE';
+    levelEl.style.color = '#34d399';
+    timeEl.textContent = '✔ No Collapse Detected (>48h Safe)';
+    timeEl.style.color = '#10b981';
+  }
+}
+
+function triggerEarthquakeSimulation() {
+  document.getElementById('simRainSlider').value = 240;
+  document.getElementById('simMoistSlider').value = 92;
+  runAiSimulation();
+  alert('🚨 SEISMIC TREMOR SIMULATED (Richter 5.1)!\n\nGround acceleration induced immediate pore pressure surge. Risk Score surged to Critical!');
+}
+
+// Emergency Broadcast
+function dispatchEmergencyBroadcast() {
+  const sector = document.getElementById('alertSectorSelect').value;
+  const msg = document.getElementById('alertMessageText').value;
+
+  document.getElementById('phoneAlertContent').textContent = msg.slice(0, 140) + '...';
+  alert(`📢 EMERGENCY BROADCAST SENT TO NDMA/SDRF COMMAND:\n\nTarget Sector: ${sector}\nMode: Cell Broadcast (SMS) + WhatsApp Bot + Wireless Siren\n\nNotification sent to 48,000 registered handsets in danger radius.`);
+}
+
+// Web Audio API Evacuation Siren
+function toggleAudioSiren() {
+  if (!isSirenPlaying) {
+    startSiren();
+  } else {
+    stopSiren();
+  }
+}
+
+function startSiren() {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    audioContext = new AudioCtx();
+    sirenOscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    sirenOscillator.type = 'sawtooth';
+    sirenOscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+
+    // Siren pitch modulation
+    sirenOscillator.frequency.linearRampToValueAtTime(880, audioContext.currentTime + 0.8);
+    sirenOscillator.frequency.linearRampToValueAtTime(440, audioContext.currentTime + 1.6);
+
+    gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+
+    sirenOscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    sirenOscillator.start();
+    isSirenPlaying = true;
+
+    document.getElementById('sirenBtn').classList.add('siren-active');
+    document.getElementById('sirenText').textContent = 'Stop Siren';
+  } catch (e) {
+    alert('Simulated Siren Playing (Audio restricted by browser policy)');
+    isSirenPlaying = true;
+    document.getElementById('sirenBtn').classList.add('siren-active');
+    document.getElementById('sirenText').textContent = 'Stop Siren';
+  }
+}
+
+function stopSiren() {
+  if (sirenOscillator) {
+    try { sirenOscillator.stop(); } catch(e){}
+  }
+  isSirenPlaying = false;
+  document.getElementById('sirenBtn').classList.remove('siren-active');
+  document.getElementById('sirenText').textContent = 'Evacuation Siren';
+}
+
+// Render Roads
+function renderRoads() {
+  const c = document.getElementById('roadListContainer');
+  if (!c || !window.DataModule) return;
+  c.innerHTML = '';
+
+  const roads = window.DataModule.ROAD_NETWORKS || [];
+  roads.forEach(r => {
+    let color = '#10b981';
+    let statusText = 'OPEN';
+    if (r.status === 'closed') { color = '#ef4444'; statusText = 'CLOSED / BLOCKED'; }
+    else if (r.status === 'partial') { color = '#f59e0b'; statusText = 'PARTIAL / ONE LANE'; }
+
+    c.innerHTML += `
+      <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:10px; padding:14px; border-left:4px solid ${color};">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong style="color:#f0f4ff; font-size:14px;">${r.name}</strong>
+          <span style="font-size:10px; font-weight:700; color:${color}; text-transform:uppercase;">${statusText}</span>
+        </div>
+        <div style="font-size:11px; color:#a8b4cc; margin:4px 0;">Highway Code: ${r.highway} &bull; State: ${r.state}</div>
+        <div style="font-size:11px; color:#f0f4ff; margin-top:6px;">Detour: <span style="color:#34d399;">${r.detour}</span></div>
+      </div>
+    `;
+  });
+}
+
+// Render Historical
+function renderHistorical() {
+  const t = document.getElementById('historicalTableBody');
+  if (!t || !window.DataModule) return;
+  t.innerHTML = '';
+
+  const events = window.DataModule.HISTORICAL_EVENTS || [];
+  events.slice(0, 10).forEach(ev => {
+    let sevColor = ev.severity === 'critical' ? '#ef4444' : (ev.severity === 'high' ? '#f97316' : '#f59e0b');
+    t.innerHTML += `
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+        <td style="padding:10px; font-family:monospace; color:#a8b4cc;">${ev.date}</td>
+        <td style="padding:10px; font-weight:600; color:#f0f4ff;">${ev.location}, ${ev.state}</td>
+        <td style="padding:10px;"><span style="color:${sevColor}; font-weight:700; text-transform:uppercase;">${ev.severity}</span></td>
+        <td style="padding:10px; color:#f87171;">${ev.casualties} dead &bull; ${ev.displaced} displaced</td>
+        <td style="padding:10px; color:#a8b4cc;">${ev.description}</td>
+      </tr>
+    `;
+  });
+}
+
+// Multilingual switcher
+function changeLanguage(lang) {
+  if (!window.I18n) return;
+  alert(`🌐 Language switched to ${lang.toUpperCase()}. Localized terminology updated for North-Eastern field teams.`);
+}
+</script>
+</body>
+</html>

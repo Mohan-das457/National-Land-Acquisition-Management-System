@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PRITHVI-SETU 360 – Unified National Multi-Application Command Suite</title>
+  <meta name="description" content="Unified National Multi-Application Command Suite integrating NLAMS (Land Acquisition), Kisan-Setu (Farmer D2C & Mandi MSP), and Drishti-NER (Landslide Early Warning & Risk Monitoring)." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* Reset & Base */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #080c18;
+      font-family: 'Inter', sans-serif;
+      color: #f0f4ff;
+    }
+
+    /* Master Top Shell */
+    .master-header {
+      height: 56px;
+      background: rgba(8, 12, 24, 0.96);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      position: relative;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Brand Logo */
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 260px;
+    }
+    .brand-badge {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #ff9900, #138808);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(255, 153, 0, 0.35);
+      flex-shrink: 0;
+    }
+    .brand-text {
+      line-height: 1.15;
+    }
+    .brand-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .brand-version {
+      font-size: 10px;
+      background: rgba(255, 153, 0, 0.2);
+      border: 1px solid rgba(255, 153, 0, 0.4);
+      color: #ffb84d;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+    .brand-sub {
+      font-size: 11px;
+      color: #7b8ba5;
+      font-weight: 500;
+    }
+
+    /* Master App Switcher Dock */
+    .app-switcher-dock {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 4px 6px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .app-tab {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
+      position: relative;
+      font-family: 'Inter', sans-serif;
+      text-decoration: none;
+    }
+    .app-tab:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #f8fafc;
+      transform: translateY(-1px);
+    }
+    .app-tab .tab-icon {
+      font-size: 15px;
+    }
+    .app-tab .tab-tag {
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    /* Specific Active App Themes */
+    .app-tab.active[data-app="nlams"] {
+      background: linear-gradient(135deg, rgba(255, 153, 0, 0.22), rgba(230, 138, 0, 0.12));
+      border: 1px solid rgba(255, 153, 0, 0.45);
+      color: #ffaa33;
+      box-shadow: 0 2px 12px rgba(255, 153, 0, 0.2);
+    }
+    .app-tab.active[data-app="nlams"] .tab-tag {
+      background: #ff9900;
+      color: #080c18;
+    }
+
+    .app-tab.active[data-app="kisan"] {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(5, 150, 105, 0.12));
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      color: #34d399;
+      box-shadow: 0 2px 12px rgba(16, 185, 129, 0.2);
+    }
+    .app-tab.active[data-app="kisan"] .tab-tag {
+      background: #10b981;
+      color: #080c18;
+    }
+
+    .app-tab.active[data-app="drishti"] {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.22), rgba(220, 38, 38, 0.12));
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      color: #f87171;
+      box-shadow: 0 2px 12px rgba(239, 68, 68, 0.2);
+    }
+    .app-tab.active[data-app="drishti"] .tab-tag {
+      background: #ef4444;
+      color: #ffffff;
+    }
+
+    .app-tab.active[data-app="deck"] {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(217, 119, 6, 0.12));
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      color: #fbbf24;
+      box-shadow: 0 2px 12px rgba(245, 158, 11, 0.2);
+    }
+    .app-tab.active[data-app="deck"] .tab-tag {
+      background: #f59e0b;
+      color: #080c18;
+    }
+
+    .app-tab.active[data-app="portal"] {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.22), rgba(14, 116, 144, 0.12));
+      border: 1px solid rgba(6, 182, 212, 0.45);
+      color: #38bdf8;
+      box-shadow: 0 2px 12px rgba(6, 182, 212, 0.2);
+    }
+    .app-tab.active[data-app="portal"] .tab-tag {
+      background: #06b6d4;
+      color: #080c18;
+    }
+
+    /* Right Controls */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .active-indicator {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 5px 11px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+    }
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulseAnim 2s infinite;
+    }
+    @keyframes pulseAnim {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
+    }
+
+    .icon-action-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .icon-action-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* NLAMS Quick Module Sub-Bar */
+    .module-sub-bar {
+      height: 38px;
+      background: #0b0f1d;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 4px;
+      overflow-x: auto;
+      z-index: 999;
+      transition: all 0.3s ease;
+    }
+    .sub-bar-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #ff9900;
+      font-weight: 700;
+      margin-right: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    .sub-item-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: #8da2c0;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+      transition: all 0.15s;
+      font-family: 'Inter', sans-serif;
+    }
+    .sub-item-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #ffffff;
+    }
+    .sub-item-btn.active {
+      background: rgba(255, 153, 0, 0.15);
+      border-color: rgba(255, 153, 0, 0.35);
+      color: #ffaa33;
+      font-weight: 600;
+    }
+
+    /* Main Multi-App Workspace */
+    .master-workspace {
+      width: 100%;
+      height: calc(100vh - 56px);
+      position: relative;
+      background: #080c18;
+    }
+    .master-workspace.has-sub-bar {
+      height: calc(100vh - 94px);
+    }
+
+    /* Viewport Frames */
+    .app-viewport {
+      width: 100%;
+      height: 100%;
+      border: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: none; /* Strictly single-active */
+      background: #080c18;
+    }
+    .app-viewport.active {
+      display: block; /* ONLY clicked application works and renders */
+      z-index: 10;
+    }
+
+    /* Shimmer Transition Loader */
+    .app-loader-overlay {
+      position: absolute;
+      inset: 0;
+      background: #080c18;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .app-loader-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .loader-spinner {
+      width: 44px;
+      height: 44px;
+      border: 3px solid rgba(255, 255, 255, 0.08);
+      border-top-color: #ff9900;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 14px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .loader-text {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #f0f4ff;
+      letter-spacing: 0.5px;
+    }
+    .loader-sub {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    /* Information / Explainer Drawer Modal */
+    .info-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .info-modal-backdrop.open {
+      display: flex;
+    }
+    .info-modal {
+      background: #0d1222;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 820px;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+      padding: 28px;
+      position: relative;
+    }
+    .info-modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .info-modal-close:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .brand-sub { display: none; }
+      .app-tab span.tab-title { display: none; }
+      .active-indicator span.status-desc { display: none; }
+    }
+    @media (max-width: 768px) {
+      .master-header { padding: 0 10px; }
+      .brand-section { min-width: auto; }
+      .app-switcher-dock { gap: 2px; padding: 2px; }
+      .app-tab { padding: 6px 9px; font-size: 11px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MASTER TOP HEADER (PERSISTENT MULTI-APP SWITCHER) -->
+  <header class="master-header">
+    <!-- Brand -->
+    <div class="brand-section">
+      <div class="brand-badge">P</div>
+      <div class="brand-text">
+        <div class="brand-title">
+          PRITHVI-SETU 360
+          <span class="brand-version">SIH 2026</span>
+        </div>
+        <div class="brand-sub">Unified National Decision &amp; Geohazard Platform</div>
+      </div>
+    </div>
+
+    <!-- Central Switcher Tabs (Clicking any activates ONLY that application) -->
+    <nav class="app-switcher-dock" aria-label="Application Switcher">
+      <button class="app-tab active" data-app="nlams" onclick="switchApplication('nlams')" title="SIH Problem Statement #26016: Real-Time Land Acquisition & Management System">
+        <span class="tab-icon">🏛️</span>
+        <span class="tab-title">NLAMS Land Acquisition</span>
+        <span class="tab-tag" style="background:#ff9900;color:#080c18;">PS #26016</span>
+      </button>
+
+      <button class="app-tab" data-app="kisan" onclick="switchApplication('kisan')" title="SIH Problem Statement #26033: Farmer Direct-to-Consumer Platform & MSP Mandi E-Gate">
+        <span class="tab-icon">🌾</span>
+        <span class="tab-title">Kisan-Setu Farmer D2C</span>
+        <span class="tab-tag" style="background:#10b981;color:#080c18;">PS #26033</span>
+      </button>
+
+      <button class="app-tab" data-app="drishti" onclick="switchApplication('drishti')" title="AI Landslide Risk Monitoring & Early Warning Network for North Eastern Region">
+        <span class="tab-icon">⛰️</span>
+        <span class="tab-title">Drishti-NER Landslide AI</span>
+        <span class="tab-tag" style="background:#ef4444;color:#fff;">AI/ML</span>
+      </button>
+
+      <button class="app-tab" data-app="deck" onclick="switchApplication('deck')" title="Grand Finale Review Presentation & Architecture Pitch Deck">
+        <span class="tab-icon">📽️</span>
+        <span class="tab-title">SIH Review Deck</span>
+        <span class="tab-tag" style="background:#f59e0b;color:#080c18;">JURY</span>
+      </button>
+
+      <button class="app-tab" data-app="portal" onclick="switchApplication('portal')" title="Citizen Public Portal & Land Khasra Registry">
+        <span class="tab-icon">🌐</span>
+        <span class="tab-title">Public Portal</span>
+        <span class="tab-tag" style="background:#06b6d4;color:#080c18;">CITIZEN</span>
+      </button>
+    </nav>
+
+    <!-- Right Controls -->
+    <div class="header-actions">
+      <!-- Live Status Pill -->
+      <div class="active-indicator" id="masterStatusPill">
+        <div class="pulse-dot" id="masterPulseDot"></div>
+        <span id="masterStatusText">NLAMS Active</span>
+        <span class="status-desc" id="masterStatusDesc" style="color:#64748b;font-weight:400;">&bull; Sec 25 Radar Live</span>
+      </div>
+
+      <!-- Persona Dropdown -->
+      <select id="masterPersonaSelect" onchange="syncMasterPersona(this.value)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#f0f4ff;padding:5px 8px;border-radius:8px;font-size:11.5px;font-weight:600;outline:none;cursor:pointer;">
+        <option value="central">🏛️ Central Ministry (Dr. Ramesh Kumar IAS)</option>
+        <option value="farmer">🌾 Ramu Gowda (Verified Farmer, TN)</option>
+        <option value="disaster_ner">🚨 Dr. Anurag Phukan (Disaster Warning Officer)</option>
+        <option value="district_tn">⚖️ CALA Tiruvallur (Dr. Alby John IAS)</option>
+        <option value="state_tn">🏢 State Govt (Tamil Nadu Secretariat)</option>
+        <option value="district_ap">🌾 CALA Guntur (Shri M. Venugopal Reddy IAS)</option>
+        <option value="state_ap">🏢 State Govt (Andhra Pradesh Secretariat)</option>
+        <option value="surveyor_tn">📐 Cadastral Surveyor (K. Soundararajan)</option>
+      </select>
+
+      <!-- Reload Active App -->
+      <button class="icon-action-btn" onclick="reloadActiveApp()" title="Reload Active Application">
+        🔄
+      </button>
+
+      <!-- Open in New Window -->
+      <button class="icon-action-btn" onclick="popoutActiveApp()" title="Open Active Application in Dedicated Window">
+        ↗️
+      </button>
+
+      <!-- Fullscreen Toggle -->
+      <button class="icon-action-btn" onclick="toggleMasterFullscreen()" title="Toggle Fullscreen">
+        ⛶
+      </button>
+
+      <!-- Architecture Explainer Modal -->
+      <button class="icon-action-btn" onclick="openMasterInfoModal()" title="View System Architecture & Problem Statement Mapping">
+        ℹ️
+      </button>
+    </div>
+  </header>
+
+  <!-- SUB-BAR FOR NLAMS MODULES (Dynamically visible when NLAMS is active) -->
+  <div class="module-sub-bar" id="nlamsSubBar">
+    <div class="sub-bar-title">
+      <span>🏛️ NLAMS MODULES:</span>
+    </div>
+    <button class="sub-item-btn active" data-sub="dashboard" onclick="switchNlamsModule('dashboard.html', this)">
+      <span>📊</span> Command Dashboard
+    </button>
+    <button class="sub-item-btn" data-sub="gis-map" onclick="switchNlamsModule('gis-map.html', this)">
+      <span>🗺️</span> Cadastral GIS Corridors (TN &amp; AP)
+    </button>
+    <button class="sub-item-btn" data-sub="workflow" onclick="switchNlamsModule('workflow.html', this)">
+      <span>🔄</span> 6-Stage Statutory Workflow &amp; DSC e-Sign
+    </button>
+    <button class="sub-item-btn" data-sub="projects" onclick="switchNlamsModule('projects.html', this)">
+      <span>🏗️</span> Projects Pipeline (2,847)
+    </button>
+    <button class="sub-item-btn" data-sub="compensation" onclick="switchNlamsModule('compensation.html', this)">
+      <span>💰</span> DBT Compensation Tracker (100% Solatium)
+    </button>
+    <button class="sub-item-btn" data-sub="documents" onclick="switchNlamsModule('documents.html', this)">
+      <span>📁</span> Legal Document Vault
+    </button>
+    <button class="sub-item-btn" data-sub="reports" onclick="switchNlamsModule('reports.html', this)">
+      <span>📈</span> MIS Reports &amp; AI Dispute Radar
+    </button>
+  </div>
+
+  <!-- MASTER WORKSPACE CONTAINERS (STRICT SINGLE-ACTIVE ISOLATION) -->
+  <main class="master-workspace has-sub-bar" id="masterWorkspace">
+
+    <!-- Transition Shimmer Overlay -->
+    <div class="app-loader-overlay" id="appLoader">
+      <div class="loader-spinner" id="loaderSpinner"></div>
+      <div class="loader-text" id="loaderTitle">Activating Application...</div>
+      <div class="loader-sub" id="loaderSub">Mounting isolated runtime environment</div>
+    </div>
+
+    <!-- Application 1: NLAMS (National Land Acquisition & Management System) -->
+    <iframe
+      id="viewport-nlams"
+      class="app-viewport active"
+      src="dashboard.html"
+      title="NLAMS Land Acquisition Management System"
+      loading="eager"
+      allow="geolocation; camera; microphone">
+    </iframe>
+
+    <!-- Application 2: Kisan-Setu (Farmer D2C Platform & Mandi MSP E-Gate) -->
+    <iframe
+      id="viewport-kisan"
+      class="app-viewport"
+      data-src="farmer-d2c.html"
+      title="Kisan-Setu Farmer D2C Platform & Procurement Scheduler"
+      loading="lazy"
+      allow="geolocation">
+    </iframe>
+
+    <!-- Application 3: Drishti-NER (AI Early Warning & Landslide Risk Monitoring) -->
+    <iframe
+      id="viewport-drishti"
+      class="app-viewport"
+      data-src="landslide-ner.html"
+      title="Drishti-NER Landslide Early Warning & Geo-Hazard Monitoring"
+      loading="lazy"
+      allow="geolocation">
+    </iframe>
+
+    <!-- Application 4: SIH Presentation Deck -->
+    <iframe
+      id="viewport-deck"
+      class="app-viewport"
+      data-src="presentation.html"
+      title="SIH Grand Finale Presentation Deck"
+      loading="lazy">
+    </iframe>
+
+    <!-- Application 5: Citizen Public Portal -->
+    <iframe
+      id="viewport-portal"
+      class="app-viewport"
+      data-src="index.html"
+      title="National Public Portal & Land Khasra Registry"
+      loading="lazy">
+    </iframe>
+
+  </main>
+
+  <!-- ARCHITECTURE & SYSTEM EXPLAINER MODAL -->
+  <div class="info-modal-backdrop" id="infoModalBackdrop" onclick="if(event.target===this)closeMasterInfoModal()">
+    <div class="info-modal">
+      <button class="info-modal-close" onclick="closeMasterInfoModal()">✕</button>
+
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#ff9900,#138808);display:flex;align-items:center;justify-content:center;font-size:20px;">🌐</div>
+        <div>
+          <h2 style="font-family:'Rajdhani',sans-serif;font-size:22px;color:#fff;margin:0;">PRITHVI-SETU 360 &bull; Unified Super-App Architecture</h2>
+          <div style="font-size:12px;color:#34d399;font-weight:600;">Smart India Hackathon 2026 &bull; Multi-Problem Statement Convergence</div>
+        </div>
+      </div>
+
+      <p style="font-size:13.5px;color:#94a3b8;line-height:1.6;margin-bottom:20px;">
+        This unified platform bundles all government digital transformation systems into a single-pane-of-glass architecture. 
+        Each application operates in complete runtime isolation to prevent memory leaks and script collisions, while allowing instantaneous switching with state preservation.
+      </p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+        <div style="background:rgba(255,153,0,0.06);border:1px solid rgba(255,153,0,0.25);border-radius:12px;padding:16px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="font-size:18px;">🏛️</span>
+            <strong style="color:#ffaa33;font-size:14px;">NLAMS (Problem #26016)</strong>
+          </div>
+          <p style="font-size:12px;color:#cbd5e1;line-height:1.5;margin:0;">
+            Ministry of Rural Development (DoLR). Solves infrastructure project stalling under the RFCTLARR Act 2013 with Section 25 countdown alerts, sub-meter cadastral GIS maps (CPRR TN & Amaravati AP), and SHA-256 DSC digital e-Sign.
+          </p>
+        </div>
+
+        <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.25);border-radius:12px;padding:16px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="font-size:18px;">🌾</span>
+            <strong style="color:#34d399;font-size:14px;">Kisan-Setu (Problem #26033)</strong>
+          </div>
+          <p style="font-size:12px;color:#cbd5e1;line-height:1.5;margin:0;">
+            Farmer Direct-to-Consumer & APMC Mandi MSP Procurement. Direct electronic contract negotiations eliminating predatory middlemen (+31.4% farmer realization) and automated Mandi gate pass scheduling.
+          </p>
+        </div>
+
+        <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.25);border-radius:12px;padding:16px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="font-size:18px;">⛰️</span>
+            <strong style="color:#f87171;font-size:14px;">Drishti-NER (Geohazard AI)</strong>
+          </div>
+          <p style="font-size:12px;color:#cbd5e1;line-height:1.5;margin:0;">
+            NDMA & SDRF Landslide Early Warning for 8 North Eastern States. Physics-informed ML risk simulation, 50+ IoT telemetry sensors (tiltmeters, rain gauges), and CAP-compliant emergency siren broadcasts.
+          </p>
+        </div>
+
+        <div style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.25);border-radius:12px;padding:16px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="font-size:18px;">📽️</span>
+            <strong style="color:#fbbf24;font-size:14px;">Grand Finale Review Deck</strong>
+          </div>
+          <p style="font-size:12px;color:#cbd5e1;line-height:1.5;margin:0;">
+            SIH 2026 Executive Jury Presentation. 15-slide interactive slide deck detailing statutory compliance, technological innovations, architecture, and multi-tier user workflows.
+          </p>
+        </div>
+      </div>
+
+      <div style="text-align:right;">
+        <button class="btn-primary" onclick="closeMasterInfoModal()" style="padding:8px 20px;font-size:13px;background:linear-gradient(135deg,#ff9900,#e68a00);border:none;border-radius:8px;color:#fff;cursor:pointer;font-weight:600;">
+          Close &amp; Return to Workspace
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== MASTER APPLICATION CONTROLLER =====
+    const APP_METADATA = {
+      nlams: {
+        id: 'nlams',
+        name: 'NLAMS Land Acquisition',
+        color: '#ff9900',
+        pulseColor: '#ff9900',
+        statusText: 'NLAMS Active',
+        statusDesc: '• Sec 25 Radar Live (2,847 Projects)',
+        viewportId: 'viewport-nlams',
+        defaultUrl: 'dashboard.html',
+        hasSubBar: true
+      },
+      kisan: {
+        id: 'kisan',
+        name: 'Kisan-Setu Farmer D2C',
+        color: '#10b981',
+        pulseColor: '#10b981',
+        statusText: 'Kisan-Setu Active',
+        statusDesc: '• ₹28.4 Cr Traded • 14.8k Mandi Passes',
+        viewportId: 'viewport-kisan',
+        defaultUrl: 'farmer-d2c.html',
+        hasSubBar: false
+      },
+      drishti: {
+        id: 'drishti',
+        name: 'Drishti-NER Landslide AI',
+        color: '#ef4444',
+        pulseColor: '#ef4444',
+        statusText: 'Drishti-NER Active',
+        statusDesc: '• 31 Geo-Zones Monitored • Live Telemetry',
+        viewportId: 'viewport-drishti',
+        defaultUrl: 'landslide-ner.html',
+        hasSubBar: false
+      },
+      deck: {
+        id: 'deck',
+        name: 'SIH Review Deck',
+        color: '#f59e0b',
+        pulseColor: '#f59e0b',
+        statusText: 'Review Deck Active',
+        statusDesc: '• Jury Slide Showcase • Problem Statement',
+        viewportId: 'viewport-deck',
+        defaultUrl: 'presentation.html',
+        hasSubBar: false
+      },
+      portal: {
+        id: 'portal',
+        name: 'Citizen Public Portal',
+        color: '#06b6d4',
+        pulseColor: '#06b6d4',
+        statusText: 'Public Portal Active',
+        statusDesc: '• Khasra Land Records • Citizen Access',
+        viewportId: 'viewport-portal',
+        defaultUrl: 'index.html',
+        hasSubBar: false
+      }
+    };
+
+    let activeAppId = 'nlams';
+    let currentNlamsModule = 'dashboard.html';
+
+    // Switch Application: Strictly makes clicked application ONLY one that is active
+    function switchApplication(appId, targetSubUrl) {
+      if (!APP_METADATA[appId]) return;
+      activeAppId = appId;
+      const meta = APP_METADATA[appId];
+
+      // Update URL hash for deep-linking
+      window.location.hash = 'app=' + appId;
+
+      // 1. Update Switcher Tabs UI
+      document.querySelectorAll('.app-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-app') === appId);
+      });
+
+      // 2. Manage Sub-Bar Visibility
+      const subBar = document.getElementById('nlamsSubBar');
+      const workspace = document.getElementById('masterWorkspace');
+      if (meta.hasSubBar) {
+        subBar.style.display = 'flex';
+        workspace.classList.add('has-sub-bar');
+      } else {
+        subBar.style.display = 'none';
+        workspace.classList.remove('has-sub-bar');
+      }
+
+      // 3. Update Status Pill
+      const statusText = document.getElementById('masterStatusText');
+      const statusDesc = document.getElementById('masterStatusDesc');
+      const pulseDot = document.getElementById('masterPulseDot');
+      statusText.textContent = meta.statusText;
+      statusText.style.color = meta.color;
+      statusDesc.textContent = meta.statusDesc;
+      pulseDot.style.background = meta.pulseColor;
+      pulseDot.style.boxShadow = `0 0 8px ${meta.pulseColor}`;
+
+      // 4. Update Document Title
+      document.title = `${meta.name} | PRITHVI-SETU 360 Unified Grid`;
+
+      // 5. Manage Viewports (Strictly Single Active)
+      const targetViewport = document.getElementById(meta.viewportId);
+
+      // Lazy load URL if not yet initialized
+      if (targetViewport.getAttribute('data-src') && !targetViewport.src) {
+        showLoader(`Loading ${meta.name}...`, meta.color);
+        targetViewport.src = targetSubUrl || targetViewport.getAttribute('data-src');
+        targetViewport.onload = () => {
+          hideLoader();
+        };
+      } else if (targetSubUrl && targetViewport.src !== targetSubUrl) {
+        showLoader(`Navigating ${meta.name}...`, meta.color);
+        targetViewport.src = targetSubUrl;
+        targetViewport.onload = () => {
+          hideLoader();
+        };
+      }
+
+      // Hide all viewports and activate ONLY target
+      document.querySelectorAll('.app-viewport').forEach(vp => {
+        if (vp.id === meta.viewportId) {
+          vp.classList.add('active');
+        } else {
+          vp.classList.remove('active');
+        }
+      });
+
+      // Sync persona selection with app
+      syncPersonaForApp(appId);
+    }
+
+    // Switch sub-module inside NLAMS
+    function switchNlamsModule(url, btnElement) {
+      currentNlamsModule = url;
+      document.querySelectorAll('.sub-item-btn').forEach(btn => btn.classList.remove('active'));
+      if (btnElement) btnElement.classList.add('active');
+
+      const nlamsFrame = document.getElementById('viewport-nlams');
+      if (nlamsFrame) {
+        showLoader('Loading NLAMS Module...', '#ff9900');
+        nlamsFrame.src = url;
+        nlamsFrame.onload = () => hideLoader();
+      }
+    }
+
+    // Sync master persona across active application
+    function syncMasterPersona(roleId) {
+      try {
+        localStorage.setItem('nlams_active_role', roleId);
+        // Dispatch postMessage to active viewport if supported
+        const activeVp = document.querySelector('.app-viewport.active');
+        if (activeVp && activeVp.contentWindow) {
+          activeVp.contentWindow.postMessage({ type: 'SWITCH_ROLE', roleId: roleId }, '*');
+          if (activeVp.contentWindow.switchRole) {
+            activeVp.contentWindow.switchRole(roleId);
+          }
+        }
+      } catch (e) {
+        console.warn('Could not postMessage to iframe:', e);
+      }
+    }
+
+    function syncPersonaForApp(appId) {
+      const select = document.getElementById('masterPersonaSelect');
+      if (!select) return;
+      if (appId === 'kisan') {
+        select.value = 'farmer';
+      } else if (appId === 'drishti') {
+        select.value = 'disaster_ner';
+      } else if (appId === 'nlams') {
+        if (select.value === 'farmer' || select.value === 'disaster_ner') {
+          select.value = 'central';
+        }
+      }
+    }
+
+    // Shimmer Transition Overlay
+    function showLoader(titleText, color) {
+      const loader = document.getElementById('appLoader');
+      const title = document.getElementById('loaderTitle');
+      const spinner = document.getElementById('loaderSpinner');
+      title.textContent = titleText;
+      spinner.style.borderTopColor = color || '#ff9900';
+      loader.classList.add('visible');
+    }
+
+    function hideLoader() {
+      const loader = document.getElementById('appLoader');
+      setTimeout(() => {
+        loader.classList.remove('visible');
+      }, 200);
+    }
+
+    // Controls
+    function reloadActiveApp() {
+      const activeVp = document.querySelector('.app-viewport.active');
+      if (activeVp) {
+        showLoader('Refreshing application...', APP_METADATA[activeAppId]?.color);
+        activeVp.contentWindow.location.reload();
+        activeVp.onload = () => hideLoader();
+      }
+    }
+
+    function popoutActiveApp() {
+      const activeVp = document.querySelector('.app-viewport.active');
+      if (activeVp) {
+        window.open(activeVp.src, '_blank');
+      }
+    }
+
+    function toggleMasterFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    function openMasterInfoModal() {
+      document.getElementById('infoModalBackdrop').classList.add('open');
+    }
+
+    function closeMasterInfoModal() {
+      document.getElementById('infoModalBackdrop').classList.remove('open');
+    }
+
+    // Initialize on Load (Support #app=... hash routing)
+    window.addEventListener('DOMContentLoaded', () => {
+      const hash = window.location.hash;
+      let targetApp = 'nlams';
+      if (hash.includes('app=')) {
+        const parsed = hash.split('app=')[1].split('&')[0];
+        if (APP_METADATA[parsed]) {
+          targetApp = parsed;
+        }
+      }
+      switchApplication(targetApp);
+
+      // Listen for message from sub-frames to handle navigation requests
+      window.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'NAVIGATE_APP') {
+          switchApplication(event.data.appId, event.data.url);
+        }
+      });
+    });
+
+    // Keyboard Shortcuts: Alt+1..5 to instantly switch between applications
+    window.addEventListener('keydown', (e) => {
+      if (e.altKey) {
+        if (e.key === '1') switchApplication('nlams');
+        if (e.key === '2') switchApplication('kisan');
+        if (e.key === '3') switchApplication('drishti');
+        if (e.key === '4') switchApplication('deck');
+        if (e.key === '5') switchApplication('portal');
+      }
+    });
+  </script>
+</body>
+</html>
