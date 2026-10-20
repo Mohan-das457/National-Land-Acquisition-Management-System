@@ -219,9 +219,58 @@ function toggleUpload() {
   panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
 }
 
-function handleUpload() {
-  alert('Document uploaded successfully!\nFile indexed and available in the repository.\nAudit trail entry created.');
-  toggleUpload();
+async function handleUpload() {
+  const fileInput = document.getElementById('fileInput');
+  if (!fileInput.files || fileInput.files.length === 0) {
+    alert('Please select a file to upload to the secure vault.');
+    return;
+  }
+
+  const file = fileInput.files[0];
+  const typeSelect = document.querySelector('#uploadPanel select');
+  const projectInput = document.querySelector('#uploadPanel input[type="text"]');
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('title', file.name.replace(/\.[^/.]+$/, ""));
+  formData.append('category', typeSelect ? typeSelect.value : 'Gazette Notification');
+  formData.append('projectId', projectInput && projectInput.value ? projectInput.value : 'PRJ-TN-CPRR-02');
+  formData.append('accessLevel', 'internal');
+
+  try {
+    const token = localStorage.getItem('nlams_token');
+    const headers = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const res = await fetch('/api/v1/documents/upload', {
+      method: 'POST',
+      headers,
+      body: formData
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      alert(`🔒 DOCUMENT VAULTED & INDEXED!\n\nDocument ID: ${data.documentId}\nSHA-256 Checksum: ${data.checksum}\nIntegrity Verified: Match\nStorage Location: Secure Vault (Non-Public Area)`);
+      allDocs.unshift({
+        id: data.documentId,
+        name: file.name,
+        type: 'notification',
+        typeLabel: typeSelect ? typeSelect.value : 'Notification',
+        project: projectInput && projectInput.value ? projectInput.value : 'CPRR Package 2',
+        state: 'Tamil Nadu',
+        date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+        size: `${(file.size / (1024*1024)).toFixed(1)} MB`,
+        signed: true,
+        hash: `SHA256: ${data.checksum.substring(0, 16)}...`
+      });
+      renderDocGrid(allDocs);
+      toggleUpload();
+    } else {
+      alert(`Upload failed: ${data.message || 'Validation error'}`);
+    }
+  } catch (err) {
+    alert(`Upload error: ${err.message}`);
+  }
 }
 
 renderDocGrid(allDocs);

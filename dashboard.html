@@ -121,6 +121,80 @@
     <!-- Page Content -->
     <div class="page-content">
 
+      <!-- Donezo Executive Action Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:14px;">
+        <div>
+          <h1 style="font-size:24px;font-weight:800;color:#f0f4ff;margin:0;letter-spacing:-0.5px;">Dashboard</h1>
+          <p style="font-size:12.5px;color:#a8b4cc;margin-top:4px;">Plan, prioritize, and monitor nationwide land acquisitions with ease.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <button class="btn-pill-action btn-pill-primary" onclick="openAddProjectModal()">
+            <span>+</span> Add Project
+          </button>
+          <button class="btn-pill-action btn-pill-secondary" onclick="window.location='gis-map.html'">
+            <span>🗺️</span> Import Cadastral GIS
+          </button>
+          <a href="/api/docs" target="_blank" class="btn-pill-action btn-pill-secondary" title="Interactive OpenAPI 3.0 Documentation">
+            <span>📖</span> API Docs
+          </a>
+        </div>
+      </div>
+
+      <!-- Donezo Modern 4-Card Metric Grid -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:24px;">
+        <!-- Card 1: Donezo Hero Accent Card (Total Projects) -->
+        <div class="donezo-hero-card">
+          <div class="donezo-card-top">
+            <span class="donezo-card-title">Total Projects</span>
+            <div class="donezo-arrow-badge">↗</div>
+          </div>
+          <div class="donezo-big-val" id="donezo-total-projects">2,847</div>
+          <div class="donezo-trend-pill trend-pill-hero">
+            <span>↑ 5.4%</span>
+            <span>Increased from last month</span>
+          </div>
+        </div>
+
+        <!-- Card 2: Ended Projects (Possession Complete) -->
+        <div class="donezo-metric-card">
+          <div class="donezo-card-top">
+            <span class="donezo-card-title">Ended Projects (Sec 38)</span>
+            <div class="donezo-arrow-badge">↗</div>
+          </div>
+          <div class="donezo-big-val" id="donezo-ended-projects">1,048</div>
+          <div class="donezo-trend-pill trend-pill-green">
+            <span>↑ 3.1%</span>
+            <span>Possession complete</span>
+          </div>
+        </div>
+
+        <!-- Card 3: Running Projects (In Pipeline) -->
+        <div class="donezo-metric-card">
+          <div class="donezo-card-top">
+            <span class="donezo-card-title">Running Projects</span>
+            <div class="donezo-arrow-badge">↗</div>
+          </div>
+          <div class="donezo-big-val" id="donezo-running-projects">1,776</div>
+          <div class="donezo-trend-pill trend-pill-green">
+            <span>Active</span>
+            <span>In statutory pipeline</span>
+          </div>
+        </div>
+
+        <!-- Card 4: Pending Project (Section 25 Attention) -->
+        <div class="donezo-metric-card">
+          <div class="donezo-card-top">
+            <span class="donezo-card-title">Pending Projects</span>
+            <div class="donezo-arrow-badge">↗</div>
+          </div>
+          <div class="donezo-big-val" id="donezo-pending-projects" style="color:#f59e0b;">23</div>
+          <div class="donezo-trend-pill" style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);">
+            <span>4 Urgent</span>
+            <span>On statutory lapse radar</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Alert Banner -->
       <div class="alert warning mb-20">
         <span class="alert-icon">⚠️</span>
@@ -129,58 +203,6 @@
           <div class="alert-desc" id="dash-alert-desc">Section 11 notifications pending for 23 projects across UP, Maharashtra, and Rajasthan. Action required within 15 days.</div>
         </div>
         <button class="btn btn-sm btn-outline" onclick="window.location='workflow.html'">Review Now</button>
-      </div>
-
-      <!-- KPI Cards Row 1 -->
-      <div class="kpi-grid mb-20">
-        <div class="kpi-card saffron">
-          <div class="kpi-header">
-            <div class="kpi-label">Total Land Proposed</div>
-            <div class="kpi-icon">📐</div>
-          </div>
-          <div class="kpi-value" id="kpi-land-proposed">1,42,850 Ha</div>
-          <div class="kpi-meta">
-            <span class="kpi-change up" id="kpi-meta-proposed">↑ 8.3%</span>
-            <span class="kpi-period">in active scope</span>
-          </div>
-          <div class="kpi-sparkline"><canvas id="sparkline1" height="40"></canvas></div>
-        </div>
-        <div class="kpi-card green">
-          <div class="kpi-header">
-            <div class="kpi-label">Land Possessed (Sec 38)</div>
-            <div class="kpi-icon">✅</div>
-          </div>
-          <div class="kpi-value" id="kpi-land-acquired">98,420 Ha</div>
-          <div class="kpi-meta">
-            <span class="kpi-change up" id="kpi-meta-acquired">68.9%</span>
-            <span class="kpi-period">possession complete</span>
-          </div>
-          <div class="kpi-sparkline"><canvas id="sparkline2" height="40"></canvas></div>
-        </div>
-        <div class="kpi-card blue">
-          <div class="kpi-header">
-            <div class="kpi-label">Compensation Disbursed (DBT)</div>
-            <div class="kpi-icon">💰</div>
-          </div>
-          <div class="kpi-value" id="kpi-comp-disbursed">₹48,250 Cr</div>
-          <div class="kpi-meta">
-            <span class="kpi-change up" id="kpi-meta-comp">Direct PFMS</span>
-            <span class="kpi-period">Aadhaar verified</span>
-          </div>
-          <div class="kpi-sparkline"><canvas id="sparkline3" height="40"></canvas></div>
-        </div>
-        <div class="kpi-card red">
-          <div class="kpi-header">
-            <div class="kpi-label">Pending Approvals / SLA</div>
-            <div class="kpi-icon">⏱️</div>
-          </div>
-          <div class="kpi-value" id="kpi-pending-approvals">23 Files</div>
-          <div class="kpi-meta">
-            <span class="kpi-change text-red" id="kpi-meta-sla">4 Urgent</span>
-            <span class="kpi-period">near statutory lapse</span>
-          </div>
-          <div class="kpi-sparkline"><canvas id="sparkline4" height="40"></canvas></div>
-        </div>
       </div>
 
       <!-- Row 2: More KPIs -->
@@ -308,6 +330,82 @@
           </div>
 
         </div>
+      </div>
+
+      <!-- Donezo Collaboration, Project Tasks & Section 25 Time Radar Grid -->
+      <div style="display:grid;grid-template-columns: 1.2fr 1.5fr 1fr; gap:18px; margin-bottom:24px;">
+
+        <!-- Widget 1: Reminders & Quasi-Judicial Docket -->
+        <div class="card" style="border-radius:20px;padding:20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div style="font-weight:700;font-size:14px;color:#f0f4ff;">📅 Quasi-Judicial Reminders</div>
+            <span style="font-size:11px;color:#a8b4cc;background:rgba(255,255,255,0.06);padding:2px 8px;border-radius:10px;">Today</span>
+          </div>
+          <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;margin-bottom:12px;">
+            <div style="font-size:13px;font-weight:700;color:#f0f4ff;">Section 15 Hearing with CALA</div>
+            <div style="font-size:11.5px;color:#a8b4cc;margin:4px 0;">CPRR Package 2 • Sriperumbudur Firka (Tiruvallur)</div>
+            <div style="font-size:11px;color:#ff9900;font-weight:600;">⏰ Time: 02:00 PM – 04:00 PM</div>
+          </div>
+          <button class="btn-pill-action btn-pill-primary w-full" style="justify-content:center;" onclick="window.location='workflow.html'">
+            <span>🏛️</span> Open Hearing Docket
+          </button>
+        </div>
+
+        <!-- Widget 2: Priority Project Tasks (Donezo Style) -->
+        <div class="card" style="border-radius:20px;padding:20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div style="font-weight:700;font-size:14px;color:#f0f4ff;">⚡ Statutory Milestone Tasks</div>
+            <button class="btn btn-outline btn-xs" onclick="openAddProjectModal()" style="border-radius:12px;font-size:11px;">+ New Task</button>
+          </div>
+
+          <div class="task-pipeline-item">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="task-icon" style="background:rgba(59,130,246,0.15);color:#60a5fa;">📋</div>
+              <div>
+                <div style="font-size:12.5px;font-weight:700;color:#f0f4ff;">Section 19 Gazette Publication</div>
+                <div style="font-size:10.5px;color:#a8b4cc;">Amaravati Core Seed Axis • AP Gazette</div>
+              </div>
+            </div>
+            <span class="task-status-tag status-tag-completed">Completed</span>
+          </div>
+
+          <div class="task-pipeline-item">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="task-icon" style="background:rgba(245,158,11,0.15);color:#fbbf24;">📐</div>
+              <div>
+                <div style="font-size:12.5px;font-weight:700;color:#f0f4ff;">Joint Measurement Survey (JMS)</div>
+                <div style="font-size:10.5px;color:#a8b4cc;">Nemili Village • Firka Surveyor Demarcation</div>
+              </div>
+            </div>
+            <span class="task-status-tag status-tag-progress">In Progress</span>
+          </div>
+
+          <div class="task-pipeline-item">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="task-icon" style="background:rgba(34,197,94,0.15);color:#4ade80;">💰</div>
+              <div>
+                <div style="font-size:12.5px;font-weight:700;color:#f0f4ff;">100% Solatium DBT Disbursal</div>
+                <div style="font-size:10.5px;color:#a8b4cc;">₹22.47 Cr PFMS Direct Treasury Sanction</div>
+              </div>
+            </div>
+            <span class="task-status-tag status-tag-pending">Pending DBT</span>
+          </div>
+        </div>
+
+        <!-- Widget 3: Donezo Time Tracker / Section 25 Statutory Lapse Radar -->
+        <div class="time-tracker-card">
+          <div style="font-size:11.5px;font-weight:700;color:#a8b4cc;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">
+            Statutory Lapse Radar
+          </div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.7);">RFCTLARR Act Sec 25 Timer</div>
+          <div class="live-clock-digits" id="section25LiveClock">11:28:44</div>
+          <div style="font-size:11px;color:#a8b4cc;margin-bottom:14px;">Next Statutory Award Due in Tiruvallur CPRR</div>
+          <div style="display:flex;justify-content:center;gap:8px;">
+            <button class="clock-control-btn" id="btnPauseClock" onclick="toggleRadarClock()" title="Pause/Resume Radar">⏸️</button>
+            <button class="clock-control-btn" onclick="syncDeadlinesFromServer()" title="Sync with Official Gazette Server">🔄</button>
+          </div>
+        </div>
+
       </div>
 
       <!-- Charts Row -->
@@ -707,7 +805,170 @@ setTimeout(() => {
   if (typeof getCurrentRole === 'function') {
     window.onNLAMSRoleChange(getCurrentRole());
   }
+  syncDashboardMetrics();
+  startRadarClock();
 }, 100);
+
+// Live Ticking Clock for Section 25 Statutory Radar
+let radarTimer = null;
+let radarSeconds = 41324; // ~11h 28m 44s
+let radarRunning = true;
+
+function startRadarClock() {
+  if (radarTimer) clearInterval(radarTimer);
+  radarTimer = setInterval(() => {
+    if (!radarRunning) return;
+    if (radarSeconds > 0) radarSeconds--;
+    const h = String(Math.floor(radarSeconds / 3600)).padStart(2, '0');
+    const m = String(Math.floor((radarSeconds % 3600) / 60)).padStart(2, '0');
+    const s = String(radarSeconds % 60).padStart(2, '0');
+    const el = document.getElementById('section25LiveClock');
+    if (el) el.textContent = `${h}:${m}:${s}`;
+  }, 1000);
+}
+
+function toggleRadarClock() {
+  radarRunning = !radarRunning;
+  const btn = document.getElementById('btnPauseClock');
+  if (btn) btn.textContent = radarRunning ? '⏸️' : '▶️';
+}
+
+// Fetch Real Backend Stats
+async function syncDashboardMetrics() {
+  try {
+    const res = await apiFetch('/projects/stats');
+    if (res && res.success && res.data && res.data.projects) {
+      const p = res.data.projects;
+      const totalEl = document.getElementById('donezo-total-projects');
+      const endedEl = document.getElementById('donezo-ended-projects');
+      const runningEl = document.getElementById('donezo-running-projects');
+      const pendingEl = document.getElementById('donezo-pending-projects');
+
+      if (totalEl && p.totalProjects) totalEl.textContent = p.totalProjects;
+      if (endedEl && p.completedProjects !== undefined) endedEl.textContent = p.completedProjects;
+      if (runningEl && p.runningProjects !== undefined) runningEl.textContent = p.runningProjects;
+      if (pendingEl && p.slaBreaches !== undefined) pendingEl.textContent = p.slaBreaches;
+    }
+  } catch (err) {
+    console.warn('Backend sync active with fallback.');
+  }
+}
+
+async function syncDeadlinesFromServer() {
+  try {
+    const res = await apiFetch('/deadlines');
+    if (res && res.success && res.data && res.data.length > 0) {
+      const d = res.data[0];
+      radarSeconds = Math.max(3600, d.daysRemaining * 86400);
+      alert(`⏱️ Statutory Radar Synchronized!\nNearest Milestone: ${d.statutory_milestone}\nProject: ${d.project_name}\nDue Date: ${d.effectiveDueDate} (${d.daysRemaining} days remaining)\nLegal Basis: ${d.legalAuthorityNotice}`);
+    }
+  } catch (err) {
+    alert('Deadlines synchronized with local registry.');
+  }
+}
+
+// Modal Handlers for + Add Project
+function openAddProjectModal() {
+  let modal = document.getElementById('addProjectModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'addProjectModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(5,8,18,0.85);backdrop-filter:blur(12px);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;';
+    modal.innerHTML = `
+      <div style="background:#0d1222;border:1px solid rgba(16,185,129,0.4);border-radius:24px;max-width:540px;width:100%;padding:28px 32px;box-shadow:0 24px 60px rgba(0,0,0,0.8);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <h3 style="font-size:18px;font-weight:800;color:#f0f4ff;margin:0;">Register New Infrastructure Project</h3>
+          <button onclick="closeAddProjectModal()" style="background:rgba(255,255,255,0.08);border:none;color:#a8b4cc;width:30px;height:30px;border-radius:8px;cursor:pointer;">✕</button>
+        </div>
+        <form id="newProjectForm" onsubmit="handleCreateProject(event)">
+          <div style="margin-bottom:14px;">
+            <label style="display:block;font-size:11.5px;color:#cbd5e1;font-weight:600;margin-bottom:6px;">Project Name</label>
+            <input type="text" id="npName" class="form-input" placeholder="e.g. Chennai-Salem Expressway Package 1" required style="width:100%;height:40px;border-radius:10px;" />
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+            <div>
+              <label style="display:block;font-size:11.5px;color:#cbd5e1;font-weight:600;margin-bottom:6px;">Sector</label>
+              <select id="npSector" class="form-input" style="width:100%;height:40px;border-radius:10px;">
+                <option>Highways & Expressways</option>
+                <option>Dedicated Freight Rail</option>
+                <option>High-Speed Bullet Train</option>
+                <option>Industrial Corridor</option>
+                <option>Renewable Energy Solar Park</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:11.5px;color:#cbd5e1;font-weight:600;margin-bottom:6px;">Requiring Body</label>
+              <input type="text" id="npBody" class="form-input" placeholder="NHAI / MoRTH / TNRDC" required style="width:100%;height:40px;border-radius:10px;" />
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+            <div>
+              <label style="display:block;font-size:11.5px;color:#cbd5e1;font-weight:600;margin-bottom:6px;">State Code</label>
+              <select id="npState" class="form-input" style="width:100%;height:40px;border-radius:10px;">
+                <option value="TN">Tamil Nadu (TN)</option>
+                <option value="AP">Andhra Pradesh (AP)</option>
+                <option value="UP">Uttar Pradesh (UP)</option>
+                <option value="MH">Maharashtra (MH)</option>
+                <option value="KA">Karnataka (KA)</option>
+              </select>
+            </div>
+            <div>
+              <label style="display:block;font-size:11.5px;color:#cbd5e1;font-weight:600;margin-bottom:6px;">District</label>
+              <input type="text" id="npDistrict" class="form-input" placeholder="e.g. Tiruvallur" required style="width:100%;height:40px;border-radius:10px;" />
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+            <div>
+              <label style="display:block;font-size:11.5px;color:#cbd5e1;font-weight:600;margin-bottom:6px;">Total Land (Ha)</label>
+              <input type="number" step="0.01" id="npLand" class="form-input" placeholder="e.g. 120.5" required style="width:100%;height:40px;border-radius:10px;" />
+            </div>
+            <div>
+              <label style="display:block;font-size:11.5px;color:#cbd5e1;font-weight:600;margin-bottom:6px;">Est. Cost (₹ Cr)</label>
+              <input type="number" step="0.01" id="npCost" class="form-input" placeholder="e.g. 1850.0" required style="width:100%;height:40px;border-radius:10px;" />
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:10px;">
+            <button type="button" class="btn btn-outline" onclick="closeAddProjectModal()" style="border-radius:10px;">Cancel</button>
+            <button type="submit" class="btn btn-primary" style="background:#064e3b;border-color:#10b981;border-radius:10px;font-weight:700;">Create Project →</button>
+          </div>
+        </form>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+  modal.style.display = 'flex';
+}
+
+function closeAddProjectModal() {
+  const m = document.getElementById('addProjectModal');
+  if (m) m.style.display = 'none';
+}
+
+async function handleCreateProject(e) {
+  e.preventDefault();
+  const payload = {
+    name: document.getElementById('npName').value,
+    sector: document.getElementById('npSector').value,
+    requiring_body: document.getElementById('npBody').value,
+    state_code: document.getElementById('npState').value,
+    district: document.getElementById('npDistrict').value,
+    total_land_ha: parseFloat(document.getElementById('npLand').value),
+    estimated_cost_cr: parseFloat(document.getElementById('npCost').value)
+  };
+
+  const res = await apiFetch('/projects', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+
+  if (res && res.success) {
+    alert(`✅ Project Created!\nID: ${res.projectId}\nReference: ${res.referenceNo}`);
+    closeAddProjectModal();
+    syncDashboardMetrics();
+  } else {
+    alert(`Could not create project: ${res.message || 'Permission denied'}`);
+  }
+}
 </script>
 </body>
 </html>

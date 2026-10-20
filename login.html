@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In – NLAMS | National Land Acquisition & Management System</title>
+  <meta name="description" content="Secure role-based authentication portal for NLAMS, DoLR, Ministry of Rural Development, Government of India." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="shared-auth.js"></script>
+
+  <style>
+    body {
+      min-height: 100vh;
+      background: #080c18;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+      overflow-x: hidden;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Ambient Background Glow */
+    .auth-bg-glow {
+      position: absolute;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glow-1 { top: -100px; left: -100px; background: rgba(255, 153, 0, 0.12); }
+    .glow-2 { bottom: -100px; right: -100px; background: rgba(19, 136, 8, 0.12); }
+
+    /* Auth Container */
+    .auth-card-wrap {
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .auth-card {
+      background: rgba(13, 17, 32, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 28px;
+      padding: 36px 32px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(20px);
+    }
+
+    .auth-top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .btn-circle-back {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #a8b4cc;
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+    .btn-circle-back:hover {
+      background: rgba(255, 153, 0, 0.15);
+      color: #ff9900;
+      border-color: rgba(255, 153, 0, 0.3);
+    }
+
+    .auth-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 153, 0, 0.12);
+      border: 1px solid rgba(255, 153, 0, 0.3);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffaa33;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .auth-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: #f0f4ff;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .auth-sub {
+      font-size: 13px;
+      color: #a8b4cc;
+      line-height: 1.5;
+    }
+
+    /* Persona Quick Picker */
+    .persona-quick-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #7b88a8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .persona-pills {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 20px;
+    }
+    .persona-pill {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #cbd5e1;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .persona-pill:hover, .persona-pill.active {
+      background: rgba(255, 153, 0, 0.15);
+      border-color: #ff9900;
+      color: #ffaa33;
+    }
+
+    /* Form Fields */
+    .input-group {
+      margin-bottom: 18px;
+    }
+    .input-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 8px;
+    }
+    .input-wrap {
+      position: relative;
+    }
+    .auth-input {
+      width: 100%;
+      height: 48px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      padding: 0 16px;
+      font-size: 14px;
+      color: #f0f4ff;
+      outline: none;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .auth-input:focus {
+      border-color: #ff9900;
+      background: rgba(255, 153, 0, 0.04);
+      box-shadow: 0 0 0 3px rgba(255, 153, 0, 0.15);
+    }
+    .input-toggle-eye {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      color: #7b88a8;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px;
+    }
+    .input-toggle-eye:hover { color: #f0f4ff; }
+
+    /* Controls Row */
+    .auth-options {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      font-size: 12.5px;
+    }
+    .remember-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #a8b4cc;
+      cursor: pointer;
+    }
+    .remember-wrap input[type="checkbox"] {
+      width: 16px; height: 16px;
+      accent-color: #ff9900;
+      cursor: pointer;
+    }
+    .forgot-link {
+      color: #ff9900;
+      text-decoration: none;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    .forgot-link:hover { opacity: 0.8; }
+
+    /* Submit Button */
+    .btn-submit-auth {
+      width: 100%;
+      height: 48px;
+      background: linear-gradient(135deg, #ff9900, #138808);
+      border: none;
+      border-radius: 14px;
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 8px 24px rgba(255, 153, 0, 0.3);
+      transition: all 0.25s;
+    }
+    .btn-submit-auth:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(255, 153, 0, 0.4);
+    }
+    .btn-submit-auth:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Success Celebration Modal */
+    .success-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 8, 18, 0.88);
+      backdrop-filter: blur(14px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .success-card {
+      background: #0d1222;
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      border-radius: 28px;
+      padding: 36px 32px;
+      text-align: center;
+      max-width: 380px;
+      width: 100%;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9);
+      animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes popIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .check-circle {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #22c55e, #15803d);
+      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 20px;
+      box-shadow: 0 10px 24px rgba(34, 197, 94, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-bg-glow glow-1"></div>
+  <div class="auth-bg-glow glow-2"></div>
+
+  <div class="auth-card-wrap">
+    <div class="auth-card">
+      <div class="auth-top-nav">
+        <a href="index.html" class="btn-circle-back" title="Back to Home">←</a>
+        <div class="auth-badge">SIH #26016 • DoLR</div>
+      </div>
+
+      <div class="auth-header">
+        <h1 class="auth-title">Welcome Back</h1>
+        <p class="auth-sub">Stay connected by signing in with your official email and password to access the acquisition grid.</p>
+      </div>
+
+      <!-- Quick Persona Switcher for Jury / Evaluators -->
+      <span class="persona-quick-label">⚡ Demo Stakeholder Profiles</span>
+      <div class="persona-pills">
+        <div class="persona-pill active" onclick="selectPersona('central', 'ramesh.kumar@dolr.gov.in')">🏛️ Ministry IAS</div>
+        <div class="persona-pill" onclick="selectPersona('district_tn', 'alby.john@tn.gov.in')">🌊 CALA Tiruvallur</div>
+        <div class="persona-pill" onclick="selectPersona('state_tn', 'phanindra.reddy@tn.gov.in')">🏢 State TN</div>
+        <div class="persona-pill" onclick="selectPersona('surveyor_tn', 'k.soundar@tn.gov.in')">📐 Surveyor</div>
+        <div class="persona-pill" onclick="selectPersona('farmer', 'ramu.gowda@kisan.in')">🌾 Farmer D2C</div>
+      </div>
+
+      <form id="authForm" onsubmit="handleFormLogin(event)">
+        <div class="input-group">
+          <label class="input-label" for="loginEmail">Email Address</label>
+          <div class="input-wrap">
+            <input type="email" id="loginEmail" class="auth-input" value="ramesh.kumar@dolr.gov.in" required />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="loginPassword">Password</label>
+          <div class="input-wrap">
+            <input type="password" id="loginPassword" class="auth-input" value="Password@123" required />
+            <button type="button" class="input-toggle-eye" onclick="togglePasswordVisibility()" title="Toggle visibility">👁️</button>
+          </div>
+        </div>
+
+        <div class="auth-options">
+          <label class="remember-wrap">
+            <input type="checkbox" id="rememberMe" checked />
+            <span>Remember me</span>
+          </label>
+          <a href="#" onclick="handleForgotPassword(event)" class="forgot-link">Forgot Password?</a>
+        </div>
+
+        <div id="authErrorMessage" style="display:none;color:#ef4444;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);padding:10px 14px;border-radius:10px;font-size:12.5px;margin-bottom:16px;"></div>
+
+        <button type="submit" class="btn-submit-auth" id="btnSignIn">
+          <span>Sign In</span>
+          <span>→</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Success Celebration Modal -->
+  <div class="success-modal" id="successModal">
+    <div class="success-card">
+      <div class="check-circle">✓</div>
+      <h2 style="font-size:22px;font-weight:800;color:#f0f4ff;margin-bottom:8px;">Successful!</h2>
+      <p style="font-size:13px;color:#a8b4cc;margin-bottom:24px;" id="successDesc">Your official session has been verified and authenticated on the server.</p>
+      <button class="btn-submit-auth" onclick="redirectDashboard()">
+        Browse Command Dashboard →
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function selectPersona(roleKey, email) {
+      document.querySelectorAll('.persona-pill').forEach(p => p.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('loginEmail').value = email;
+      document.getElementById('loginPassword').value = 'Password@123';
+      localStorage.setItem('nlams_current_role', roleKey);
+    }
+
+    function togglePasswordVisibility() {
+      const input = document.getElementById('loginPassword');
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    async function handleFormLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const btn = document.getElementById('btnSignIn');
+      const errBox = document.getElementById('authErrorMessage');
+
+      errBox.style.display = 'none';
+      btn.disabled = true;
+      btn.innerHTML = '<span>Verifying credentials...</span>';
+
+      const result = await apiLogin(email, password);
+
+      if (result.success) {
+        document.getElementById('successDesc').textContent = `Welcome, ${result.user.fullName} (${result.user.role.toUpperCase()}). Session initialized.`;
+        document.getElementById('successModal').style.display = 'flex';
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = '<span>Sign In</span><span>→</span>';
+        errBox.textContent = result.message || 'Authentication failed. Please verify credentials.';
+        errBox.style.display = 'block';
+      }
+    }
+
+    function redirectDashboard() {
+      window.location.href = 'dashboard.html';
+    }
+
+    function handleForgotPassword(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      alert(`🔐 Password reset instruction has been dispatched to ${email}. In demo mode, default credentials are 'Password@123'.`);
+    }
+  </script>
+</body>
+</html>

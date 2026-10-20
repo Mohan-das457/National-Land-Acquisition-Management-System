@@ -1,0 +1,154 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "NLAMS — National Land Acquisition & Management System API",
+    "description": "Comprehensive REST API for the National Land Acquisition & Management System compliant with the RFCTLARR Act 2013 and PM GatiShakti standards. Built for Smart India Hackathon (SIH 2026), Problem Statement #26016.",
+    "version": "3.0.0",
+    "contact": {
+      "name": "Department of Land Resources (DoLR), MoRD",
+      "url": "https://github.com/Mohan-das457/National-Land-Acquisition-Management-System"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000",
+      "description": "Local Development Server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "summary": "System Health Check",
+        "responses": {
+          "200": { "description": "Backend and database status" }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "summary": "Official and Citizen Authentication",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "example": "ramesh.kumar@dolr.gov.in" },
+                  "password": { "type": "string", "example": "Password@123" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "JWT token and sanitized profile" },
+          "401": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/api/v1/projects": {
+      "get": {
+        "summary": "List Infrastructure Projects",
+        "parameters": [
+          { "name": "state", "in": "query", "schema": { "type": "string" } },
+          { "name": "sector", "in": "query", "schema": { "type": "string" } },
+          { "name": "stage", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "List of projects" } }
+      },
+      "post": {
+        "summary": "Register New Project",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "201": { "description": "Project created" } }
+      }
+    },
+    "/api/v1/projects/stats": {
+      "get": {
+        "summary": "Dashboard Executive KPIs & Summaries",
+        "responses": { "200": { "description": "Aggregated metrics" } }
+      }
+    },
+    "/api/v1/parcels": {
+      "get": {
+        "summary": "Query Cadastral Parcels or GeoJSON Features",
+        "parameters": [
+          { "name": "projectId", "in": "query", "schema": { "type": "string" } },
+          { "name": "geojson", "in": "query", "schema": { "type": "string", "example": "true" } }
+        ],
+        "responses": { "200": { "description": "Cadastral data" } }
+      }
+    },
+    "/api/v1/workflow/transition": {
+      "post": {
+        "summary": "Transition Statutory Lifecycle Stage",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "State transition recorded" } }
+      }
+    },
+    "/api/v1/compensation/calculate": {
+      "post": {
+        "summary": "Compute RFCTLARR Statutory Award",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "acquiredAreaHa": { "type": "number", "example": 2.5 },
+                  "guidelineValuePerHa": { "type": "number", "example": 6000000 },
+                  "distanceFromUrbanKm": { "type": "number", "example": 12 },
+                  "treesValuation": { "type": "number", "example": 150000 },
+                  "structuresValuation": { "type": "number", "example": 200000 }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Calculation breakdown" } }
+      }
+    },
+    "/api/v1/compensation/disburse/{caseId}": {
+      "post": {
+        "summary": "Execute PFMS DBT Disbursement",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "caseId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Disbursement completed in sandbox" } }
+      }
+    },
+    "/api/v1/signatures/sign": {
+      "post": {
+        "summary": "Apply Cryptographic e-Sign / DSC Token",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Signature applied" } }
+      }
+    },
+    "/api/v1/deadlines": {
+      "get": {
+        "summary": "Section 25 Statutory 12-Month Countdown Radar",
+        "responses": { "200": { "description": "Active statutory deadlines" } }
+      }
+    },
+    "/api/v1/citizen/khasra-search": {
+      "get": {
+        "summary": "Public Land Record & Khata Search",
+        "parameters": [
+          { "name": "query", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Masked public search results" } }
+      }
+    }
+  }
+}

@@ -328,6 +328,62 @@ const NLAMS_ROLES = {
   }
 };
 
+// Real Backend Integration & Token Management
+const PERSONA_EMAILS = {
+  central: 'ramesh.kumar@dolr.gov.in',
+  state_tn: 'phanindra.reddy@tn.gov.in',
+  district_tn: 'alby.john@tn.gov.in',
+  surveyor_tn: 'k.soundar@tn.gov.in',
+  state_ap: 'rp.sisodia@ap.gov.in',
+  district_ap: 'venugopal.reddy@ap.gov.in',
+  farmer: 'ramu.gowda@kisan.in'
+};
+
+async function apiFetch(endpoint, options = {}) {
+  const token = localStorage.getItem('nlams_token');
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(options.headers || {})
+  };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const url = endpoint.startsWith('http') || endpoint.startsWith('/api') ? endpoint : `/api/v1${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
+  try {
+    const res = await fetch(url, { ...options, headers });
+    return await res.json();
+  } catch (err) {
+    console.warn(`[NLAMS API] Request failed for ${url}:`, err);
+    return { success: false, error: err.message };
+  }
+}
+
+async function apiLogin(email, password = 'Password@123') {
+  try {
+    const res = await fetch('/api/v1/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (data.success && data.token) {
+      localStorage.setItem('nlams_token', data.token);
+      localStorage.setItem('nlams_user', JSON.stringify(data.user));
+    }
+    return data;
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+}
+
+async function apiLogout() {
+  await apiFetch('/auth/logout', { method: 'POST' });
+  localStorage.removeItem('nlams_token');
+  localStorage.removeItem('nlams_user');
+  window.location.href = 'index.html';
+}
+
 // Current role retrieval
 function getCurrentRole() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -344,10 +400,17 @@ function getCurrentRole() {
 }
 
 // Switch active role
-function switchRole(roleId) {
+async function switchRole(roleId) {
   if (NLAMS_ROLES[roleId]) {
     localStorage.setItem('nlams_current_role', roleId);
     const role = NLAMS_ROLES[roleId];
+
+    // Synchronize server-side session with real credentials
+    const email = PERSONA_EMAILS[roleId];
+    if (email) {
+      await apiLogin(email, 'Password@123');
+    }
+
     updateUIPersona(role);
     showRoleToast(role);
     

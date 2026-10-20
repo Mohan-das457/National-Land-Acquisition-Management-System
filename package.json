@@ -1,0 +1,46 @@
+{
+  "name": "land-acquisition-system",
+  "version": "1.0.0",
+  "description": "**Department of Land Resources (DoLR), Ministry of Rural Development, Government of India**",
+  "main": "cadastral-data.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest --runInBand --detectOpenHandles --forceExit",
+    "migrate": "node src/db/migrate.js",
+    "seed": "node src/db/seed.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mohan-das457/National-Land-Acquisition-Management-System.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Mohan-das457/National-Land-Acquisition-Management-System/issues"
+  },
+  "homepage": "https://github.com/Mohan-das457/National-Land-Acquisition-Management-System#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^13.0.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.8",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "morgan": "^1.12.1",
+    "multer": "^2.4.0",
+    "mysql2": "^3.24.6",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "jest": "^30.5.2",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.3.1"
+  }
+}

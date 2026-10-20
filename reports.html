@@ -265,6 +265,55 @@ document.getElementById('misBody').innerHTML = stateReport.map(d => {
     <td><span style="font-weight:800;font-size:14px;color:${scoreColor[d.score]||'#5a6478'};">${d.score}</span></td>
   </tr>`;
 }).join('');
+
+/**
+ * Pull live project totals from the backend dashboard stats endpoint
+ * and update the KPI summary row at the top of this reports page.
+ * Silently skips if backend is unreachable (offline/demo mode).
+ */
+async function syncReportStats() {
+  try {
+    const token = localStorage.getItem('nlams_token');
+    const res = await fetch('/api/v1/projects/stats', {
+      headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+    });
+    if (!res.ok) return;
+    const body = await res.json();
+    if (!body.success) return;
+    const s = body.data;
+    const p = s.projects;
+    const parc = s.parcels;
+
+    // Patch any KPI elements the page may have with IDs
+    const elMap = {
+      'rptTotalProjects': p.totalProjects,
+      'rptLandProposed': Math.round(p.totalLandProposedHa || 0).toLocaleString() + ' Ha',
+      'rptLandAcquired': Math.round(p.totalLandAcquiredHa || 0).toLocaleString() + ' Ha',
+      'rptCompSanctioned': '₹' + (+(p.totalCompSanctionedCr || 0)).toFixed(1) + ' Cr',
+      'rptCompDisbursed': '₹' + (+(p.totalCompDisbursedCr || 0)).toFixed(1) + ' Cr',
+      'rptSLABreaches': p.slaBreaches || 0,
+      'rptTotalParcels': (parc.totalParcels || 0).toLocaleString(),
+      'rptDisbursedParcels': (parc.disbursedParcels || 0).toLocaleString()
+    };
+    Object.entries(elMap).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    });
+
+    // Inject a live data notice badge into the header
+    const header = document.querySelector('.top-header');
+    if (header && !document.getElementById('liveDataBadge')) {
+      const badge = document.createElement('div');
+      badge.id = 'liveDataBadge';
+      badge.style.cssText = 'font-size:11px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);color:#22c55e;padding:4px 10px;border-radius:12px;font-weight:700;white-space:nowrap;';
+      badge.textContent = `🟢 Live Data · ${p.totalProjects} Projects · ${(parc.totalParcels||0)} Parcels`;
+      header.appendChild(badge);
+    }
+  } catch (e) { /* silent */ }
+}
+
+syncReportStats();
+
 </script>
 </body>
 </html>

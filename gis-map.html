@@ -244,8 +244,10 @@
         <div class="header-breadcrumb"><span>PRITHVI-SETU 360</span><span class="breadcrumb-sep">/</span><span id="gisBreadcrumb">Cadastral + Agri Hubs + Landslide Zones</span></div>
       </div>
       <div class="header-spacer"></div>
-      <div style="display:flex;gap:8px;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
         <button class="btn btn-outline btn-sm" id="addGeotagBtn" onclick="toggleGeotagMode()">📍 Surveyor DGPS Demarcation</button>
+        <button class="btn btn-outline btn-sm" onclick="exportGeoJSON()" title="Download live parcel boundaries as GeoJSON (EPSG:4326 WGS84)">⬇️ GeoJSON</button>
+        <button class="btn btn-outline btn-sm" onclick="exportParcelCSV()" title="Download parcel register as CSV for field verification">📊 CSV</button>
         <button class="btn btn-saffron btn-sm" onclick="exportKML()">⬇️ Export KML / Shapefile</button>
       </div>
     </header>
@@ -1114,6 +1116,106 @@ function saveNewSurveyParcel(areaHa, areaLocal) {
 
 function exportKML() {
   alert(`Exporting ${currentRegion} Cadastral GIS Layers in OGC KML & ESRI Shapefile format:\n- Cadastral Parcel Polygons (Survey & Sub-division Boundaries)\n- 60m Centerline Expressway Alignment Buffer\n- DGPS Ground Control Benchmark Points`);
+}
+
+/**
+ * Export live parcel data from backend API as GeoJSON (EPSG:4326 WGS84).
+ * Falls back to a static GeoJSON from the in-memory cadastral-data.js if the
+ * API is unreachable in an offline / demo environment.
+ * NOTE: Coordinates are synthetic demo data for SIH 2026 hackathon purposes.
+ */
+async function exportGeoJSON() {
+  const btn = event && event.currentTarget;
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Preparing…'; }
+  try {
+    const params = new URLSearchParams({ geojson: 'true' });
+    if (currentRegion && currentRegion !== 'national') params.set('stateCode', currentRegion);
+    const res = await fetch(`/api/v1/parcels?${params.toString()}`);
+    let geojson;
+    if (res.ok) {
+      geojson = await res.json();
+    } else {
+      // Offline / demo fallback: build minimal GeoJSON from loaded cadastral-data
+      const parcels = window.TN_PARCELS || window.AP_PARCELS || [];
+      geojson = {
+        type: 'FeatureCollection',
+        _source: 'LOCAL_DEMO_DATA',
+        _note: 'Demo synthetic data — not survey-authoritative.',
+        features: parcels.slice(0, 20).map((p, i) => ({
+          type: 'Feature',
+          id: `demo-${i}`,
+          geometry: { type: 'Polygon', coordinates: [p.polygon ? p.polygon.map(pt => [pt[1], pt[0]]) : []] },
+          properties: { surveyNumber: p.surveyNo, village: p.village, ownerName: p.owner, areaHa: p.areaHa, status: p.status }
+        }))
+      };
+    }
+    // Append disclaimer metadata
+    geojson._disclaimer = '[DEMO] Synthetic cadastral data for SIH 2026 evaluation. Not authoritative government survey data.';
+    geojson._corridor = currentRegion || 'ALL';
+    geojson._exportedAt = new Date().toISOString();
+
+    const blob = new Blob([JSON.stringify(geojson, null, 2)], { type: 'application/geo+json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `NLAMS_Parcels_${currentRegion || 'All'}_${new Date().toISOString().slice(0,10)}.geojson`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    alert('GeoJSON export failed: ' + err.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '⬇️ GeoJSON'; }
+  }
+}
+
+/**
+ * Export parcel register as CSV for field surveyors.
+ * Omits bank account / Aadhaar fields (privacy-by-design).
+ */
+async function exportParcelCSV() {
+  const btn = event && event.currentTarget;
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Preparing…'; }
+  try {
+    const params = new URLSearchParams();
+    if (currentRegion && currentRegion !== 'national') params.set('stateCode', currentRegion);
+    const res = await fetch(`/api/v1/parcels?${params.toString()}`);
+    let rows = [];
+    if (res.ok) {
+      const body = await res.json();
+      rows = body.data || [];
+    } else {
+      // Local fallback: use in-memory cadastral arrays
+      const parcels = window.TN_PARCELS || window.AP_PARCELS || [];
+      rows = parcels.slice(0, 30).map(p => ({
+        id: p.id || '', survey_number: p.surveyNo, village: p.village,
+        district: p.district || '', state_code: currentRegion || '',
+        owner_name: p.owner, total_area_ha: p.areaHa, acquired_area_ha: p.acquiredHa,
+        land_classification: p.landClass || '', disbursement_status: p.status,
+        total_award_amount: p.award || ''
+      }));
+    }
+
+    const headers = ['id','survey_number','village','district','state_code','owner_name',
+                     'total_area_ha','acquired_area_ha','land_classification',
+                     'disbursement_status','total_award_amount'];
+    const csvLines = [
+      '# NLAMS Parcel Register Export — DEMO SYNTHETIC DATA — SIH 2026',
+      '# Privacy: Bank account and Aadhaar fields omitted. For official use only.',
+      `# Corridor: ${currentRegion || 'All'} | Exported: ${new Date().toISOString()}`,
+      headers.join(','),
+      ...rows.map(r => headers.map(h => `"${(r[h] ?? '').toString().replace(/"/g, '""')}"`).join(','))
+    ];
+
+    const blob = new Blob([csvLines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `NLAMS_Parcels_${currentRegion || 'All'}_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    alert('CSV export failed: ' + err.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '📊 CSV'; }
+  }
 }
 
 // Role change integration
