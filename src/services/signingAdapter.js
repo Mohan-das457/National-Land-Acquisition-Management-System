@@ -47,7 +47,7 @@ class SigningProviderAdapter {
       verification_status: 'valid',
       is_demo_mode: this.isDemoMode ? 1 : 0,
       audit_metadata: JSON.stringify({
-        simulatedProviderNotice: 'DEMONSTRATION ADAPTER: This signature was generated within a local SIH sandbox. It certifies mathematical hash integrity but does not represent a live Certificate Authority (CA) issued key without configured production PKI hardware.',
+        simulatedProviderNotice: 'DEMONSTRATION ADAPTER: This signature was generated within a local demonstration sandbox. It certifies mathematical hash integrity but does not represent a live Certificate Authority (CA) issued key without configured production PKI hardware.',
         algorithm: 'SHA-256 / RSA-2048 Simulation',
         signerRole: user.role,
         signerJurisdiction: `${user.state_code} / ${user.district}`

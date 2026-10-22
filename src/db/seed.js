@@ -3,7 +3,7 @@ const db = require('./index');
 const { runMigrations } = require('./migrate');
 
 async function seedDatabase() {
-  console.log('[Seed] Seeding synthetic data for SIH 2026 demo...');
+  console.log('[Seed] Seeding synthetic baseline records for NLAMS project evaluation...');
   await runMigrations();
 
   const salt = await bcrypt.genSalt(10);
@@ -461,7 +461,7 @@ async function seedDatabase() {
     }
   }
 
-  console.log('[Seed] Database successfully seeded with verified SIH 2026 synthetic records.');
+  console.log('[Seed] Database successfully seeded with verified NLAMS synthetic records.');
 }
 
 if (require.main === module) {

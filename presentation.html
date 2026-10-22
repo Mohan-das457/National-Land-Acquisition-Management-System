@@ -3,46 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PRITHVI-SETU 360 – SIH 2026 Jury Review Deck | Farmer D2C × Landslide AI × NLAMS</title>
-  <link rel="stylesheet" href="style.css">
+  <title>NLAMS – Technical Project Review Presentation Deck | RFCTLARR Act 2013 & Spatial Cadastre</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-presentation: #060d17;
-      --slide-bg: #0d1929;
-      --card-bg: rgba(17, 34, 64, 0.75);
-      --saffron-bright: #ff8c00;
+      --bg-space: #070d19;
+      --bg-card: rgba(15, 23, 42, 0.85);
+      --bg-card-hover: rgba(30, 41, 59, 0.95);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-highlight: rgba(255, 122, 0, 0.4);
+      --saffron-bright: #ff7a00;
       --gold-bright: #f5a623;
       --emerald-bright: #10b981;
       --cyan-bright: #38bdf8;
-      --text-white: #f8fafc;
+      --danger-red: #ef4444;
+      --text-main: #f8fafc;
       --text-muted: #94a3b8;
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Space Grotesk', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body.presentation-mode {
-      background: var(--bg-presentation);
-      color: var(--text-white);
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      height: 100vh;
-      width: 100vw;
+      background-color: var(--bg-space);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(255, 122, 0, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(56, 189, 248, 0.05) 0px, transparent 50%);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
     }
 
-    /* Presentation Header Bar */
+    /* Presentation Header */
     .pres-header {
-      height: 60px;
-      background: rgba(10, 25, 47, 0.95);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 12px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 24px;
-      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
       z-index: 100;
-      position: relative;
     }
 
     .pres-logo-area {
@@ -52,121 +67,115 @@
     }
 
     .pres-logo-badge {
-      background: linear-gradient(135deg, #ff7a00, #ffae00);
+      background: linear-gradient(135deg, #10b981, #ff7a00);
       color: #000;
-      font-weight: 800;
       font-size: 11px;
-      padding: 3px 8px;
+      font-weight: 800;
+      padding: 4px 8px;
       border-radius: 4px;
       letter-spacing: 0.5px;
     }
 
     .pres-title {
-      font-size: 15px;
+      font-family: var(--font-heading);
+      font-size: 16px;
       font-weight: 700;
-      color: var(--text-white);
+      color: #fff;
     }
 
     .pres-controls {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .pres-btn {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #fff;
-      padding: 6px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 6px 12px;
       border-radius: 6px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: all 0.2s ease;
       text-decoration: none;
+      transition: all 0.2s ease;
     }
 
     .pres-btn:hover {
-      background: rgba(255, 255, 255, 0.18);
-      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
     }
 
     .pres-btn.primary {
-      background: linear-gradient(135deg, #ff7a00, #ff9e00);
-      color: #060d17;
+      background: var(--saffron-bright);
+      color: #000;
       border: none;
-      font-weight: 700;
+    }
+
+    .pres-btn.primary:hover {
+      background: #ff9100;
     }
 
     .pres-btn.emerald {
       background: rgba(16, 185, 129, 0.2);
-      border-color: #10b981;
+      border-color: var(--emerald-bright);
       color: #34d399;
     }
 
     .slide-timer {
       font-family: monospace;
-      font-size: 14px;
-      background: rgba(0, 0, 0, 0.4);
-      padding: 5px 10px;
-      border-radius: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #38bdf8;
+      font-size: 13px;
+      color: var(--gold-bright);
+      padding: 4px 10px;
+      background: rgba(245, 166, 35, 0.1);
+      border: 1px solid rgba(245, 166, 35, 0.3);
+      border-radius: 4px;
     }
 
-    /* Main Slide Stage */
+    /* Slide Stage */
     .slide-stage {
-      height: calc(100vh - 60px - 50px);
-      position: relative;
-      overflow: hidden;
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px 40px;
-      box-sizing: border-box;
+      padding: 24px;
+      position: relative;
     }
 
     .slide-card {
-      position: absolute;
-      width: 92%;
-      max-width: 1400px;
-      height: 90%;
-      background: linear-gradient(145deg, #0c1c33, #0a172a);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      width: 100%;
+      max-width: 1200px;
+      min-height: 600px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
       border-radius: 16px;
-      padding: 40px 48px;
-      box-sizing: border-box;
-      opacity: 0;
-      visibility: hidden;
-      transform: scale(0.96) translateX(40px);
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      display: flex;
+      padding: 40px;
+      display: none;
       flex-direction: column;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
-      overflow-y: auto;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
+      position: relative;
+      animation: fadeIn 0.3s ease-out forwards;
     }
 
     .slide-card.active {
-      opacity: 1;
-      visibility: visible;
-      transform: scale(1) translateX(0);
-      z-index: 10;
+      display: flex;
     }
 
-    .slide-card.prev {
-      transform: scale(0.96) translateX(-40px);
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Slide Content Typography */
     .slide-eyebrow {
-      font-size: 13px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
+      font-size: 12px;
+      font-weight: 700;
       color: var(--saffron-bright);
+      letter-spacing: 1px;
+      text-transform: uppercase;
       margin-bottom: 8px;
       display: flex;
       align-items: center;
@@ -174,181 +183,156 @@
     }
 
     .slide-heading {
-      font-size: 28px;
+      font-family: var(--font-heading);
+      font-size: 26px;
       font-weight: 800;
       color: #fff;
-      margin: 0 0 20px 0;
-      line-height: 1.25;
+      margin-bottom: 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    .slide-heading .action-link {
+    .slide-heading a.action-link {
       font-size: 13px;
+      font-family: var(--font-body);
       font-weight: 600;
-      color: #38bdf8;
-      background: rgba(56, 189, 248, 0.1);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      padding: 6px 14px;
-      border-radius: 6px;
+      color: var(--cyan-bright);
       text-decoration: none;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: all 0.2s;
+      padding: 4px 10px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 6px;
     }
 
-    .slide-heading .action-link:hover {
-      background: rgba(56, 189, 248, 0.25);
+    .slide-heading a.action-link:hover {
+      background: rgba(56, 189, 248, 0.2);
     }
 
-    .slide-body {
-      flex: 1;
+    /* Grids & Cards */
+    .grid-2 {
       display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 20px;
-      overflow-y: auto;
+      flex: 1;
     }
 
-    /* Grid Layouts */
     .grid-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 20px;
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 24px;
+      flex: 1;
     }
 
     .grid-6-funnel {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: repeat(2, auto);
-      gap: 16px;
+      grid-gap: 16px;
+      flex: 1;
     }
 
     .feature-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.09);
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid var(--border-subtle);
       border-radius: 12px;
-      padding: 22px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      position: relative;
-      overflow: hidden;
+      gap: 12px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
     }
 
-    .feature-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, var(--saffron-bright), transparent);
-      opacity: 0.3;
+    .feature-card:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
     }
 
     .feature-card.highlight {
-      border-color: rgba(255, 140, 0, 0.4);
-      background: rgba(255, 140, 0, 0.04);
-    }
-
-    .feature-card.danger {
-      border-color: rgba(239, 68, 68, 0.4);
-      background: rgba(239, 68, 68, 0.05);
+      border-color: var(--border-highlight);
+      background: rgba(255, 122, 0, 0.05);
     }
 
     .feature-card.success {
-      border-color: rgba(16, 185, 129, 0.4);
+      border-color: rgba(16, 185, 129, 0.3);
       background: rgba(16, 185, 129, 0.05);
     }
 
+    .feature-card.danger {
+      border-color: rgba(239, 68, 68, 0.3);
+      background: rgba(239, 68, 68, 0.05);
+    }
+
     .feature-card h3 {
-      margin: 0 0 12px 0;
+      font-family: var(--font-heading);
       font-size: 16px;
       font-weight: 700;
-      color: #f1f5f9;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
     .feature-card ul {
-      margin: 0;
-      padding-left: 18px;
-      color: #cbd5e1;
-      font-size: 13.5px;
-      line-height: 1.6;
-    }
-
-    .feature-card li {
-      margin-bottom: 8px;
-    }
-
-    .feature-card strong {
-      color: #fff;
-    }
-
-    /* Speaker Notes Drawer */
-    .speaker-notes-panel {
-      position: fixed;
-      bottom: 50px;
-      left: 0;
-      width: 100%;
-      background: #050b14;
-      border-top: 2px solid var(--saffron-bright);
-      padding: 16px 32px;
-      box-sizing: border-box;
-      display: none;
-      z-index: 90;
-      box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.7);
-    }
-
-    .speaker-notes-panel.active {
-      display: block;
-    }
-
-    .speaker-notes-title {
-      font-size: 12px;
-      font-weight: 800;
-      color: var(--saffron-bright);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 6px;
+      list-style: none;
       display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .speaker-notes-text {
-      font-size: 14px;
-      color: #e2e8f0;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 13px;
+      color: #cbd5e1;
       line-height: 1.5;
-      font-style: italic;
     }
 
-    /* Presentation Bottom Footer Bar */
+    .feature-card ul li {
+      position: relative;
+      padding-left: 14px;
+    }
+
+    .feature-card ul li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--saffron-bright);
+      font-weight: bold;
+    }
+
+    .feature-card.success ul li::before { color: var(--emerald-bright); }
+    .feature-card.danger ul li::before { color: var(--danger-red); }
+
+    /* Presentation Footer */
     .pres-footer {
-      height: 50px;
-      background: rgba(10, 25, 47, 0.95);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(15, 23, 42, 0.95);
+      border-top: 1px solid var(--border-subtle);
+      padding: 12px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 24px;
-      backdrop-filter: blur(10px);
-      z-index: 100;
-      position: relative;
+      z-index: 90;
+    }
+
+    .nav-arrow-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .nav-arrow-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
     }
 
     .slide-dots {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     .slide-dot {
@@ -361,63 +345,57 @@
     }
 
     .slide-dot.active {
-      background: var(--saffron-bright);
       width: 24px;
-      border-radius: 12px;
+      border-radius: 5px;
+      background: var(--saffron-bright);
     }
 
-    .nav-arrow-btn {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #fff;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
+    /* Speaker Notes Drawer */
+    .speaker-notes-panel {
+      position: fixed;
+      bottom: 60px;
+      left: 24px;
+      right: 24px;
+      background: rgba(10, 25, 47, 0.97);
+      border: 1px solid var(--saffron-bright);
+      border-radius: 12px;
+      padding: 16px 20px;
+      z-index: 95;
+      display: none;
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.6);
+      max-height: 160px;
+      overflow-y: auto;
+    }
+
+    .speaker-notes-panel.active {
+      display: block;
+    }
+
+    .speaker-notes-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--saffron-bright);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s;
+      gap: 6px;
     }
 
-    .nav-arrow-btn:hover {
-      background: var(--saffron-bright);
-      color: #000;
-      border-color: var(--saffron-bright);
+    .speaker-notes-text {
+      font-size: 14px;
+      color: #f1f5f9;
+      line-height: 1.6;
     }
 
-    /* Print styling for PDF export */
     @media print {
-      body.presentation-mode {
-        background: #fff !important;
-        color: #000 !important;
-        overflow: visible !important;
-        height: auto !important;
-      }
-      .pres-header, .pres-footer, .speaker-notes-panel {
-        display: none !important;
-      }
-      .slide-stage {
-        height: auto !important;
-        padding: 0 !important;
-        display: block !important;
-      }
-      .slide-card {
-        position: relative !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-        transform: none !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        height: 100vh !important;
-        page-break-after: always !important;
-        border: none !important;
-        border-radius: 0 !important;
-        background: #0f172a !important;
-        color: #fff !important;
-        margin: 0 !important;
-        padding: 40px !important;
-      }
+      body.presentation-mode { background: #fff !important; color: #000 !important; }
+      .pres-header, .pres-footer, .speaker-notes-panel { display: none !important; }
+      .slide-stage { padding: 0 !important; display: block !important; }
+      .slide-card { display: block !important; page-break-after: always; box-shadow: none !important; border: 1px solid #ccc !important; color: #000 !important; background: #fff !important; margin-bottom: 40px; }
+      .slide-card h1, .slide-card h2, .slide-card h3 { color: #000 !important; }
+      .slide-card ul li { color: #333 !important; }
     }
   </style>
 </head>
@@ -426,34 +404,37 @@
   <!-- Presentation Header -->
   <header class="pres-header">
     <div class="pres-logo-area">
-      <span class="pres-logo-badge" style="background: linear-gradient(135deg, #10b981, #ff8c00); color: #000;">SIH 2026 GRAND FINALE</span>
-      <span class="pres-title">PRITHVI-SETU 360: Triple-Impact Prototype Review Deck</span>
+      <span class="pres-logo-badge">PROJECT REVIEW &amp; EVALUATION</span>
+      <span class="pres-title">NLAMS: National Land Acquisition &amp; Management System</span>
       <span style="color: rgba(255,255,255,0.4); font-size: 12px;">|</span>
-      <span style="color: var(--text-muted); font-size: 13px;">Land Acquisition &bull; Farmer D2C (SIH26033) &bull; Landslide AI (NER)</span>
+      <span style="color: var(--text-muted); font-size: 13px;">RFCTLARR Act 2013 &bull; Sub-Meter Cadastral GIS &bull; PFMS DBT</span>
     </div>
 
     <div class="pres-controls">
-      <a href="unified-platform.html" target="_top" class="pres-btn" style="background: linear-gradient(135deg, #ff9900, #138808); border:none; color:#fff; font-weight:700;" title="Launch All-In-One Unified Command Suite">
-        <i class="fa-solid fa-globe"></i> Unified Grid
+      <a href="NLAMS_Project_Review_Presentation.pptx" download class="pres-btn primary" title="Download Official PowerPoint Presentation (.pptx)">
+        <i class="fa-solid fa-file-powerpoint"></i> Download PPTX
       </a>
-      <a href="farmer-d2c.html" onclick="if(window.self!==window.top){event.preventDefault();window.top.postMessage({type:'NAVIGATE_APP',appId:'kisan',url:'farmer-d2c.html'},'*');}" class="pres-btn" style="background: rgba(16,185,129,0.2); border-color:#10b981; color:#34d399;" title="Open Farmer D2C & Mandi Prototype">
-        <i class="fa-solid fa-wheat-awn"></i> Farmer D2C
+      <a href="dashboard.html" target="_top" class="pres-btn" style="background: rgba(255,122,0,0.15); border-color:#ff7a00; color:#ff9e00;" title="Launch Command Dashboard">
+        <i class="fa-solid fa-gauge-high"></i> Dashboard
       </a>
-      <a href="landslide-ner.html" onclick="if(window.self!==window.top){event.preventDefault();window.top.postMessage({type:'NAVIGATE_APP',appId:'drishti',url:'landslide-ner.html'},'*');}" class="pres-btn" style="background: rgba(239,68,68,0.2); border-color:#ef4444; color:#f87171;" title="Open Landslide AI Prototype">
-        <i class="fa-solid fa-mountain"></i> Landslide AI
+      <a href="gis-map.html" target="_top" class="pres-btn" style="background: rgba(56,189,248,0.15); border-color:#38bdf8; color:#38bdf8;" title="Open Cadastral GIS Map">
+        <i class="fa-solid fa-earth-asia"></i> GIS Map
+      </a>
+      <a href="workflow.html" target="_top" class="pres-btn" style="background: rgba(16,185,129,0.15); border-color:#10b981; color:#34d399;" title="Open e-Office Workflow">
+        <i class="fa-solid fa-diagram-project"></i> e-Office
       </a>
       <span class="slide-timer" id="presTimer" title="Elapsed presentation time">⏱️ 00:00</span>
-      <button class="pres-btn" onclick="toggleSpeakerNotes()" title="Press 'N' to toggle speaker script">
+      <button class="pres-btn" onclick="toggleSpeakerNotes()" title="Press 'N' to toggle defense notes">
         <i class="fa-solid fa-microphone-lines"></i> Notes [N]
       </button>
-      <button class="pres-btn" onclick="window.print()" title="Print or Save as PDF Slide Deck">
-        <i class="fa-solid fa-print"></i> Print PDF
+      <button class="pres-btn" onclick="window.print()" title="Print / Export as PDF">
+        <i class="fa-solid fa-print"></i> PDF
       </button>
-      <button class="pres-btn primary" onclick="toggleFullScreen()" title="Press 'F' for Fullscreen">
+      <button class="pres-btn" onclick="toggleFullScreen()" title="Press 'F' for Fullscreen">
         <i class="fa-solid fa-expand"></i> Fullscreen [F]
       </button>
-      <a href="index.html" class="pres-btn emerald" title="Go to Main Unified Application Portal">
-        <i class="fa-solid fa-house"></i> Master Portal
+      <a href="index.html" class="pres-btn emerald" title="Main Portal">
+        <i class="fa-solid fa-house"></i> Portal
       </a>
     </div>
   </header>
@@ -461,93 +442,163 @@
   <!-- Slide Stage -->
   <main class="slide-stage" id="slideStage">
 
-    <!-- SLIDE 1: Title & Vision -->
-    <div class="slide-card active" data-slide="1" data-notes="Respected review panel and hackathon evaluators, welcome to the official presentation of PRITHVI-SETU 360. We have successfully synthesized and built complete working prototypes for three mission-critical national challenges: First, SIH26033: Farmer Direct-to-Consumer Platform &amp; Mandi Procurement Scheduling; Second, AI-Based Early Warning &amp; Landslide Risk Monitoring for the North Eastern Region; and Third, the National Land Acquisition &amp; Management System under RFCTLARR Act 2013. Today, we demonstrate full end-to-end working software for all three.">
-      <div class="slide-eyebrow"><i class="fa-solid fa-landmark"></i> Smart India Hackathon 2026 • Unified National Grid Prototype</div>
-      <h1 class="slide-heading" style="font-size: 32px; margin-bottom: 8px;">
-        PRITHVI-SETU 360: Unified National Land, Agri-Commerce &amp; Geo-Risk Grid
+    <!-- SLIDE 1: Title & Project Overview -->
+    <div class="slide-card active" data-slide="1" data-notes="Respected members of the review committee, welcome to the final technical presentation and defense of the National Land Acquisition and Management System (NLAMS). Our platform addresses the single largest source of infrastructure delay and litigation in India: the complex statutory process of land acquisition under the RFCTLARR Act 2013. We demonstrate a complete, production-grade full-stack solution featuring sub-meter cadastral GIS, e-Office green-noting, automated Section 25 lapse countdowns, and PFMS direct benefit transfer.">
+      <div class="slide-eyebrow"><i class="fa-solid fa-landmark"></i> Final Technical Project Review &amp; Defense</div>
+      <h1 class="slide-heading" style="font-size: 30px; margin-bottom: 6px;">
+        National Land Acquisition &amp; Management System (NLAMS)
       </h1>
-      <p style="font-size: 16px; color: var(--gold-bright); margin: 0 0 24px 0; font-weight: 500;">
-        Three Integrated High-Impact Prototypes: Farmer D2C (SIH26033) + Landslide AI (NER) + Land Acquisition (NLAMS)
+      <p style="font-size: 15px; color: var(--gold-bright); margin: 0 0 20px 0; font-weight: 500;">
+        Real-Time End-to-End Digital Monitoring &amp; Decision Support Platform under RFCTLARR Act, 2013
       </p>
 
       <div class="grid-3" style="margin-top: 10px;">
-        <div class="feature-card success" style="border-color: rgba(16,185,129,0.4);">
-          <h3 style="color: var(--emerald-bright);"><i class="fa-solid fa-wheat-awn"></i> 1. Farmer D2C (SIH26033)</h3>
-          <ul>
-            <li><strong>Zero Middlemen:</strong> Direct consumer &amp; bulk institutional marketplace saving 25-40% broker margin.</li>
-            <li><strong>Farmer Income Boost:</strong> Real-time price realization engine showing <strong>+31.4%</strong> higher farmgate earnings.</li>
-            <li><strong>MSP Procurement E-Tokens:</strong> FCI/NAFED live mandi queue tracking, moisture FAQ grading &amp; instant PFMS DBT.</li>
-          </ul>
-        </div>
-
-        <div class="feature-card danger" style="border-color: rgba(239,68,68,0.4);">
-          <h3 style="color: #f87171;"><i class="fa-solid fa-mountain"></i> 2. Landslide AI (NER)</h3>
-          <ul>
-            <li><strong>8 NER States:</strong> 31 high-risk hill zones &amp; 52 IoT sensors (rain gauges, tilt meters, pore pressure).</li>
-            <li><strong>AI Simulation Sandbox:</strong> Real-time ML slope collapse model with interactive rainfall/seismic sliders.</li>
-            <li><strong>Emergency Dispatch:</strong> Automated NDMA wireless siren, cell SMS blast &amp; road detour rerouting.</li>
-          </ul>
-        </div>
-
         <div class="feature-card highlight">
-          <h3 style="color: var(--saffron-bright);"><i class="fa-solid fa-landmark-dome"></i> 3. Land Acquisition (NLAMS)</h3>
+          <h3 style="color: var(--saffron-bright);"><i class="fa-solid fa-user-shield"></i> Project Scope &amp; Info</h3>
           <ul>
-            <li><strong>Sub-Meter Cadastral GIS:</strong> Real Patta &amp; Webland 1B parcels for Tamil Nadu (CPRR) &amp; AP (Amaravati).</li>
-            <li><strong>6-Stage RFCTLARR Workflow:</strong> Proposal to Sec 38 Possession with e-Office green-noting &amp; DSC e-Sign.</li>
-            <li><strong>Sec 25 Lapse Radar:</strong> 12-month statutory countdown preventing catastrophic project lapses.</li>
+            <li><strong>Project:</strong> Full-Stack NLAMS Platform</li>
+            <li><strong>Presented by:</strong> Mohan &amp; Development Team</li>
+            <li><strong>Domain:</strong> E-Governance, GIS Informatics &amp; Legal Tech</li>
+            <li><strong>Status:</strong> 100% Implemented &amp; Live</li>
+          </ul>
+        </div>
+
+        <div class="feature-card success">
+          <h3 style="color: var(--emerald-bright);"><i class="fa-solid fa-scale-balanced"></i> Statutory Compliance</h3>
+          <ul>
+            <li><strong>RFCTLARR Act 2013:</strong> All 6 stages digitized</li>
+            <li><strong>Section 25 Clock:</strong> 12-Month lapse early warning</li>
+            <li><strong>Mandatory Solatium:</strong> 100% calculation (Sec 30)</li>
+            <li><strong>Disbursal:</strong> PFMS Direct Benefit Transfer</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h3 style="color: var(--cyan-bright);"><i class="fa-solid fa-map-location-dot"></i> Spatial &amp; Architectural Rigor</h3>
+          <ul>
+            <li><strong>Cadastral GIS:</strong> True farm polygons on satellite tiles</li>
+            <li><strong>Pan-India:</strong> Corridors across North, South, East, West</li>
+            <li><strong>e-Office:</strong> Green-noting sheets with cryptographic DSC</li>
+            <li><strong>Dual DB:</strong> MySQL 8.0 with adaptive SQLite fallback</li>
           </ul>
         </div>
       </div>
 
       <div style="margin-top: auto; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px;">
-        <span style="font-size: 13px; color: var(--text-muted);"><i class="fa-solid fa-user-shield" style="color: var(--saffron-bright);"></i> Presenter: <strong>Mohan &amp; Team (SIH 2026)</strong></span>
-        <span style="font-size: 13px; color: var(--text-muted);"><i class="fa-solid fa-laptop-code"></i> Live Local Server: <code>http://localhost:8000/</code></span>
-        <span style="font-size: 13px; color: #34d399;"><i class="fa-solid fa-circle-check"></i> 100% Functional Prototypes for All 3 Problem Statements</span>
+        <span style="font-size: 13px; color: var(--text-muted);"><i class="fa-solid fa-graduation-cap" style="color: var(--saffron-bright);"></i> Technical Project Review</span>
+        <span style="font-size: 13px; color: var(--text-muted);"><i class="fa-solid fa-server"></i> Local Server: <code>http://localhost:3000/</code></span>
+        <span style="font-size: 13px; color: #34d399;"><i class="fa-solid fa-circle-check"></i> 100% Verified Full-Stack Platform</span>
       </div>
     </div>
 
-    <!-- SLIDE 2: The National Challenge & Pain Points -->
-    <div class="slide-card" data-slide="2" data-notes="Why does land acquisition in India take an average of 4 to 7 years? First, under Section 25 of the RFCTLARR Act 2013, an acquisition automatically lapses if an Award is not passed within 12 months of Section 19. Hundreds of projects have collapsed because Collectors missed this deadline. Second, generic pin maps cannot resolve boundary disputes; only sub-meter cadastral polygons can. Third, federal coordination between Union Ministries and State revenue departments is plagued by lost physical files.">
-      <div class="slide-eyebrow"><i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i> The Problem Context</div>
+    <!-- SLIDE 2: Project Overview & Executive Summary -->
+    <div class="slide-card" data-slide="2" data-notes="In this slide we present the executive abstract of NLAMS. Land acquisition in India touches multiple levels of government: central ministries sanction funds, state governments issue gazettes, district collectors act as quasi-judicial authorities, and field surveyors demarcate boundaries. NLAMS unites all these federal tiers into one unified digital backbone.">
+      <div class="slide-eyebrow"><i class="fa-solid fa-compass"></i> Executive Summary</div>
       <h2 class="slide-heading">
-        Why Land Acquisition Fails: The Critical Bottlenecks
-        <a href="reports.html" target="_blank" class="action-link"><i class="fa-solid fa-chart-line"></i> View AI Delay Radar</a>
+        Project Overview &amp; Executive Abstract
+        <a href="dashboard.html" target="_blank" class="action-link"><i class="fa-solid fa-gauge"></i> View Executive Dashboard</a>
+      </h2>
+
+      <div class="grid-2">
+        <div class="feature-card highlight">
+          <h3 style="color: var(--saffron-bright);"><i class="fa-solid fa-book-bookmark"></i> Problem Context &amp; Purpose</h3>
+          <ul>
+            <li>Land acquisition is the foremost impediment to national infrastructure expansion (Expressways, High-Speed Rail, Freight Corridors, Smart Cities).</li>
+            <li>NLAMS is an enterprise-grade digital governance platform built to unify all 28 States and 8 Union Territories under a common statutory monitoring framework.</li>
+            <li>Strictly encodes the provisions of the RFCTLARR Act 2013, ensuring statutory compliance at every milestone from SIA to physical possession.</li>
+            <li>Connects disparate state land revenue portals (UP Bhulekh, MahaBhumi, Bhoomi, Tamil Nilam, Webland) into a coherent spatial standard.</li>
+          </ul>
+        </div>
+
+        <div class="feature-card success">
+          <h3 style="color: var(--emerald-bright);"><i class="fa-solid fa-bullseye"></i> Core Engineering Objectives</h3>
+          <ul>
+            <li><strong>Prevent Project Lapses:</strong> Eliminate Section 25 statutory lapses via real-time countdown tracking and multi-tier alert escalation.</li>
+            <li><strong>Sub-Meter Spatial Clarity:</strong> Transition from crude point markers to surveyed cadastral polygons overlaid on high-resolution satellite basemaps.</li>
+            <li><strong>Transparent Compensation:</strong> Fully automate Section 26 market valuation, rural multipliers, 100% Solatium (Sec 30), and 12% statutory interest.</li>
+            <li><strong>Tamper-Proof e-Office:</strong> Digitize green-noting sheets and validate approvals with SHA-256 cryptographic hashes and DSC signatures.</li>
+            <li><strong>Direct Benefit Transfer:</strong> Enable direct escrow deposits into Aadhaar-linked beneficiary bank accounts via PFMS.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Problem Statement & Critical Bottlenecks -->
+    <div class="slide-card" data-slide="3" data-notes="Why do land acquisition projects in India face multi-year delays? According to MOSPI data, over 1,800 mega projects have suffered ₹4.5 Lakh Crore in cost overruns, 70% of which originate in land disputes. Worse, Section 25 of the RFCTLARR Act imposes a strict 12-month guillotine clause: if an Award is not passed within 12 months of Section 19, the entire acquisition lapses by law.">
+      <div class="slide-eyebrow"><i class="fa-solid fa-triangle-exclamation" style="color: #ef4444;"></i> Problem Motivation</div>
+      <h2 class="slide-heading">
+        Why Land Acquisition Fails: Critical Bottlenecks
+        <a href="reports.html" target="_blank" class="action-link"><i class="fa-solid fa-chart-line"></i> View Delay Analytics</a>
       </h2>
 
       <div class="grid-3">
         <div class="feature-card danger">
-          <h3 style="color: #ef4444;"><i class="fa-solid fa-hourglass-end"></i> 1. Massive Cost Overruns</h3>
+          <h3 style="color: #ef4444;"><i class="fa-solid fa-hourglass-end"></i> 1. Massive Delays &amp; Overruns</h3>
           <ul>
-            <li><strong>MOSPI Infrastructure Data:</strong> Over <strong>₹4.5 Lakh Crore</strong> in cumulative cost escalation across 1,800+ national infrastructure projects.</li>
-            <li><strong>70% of Delays</strong> are attributed directly to land acquisition bottlenecks, environmental clearances, and right-of-way disputes.</li>
-            <li>Slow physical file circulation across Village, Taluk, District, and State Secretariats takes an average of <strong>18 months</strong>.</li>
+            <li><strong>MOSPI Data:</strong> Over <strong>₹4.5 Lakh Crore</strong> in cumulative cost escalation across 1,800+ national infrastructure projects.</li>
+            <li><strong>70% of Project Delays</strong> are attributed directly to land acquisition bottlenecks, right-of-way stays, and boundary conflicts.</li>
+            <li>Physical file movement across Village, Taluk, District, and State Secretariats consumes <strong>18 to 24 months</strong>.</li>
           </ul>
         </div>
 
         <div class="feature-card highlight">
-          <h3 style="color: var(--saffron-bright);"><i class="fa-solid fa-clock-rotate-left"></i> 2. The Fatal Section 25 Lapse</h3>
+          <h3 style="color: var(--saffron-bright);"><i class="fa-solid fa-clock-rotate-left"></i> 2. Section 25 Statutory Lapse</h3>
           <ul>
-            <li>Under <strong>RFCTLARR Act 2013 (Section 25)</strong>, if an Award under Sec 23 is not passed within <strong>12 months</strong> of Section 19 declaration, <em>the entire acquisition lapses automatically</em>.</li>
-            <li>A lapse wipes out all prior spending and forces the administration to restart from Section 4 SIA.</li>
-            <li>Lack of an automated countdown clock causes inadvertent statutory lapses across districts.</li>
+            <li>Under <strong>RFCTLARR Act 2013 (Section 25)</strong>, an Award must be passed within <strong>12 months</strong> of Section 19 declaration.</li>
+            <li>If the deadline is missed by even one day, <strong>the entire acquisition proceedings lapse automatically</strong>.</li>
+            <li>Restarting from Section 4 SIA wastes hundreds of crores and restarts the multi-year cycle.</li>
           </ul>
         </div>
 
         <div class="feature-card">
-          <h3 style="color: var(--gold-bright);"><i class="fa-solid fa-map-location-dot"></i> 3. Cadastral &amp; Spatial Blindspots</h3>
+          <h3 style="color: var(--gold-bright);"><i class="fa-solid fa-map-location-dot"></i> 3. Spatial &amp; Federal Divide</h3>
           <ul>
-            <li>Standard consumer maps (Google / OSM) only drop point markers; they have <strong>zero parcel boundary intelligence</strong>.</li>
+            <li>Standard consumer maps (Google / OSM) only drop point markers with <strong>zero parcel boundary intelligence</strong>.</li>
             <li>Disputes occur at the centimeter boundary between farm plots and highway alignments.</li>
-            <li>Federal disconnect: <em>Land is a State subject</em> (Entry 18), while <em>National Highways/Railways are Union subjects</em> (Entry 23/24).</li>
+            <li>Federal disconnect: <em>Land is a State subject</em> (Entry 18), while <em>National Highways &amp; Railways are Union subjects</em> (Entry 23/24).</li>
           </ul>
         </div>
       </div>
     </div>
 
-    <!-- SLIDE 3: Statutory Legal Framework -->
-    <div class="slide-card" data-slide="3" data-notes="NLAMS is not just software—it is an encoded legal engine reflecting the complete statutory mandates of the RFCTLARR Act 2013. We have digitized all 6 stages: from the Social Impact Assessment under Section 4, through the Section 11 Preliminary Notification, Section 15 Objection Hearings, Section 19 Final Declaration, Section 23 Award with 100% Solatium, up to Section 38 Physical Possession.">
-      <div class="slide-eyebrow"><i class="fa-solid fa-gavel"></i> Statutory Rigor</div>
+    <!-- SLIDE 4: Gap Analysis (Existing vs Proposed) -->
+    <div class="slide-card" data-slide="4" data-notes="This slide presents the literature survey and comparative gap analysis between the legacy paper-based process and our proposed NLAMS full-stack platform. In every dimension—from file routing and spatial accuracy to statutory tracking and compensation transparency—NLAMS replaces manual vulnerabilities with automated digital controls.">
+      <div class="slide-eyebrow"><i class="fa-solid fa-code-compare"></i> Literature Survey &amp; Gap Analysis</div>
+      <h2 class="slide-heading">
+        Existing System vs. Proposed NLAMS Platform
+        <a href="projects.html" target="_blank" class="action-link"><i class="fa-solid fa-diagram-project"></i> View Project Pipeline</a>
+      </h2>
+
+      <div class="grid-2">
+        <div class="feature-card danger">
+          <h3 style="color: #ef4444;"><i class="fa-solid fa-circle-xmark"></i> Existing / Legacy Acquisition System</h3>
+          <ul>
+            <li><strong>Manual Paper Files:</strong> Physical dak circulation with zero auditability and high risk of misplacement.</li>
+            <li><strong>Coarse Maps:</strong> Static paper shajra maps or disconnected CAD files vulnerable to manual manipulation.</li>
+            <li><strong>Statutory Lapse Danger:</strong> Section 25 12-month limit tracked in manual registers, frequently leading to inadvertent lapses.</li>
+            <li><strong>Manual Math:</strong> Arithmetic errors in calculating rural multiplier factors and mandatory solatium.</li>
+            <li><strong>Slow Disbursal:</strong> Cheque or cash payouts prone to delays, intermediaries, and ghost claims.</li>
+            <li><strong>Opaque to Farmers:</strong> Affected landowners must travel to collectorates to inspect notifications.</li>
+          </ul>
+        </div>
+
+        <div class="feature-card success">
+          <h3 style="color: var(--emerald-bright);"><i class="fa-solid fa-circle-check"></i> Proposed NLAMS Digital Platform</h3>
+          <ul>
+            <li><strong>Digital e-Office:</strong> Green-noting sheets with cryptographic DSC signatures and SHA-256 tamper seals.</li>
+            <li><strong>Sub-Meter Cadastral GIS:</strong> Multi-point GeoJSON parcel polygons with 60m expressway alignment overlay.</li>
+            <li><strong>Active Lapse Radar:</strong> Real-time countdown engine with automated 3-tier SMS/email escalation.</li>
+            <li><strong>Automated Award Math:</strong> Strict programmatic computation of Sec 26, Sec 30(1) Solatium, and Sec 30(3) interest.</li>
+            <li><strong>PFMS Direct Benefit Transfer:</strong> Direct account deposits via Aadhaar-linked beneficiary register.</li>
+            <li><strong>Public Citizen Portal:</strong> Privacy-masked Khasra lookup enabling farmers to verify awards online.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: Statutory Legal Framework -->
+    <div class="slide-card" data-slide="5" data-notes="NLAMS is not generic workflow software—it is a purpose-built legal execution engine strictly encoding all 6 statutory stages of the RFCTLARR Act 2013. We follow the statute verbatim: Stage 1 Social Impact Assessment, Stage 2 Preliminary Notification under Section 11, Stage 3 Section 15 Objection Hearings, Stage 4 Section 19 Final Declaration, Stage 5 Section 23 Award with 100% Solatium, and Stage 6 Section 38 Physical Possession.">
+      <div class="slide-eyebrow"><i class="fa-solid fa-gavel"></i> Statutory Legal Lifecycle</div>
       <h2 class="slide-heading">
         RFCTLARR Act 2013: 6-Stage Statutory Lifecycle
         <a href="workflow.html" target="_blank" class="action-link"><i class="fa-solid fa-diagram-project"></i> Open Workflow Engine</a>
@@ -556,17 +607,17 @@
       <div class="grid-6-funnel">
         <div class="feature-card">
           <h3 style="font-size: 15px; color: var(--gold-bright);"><span style="background: rgba(245,166,35,0.2); padding: 2px 6px; border-radius: 4px;">Stage 1</span> Sec 4-7 SIA</h3>
-          <p style="font-size: 13px; color: #cbd5e1; margin: 0;">Social Impact Assessment, Gram Sabha public consultation, and Expert Group clearance.</p>
+          <p style="font-size: 13px; color: #cbd5e1; margin: 0;">Social Impact Assessment, Gram Sabha public consultation, and appraisal by independent Multi-Disciplinary Expert Group.</p>
         </div>
 
         <div class="feature-card">
           <h3 style="font-size: 15px; color: var(--gold-bright);"><span style="background: rgba(245,166,35,0.2); padding: 2px 6px; border-radius: 4px;">Stage 2</span> Sec 11 Prelim Notice</h3>
-          <p style="font-size: 13px; color: #cbd5e1; margin: 0;">Official Gazette publication, land transaction freeze, tree/well census, and Joint Measurement Survey (JMS).</p>
+          <p style="font-size: 13px; color: #cbd5e1; margin: 0;">Official Gazette publication, freeze on private land registrations, tree/crop census, and Joint Measurement Survey.</p>
         </div>
 
         <div class="feature-card">
           <h3 style="font-size: 15px; color: var(--gold-bright);"><span style="background: rgba(245,166,35,0.2); padding: 2px 6px; border-radius: 4px;">Stage 3</span> Sec 15 Objections</h3>
-          <p style="font-size: 13px; color: #cbd5e1; margin: 0;">60-day statutory window for affected owners. Quasi-judicial hearing docket with CALA Speaking Orders.</p>
+          <p style="font-size: 13px; color: #cbd5e1; margin: 0;">60-day window for affected landowners; CALA quasi-judicial hearing docket with legally binding Speaking Orders.</p>
         </div>
 
         <div class="feature-card highlight">
@@ -576,21 +627,55 @@
 
         <div class="feature-card highlight">
           <h3 style="font-size: 15px; color: var(--saffron-bright);"><span style="background: rgba(255,140,0,0.2); padding: 2px 6px; border-radius: 4px;">Stage 5</span> Sec 23 Award</h3>
-          <p style="font-size: 13px; color: #cbd5e1; margin: 0;">Compensation Award formulation: Market Value × Multiplier + 100% Solatium (Sec 30) + 12% interest.</p>
+          <p style="font-size: 13px; color: #cbd5e1; margin: 0;">Compensation Award determination: Market Value × Multiplier + 100% Solatium (Sec 30) + 12% Interest.</p>
         </div>
 
         <div class="feature-card success">
           <h3 style="font-size: 15px; color: var(--emerald-bright);"><span style="background: rgba(16,185,129,0.2); padding: 2px 6px; border-radius: 4px;">Stage 6</span> Sec 38 Possession</h3>
-          <p style="font-size: 13px; color: #cbd5e1; margin: 0;">Collector takes possession <em>only after</em> 100% of compensation has been credited via PFMS/DBT to farmer accounts.</p>
+          <p style="font-size: 13px; color: #cbd5e1; margin: 0;">Physical handover of land to executing agency ONLY AFTER 100% compensation deposited into farmer bank accounts.</p>
         </div>
       </div>
     </div>
 
-    <!-- SLIDE 4: Solution Architecture & Federal Governance -->
-    <div class="slide-card" data-slide="4" data-notes="Because Land is an exclusive State subject under Entry 18 of the State List while mega infrastructure is a Central subject under Entries 23 and 24 of the Union List, a one-size-fits-all single login is unworkable. We engineered a Federal Multi-Role Governance Model across all 28 States and 8 Union Territories: Central Ministry for national monitoring and PFMS releases, State Nodal Departments for Gazette publications, District Collectors as Competent Authorities for Land Acquisition, and Field Surveyors for ground demarcation.">
-      <div class="slide-eyebrow"><i class="fa-solid fa-sitemap"></i> Pan-India Federal Architecture</div>
+    <!-- SLIDE 6: System Architecture & Technical Specifications -->
+    <div class="slide-card" data-slide="6" data-notes="Let us review the full-stack system architecture. The client tier is built on semantic HTML5 and vanilla JavaScript modules with zero framework overhead. The application tier runs a high-performance Node.js Express REST API structured in modular controllers and services. Persistence uses an adaptive dual-engine architecture: production MySQL 8.0 with automatic zero-config SQLite fallback. The API is documented in interactive OpenAPI 3.0 at /api/docs.">
+      <div class="slide-eyebrow"><i class="fa-solid fa-server"></i> System Architecture</div>
       <h2 class="slide-heading">
-        Federal Governance across All 28 States &amp; 8 UTs
+        Full-Stack System Architecture &amp; Tech Stack
+        <a href="/api/docs" target="_blank" class="action-link"><i class="fa-solid fa-file-code"></i> Open Swagger API Docs</a>
+      </h2>
+
+      <div class="grid-2">
+        <div class="feature-card">
+          <h3 style="color: var(--cyan-bright);"><i class="fa-solid fa-layer-group"></i> Architectural Tiers &amp; Data Flow</h3>
+          <ul>
+            <li><strong>Client Presentation Tier:</strong> Lightweight semantic HTML5, Vanilla CSS3 (Custom Design System), and ES6+ modules with sub-second page loads.</li>
+            <li><strong>Application Controller Tier:</strong> Node.js Express REST API (v1) with modular controller-service pattern, input validation, and Helmet security headers.</li>
+            <li><strong>Database Persistence Tier:</strong> Adaptive dual-engine persistence — Enterprise MySQL 8.0 with automated zero-configuration SQLite3 fallback.</li>
+            <li><strong>Geospatial Tier:</strong> Leaflet.js mapping engine with GeoJSON cadastral vector layers, ESRI World Satellite imagery, and Carto tiles.</li>
+            <li><strong>Security &amp; Cryptography:</strong> JWT session tokens, CORS origin protection, rate limiting, and SHA-256 cryptographic document hashing.</li>
+          </ul>
+        </div>
+
+        <div class="feature-card highlight">
+          <h3 style="color: var(--saffron-bright);"><i class="fa-solid fa-microchip"></i> Technology Specifications</h3>
+          <ul>
+            <li><strong>Backend Runtime:</strong> Node.js v20+ / Express v5 (high throughput, asynchronous non-blocking I/O).</li>
+            <li><strong>Database Engines:</strong> <code>better-sqlite3</code> v13 / <code>mysql2</code> v3 with automated migration and seed scripts.</li>
+            <li><strong>Interactive API Docs:</strong> OpenAPI 3.0 / Swagger UI mounted at <code>/api/docs</code> for live endpoint testing.</li>
+            <li><strong>Authentication:</strong> Cryptographic JWTs with role-based access control (RBAC) across 4 federal roles.</li>
+            <li><strong>Integration Adapters:</strong> NIC DSC digital signature adapter, PFMS sandbox gateway, SMS/Email notification dispatcher.</li>
+            <li><strong>Automated Testing:</strong> Complete Jest v30 &amp; Supertest suite covering auth, compensation, workflows, and deadlines.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: Multi-Stakeholder Federal Governance Model -->
+    <div class="slide-card" data-slide="7" data-notes="Because Land is an exclusive State subject under Entry 18 of the State List while mega infrastructure is a Central subject under Entries 23 and 24 of the Union List, a single login is unworkable. We engineered a Federal Multi-Role Governance Model across all 28 States and 8 Union Territories: Central Ministry for national monitoring and PFMS releases, State Nodal Departments for Gazette publications, District Collectors as Competent Authorities for Land Acquisition, and Field Surveyors for ground demarcation.">
+      <div class="slide-eyebrow"><i class="fa-solid fa-sitemap"></i> Federal Architecture</div>
+      <h2 class="slide-heading">
+        Multi-Stakeholder Federal Governance &amp; RBAC Personas
         <a href="dashboard.html" target="_blank" class="action-link"><i class="fa-solid fa-user-gear"></i> Test Role Switcher</a>
       </h2>
 
@@ -598,17 +683,17 @@
         <div class="feature-card highlight">
           <h3 style="color: var(--saffron-bright);"><i class="fa-solid fa-building-columns"></i> 1. Central Ministries (MoRD / MoRTH / Railways)</h3>
           <ul>
-            <li>Pan-India national decision support tracking 2,847 projects across all 36 States and UTs.</li>
+            <li>Pan-India national decision support tracking projects across all 36 States and UTs.</li>
             <li>Escrow fund allocation and release through Public Financial Management System (PFMS).</li>
-            <li>Parliamentary Question (PQ) response generator and Cabinet briefing generator.</li>
+            <li>Parliamentary Question (PQ) response generator for Lok Sabha &amp; Rajya Sabha briefings.</li>
           </ul>
         </div>
 
         <div class="feature-card">
           <h3 style="color: var(--gold-bright);"><i class="fa-solid fa-landmark-flag"></i> 2. State Nodal Revenue Departments (All States)</h3>
           <ul>
-            <li>E-Gazette notification publication and state-wide corridor monitoring across UP, MH, TN, AP, KA, GJ, WB, etc.</li>
-            <li>Built-in integration adapters with State Land Registries: <strong>UP Bhulekh, MahaBhumi, Bhoomi (KA), Tamil Nilam (TN), Webland (AP), AnyRoR (GJ), BanglarBhumi (WB), Dharitree (AS)</strong>.</li>
+            <li>E-Gazette notification publication and state-wide corridor monitoring across UP, MH, TN, AP, KA, etc.</li>
+            <li>Built-in integration adapters with State Land Registries: <strong>UP Bhulekh, MahaBhumi, Bhoomi (KA), Tamil Nilam (TN), Webland (AP)</strong>.</li>
             <li>District-level performance ranking and statutory bottleneck escalation.</li>
           </ul>
         </div>
@@ -623,7 +708,7 @@
         </div>
 
         <div class="feature-card">
-          <h3 style="color: var(--cyan-bright);"><i class="fa-solid fa-location-crosshairs"></i> 4. Field Surveyor &amp; Project Implementing Authorities</h3>
+          <h3 style="color: var(--cyan-bright);"><i class="fa-solid fa-location-crosshairs"></i> 4. Field Surveyor &amp; Implementing Authorities</h3>
           <ul>
             <li>Ground Joint Measurement Survey (JMS) using Differential GPS (DGPS) coordinates.</li>
             <li>Mobile interactive demarcation tool calculating live acreage in Cents, Acres, and Hectares.</li>
@@ -633,9 +718,9 @@
       </div>
     </div>
 
-    <!-- SLIDE 5: Sub-Meter Cadastral GIS Engine (Pan-India) -->
-    <div class="slide-card" data-slide="5" data-notes="Here is our most powerful spatial feature: our sub-meter Cadastral GIS engine covering all zones of India. Unlike basic point markers, we render true cadastral farm polygons overlaid on high-resolution satellite imagery across North, South, East, West, Central, and North-Eastern India. In Northern India we have UP's Ganga Expressway and Jewar Airport; in the West we have Maharashtra's Samruddhi Mahamarg and Gujarat's Dholera SIR; in the South we have Tamil Nadu's CPRR, Andhra Pradesh's Amaravati, and Karnataka's STRR; in the East and NE we have West Bengal's Freight Corridor and Assam's Guwahati Ring Road.">
-      <div class="slide-eyebrow"><i class="fa-solid fa-satellite"></i> Nationwide Spatial Intelligence</div>
+    <!-- SLIDE 8: Sub-Meter Cadastral GIS Engine -->
+    <div class="slide-card" data-slide="8" data-notes="Here is our spatial engine: our sub-meter Cadastral GIS covering all zones of India. Unlike basic point markers, we render true cadastral farm polygons overlaid on high-resolution satellite imagery across North, South, East, West, Central, and North-Eastern India. In Northern India we have UP's Ganga Expressway and Jewar Airport; in the West we have Maharashtra's Samruddhi Mahamarg and Gujarat's Dholera SIR; in the South we have Tamil Nadu's CPRR, Andhra Pradesh's Amaravati, and Karnataka's STRR; in the East and NE we have West Bengal's Freight Corridor and Assam's Guwahati Ring Road.">
+      <div class="slide-eyebrow"><i class="fa-solid fa-satellite"></i> Spatial Intelligence</div>
       <h2 class="slide-heading">
         Pan-India Cadastral GIS Engine: Multi-Zone Corridors
         <a href="gis-map.html" target="_blank" class="action-link"><i class="fa-solid fa-earth-asia"></i> Open Live Cadastral GIS</a>
@@ -654,7 +739,7 @@
         </div>
 
         <div class="feature-card">
-          <h3 style="color: var(--gold-bright);"><i class="fa-solid fa-layer-group"></i> 🛰️ Nationwide Cadastral Intelligence</h3>
+          <h3 style="color: var(--gold-bright);"><i class="fa-solid fa-layer-group"></i> 🛰️ Advanced Cadastral Intelligence</h3>
           <ul>
             <li><strong>All 36 States &amp; UTs Master Hubs:</strong> Interactive national heatmap and instant zoom-to-cadastre hubs for every State &amp; UT.</li>
             <li><strong>True Sub-Meter Farm Polygons:</strong> Multi-coordinate boundaries displaying registered owner, surveyed area, and statutory status.</li>
@@ -666,8 +751,8 @@
       </div>
     </div>
 
-    <!-- SLIDE 6: e-Office Green-Noting & Cryptographic e-Sign -->
-    <div class="slide-card" data-slide="6" data-notes="A major novelty in NLAMS is our authentic government e-Office Green-Noting Sheet. When a Competent Authority inspects a file, they don't just click a button. They see the full noting history with green paper styling, verify statutory compliance checklists, and execute an authentic Cryptographic Digital Signature with SHA-256 tamper-evident seals. This legally bonds the officer's approval and auto-routes the file to the next statutory stage.">
+    <!-- SLIDE 9: e-Office Green-Noting & Cryptographic e-Sign -->
+    <div class="slide-card" data-slide="9" data-notes="A major novelty in NLAMS is our authentic government e-Office Green-Noting Sheet. When a Competent Authority inspects a file, they don't just click a button. They see the full noting history with green paper styling, verify statutory compliance checklists, and execute an authentic Cryptographic Digital Signature with SHA-256 tamper-evident seals. This legally bonds the officer's approval and auto-routes the file to the next statutory stage.">
       <div class="slide-eyebrow"><i class="fa-solid fa-signature"></i> Workflow Innovation</div>
       <h2 class="slide-heading">
         e-Office Green-Noting &amp; Cryptographic e-Sign Engine
@@ -687,7 +772,7 @@
         <div class="feature-card highlight">
           <h3 style="color: var(--saffron-bright);"><i class="fa-solid fa-fingerprint"></i> 2. Cryptographic DSC / e-Sign</h3>
           <ul>
-            <li>Officers approve statutory stages using Aadhaar OTP / Digital Signature Certificate (DSC).</li>
+            <li>Officers approve statutory stages using Aadhaar OTP or Digital Signature Certificate (DSC).</li>
             <li>Generates an immutable <strong>SHA-256 cryptographic hash</strong> stamped on the digital order sheet.</li>
             <li>Auto-advances files across stages while logging officer ID, IP address, and timestamp.</li>
           </ul>
@@ -704,11 +789,11 @@
       </div>
     </div>
 
-    <!-- SLIDE 7: Section 25 Statutory 12-Month Lapse Alarm -->
-    <div class="slide-card" data-slide="7" data-notes="Now we present our most critical legal safeguard: the Section 25 Statutory Lapse Alarm. The law says that once Section 19 is published, the Collector has exactly 12 months to pass the compensation Award under Section 23. If they miss this date by even one day, the entire acquisition lapses. Our system features a real-time countdown gauge. When projects cross into the 30-day danger zone, it triggers SMS alerts, red alert banners, and auto-drafts a Ministerial Show-Cause Notice.">
+    <!-- SLIDE 10: Section 25 Statutory 12-Month Lapse Alarm -->
+    <div class="slide-card" data-slide="10" data-notes="Now we present our most critical legal safeguard: the Section 25 Statutory Lapse Alarm. The law says that once Section 19 is published, the Collector has exactly 12 months to pass the compensation Award under Section 23. If they miss this date by even one day, the entire acquisition lapses. Our system features a real-time countdown gauge. When projects cross into the 30-day danger zone, it triggers SMS alerts, red alert banners, and auto-drafts a Ministerial Show-Cause Notice.">
       <div class="slide-eyebrow"><i class="fa-solid fa-bell" style="color: #ef4444;"></i> Legal Safeguard</div>
       <h2 class="slide-heading">
-        Section 25 Statutory 12-Month Lapse Alarm System
+        Section 25 Statutory 12-Month Countdown &amp; Lapse Radar
         <a href="workflow.html#sec25" target="_blank" class="action-link"><i class="fa-solid fa-stopwatch"></i> View Active Alarms</a>
       </h2>
 
@@ -723,7 +808,7 @@
         </div>
 
         <div class="feature-card highlight">
-          <h3 style="color: var(--saffron-bright);"><i class="fa-solid fa-shield-halved"></i> NLAMS Automated Early Warning Engine</h3>
+          <h3 style="color: var(--saffron-bright);"><i class="fa-solid fa-shield-halved"></i> Automated Early Warning Engine</h3>
           <ul>
             <li><strong>Real-Time Countdown:</strong> Active gauge tracking elapsed days and remaining calendar days for every active project.</li>
             <li><strong>Automated Escalation Triggers:</strong>
@@ -737,8 +822,8 @@
       </div>
     </div>
 
-    <!-- SLIDE 8: Compensation Assessment & DBT -->
-    <div class="slide-card" data-slide="8" data-notes="Fair compensation is the constitutional pillar of land acquisition. In NLAMS, the statutory compensation formula is 100% automated: Base Market Value, rural multiplier under Section 26, mandatory 100% Solatium under Section 30(1), and 12% additional interest under Section 30(3). Every rupee is linked to Aadhaar and paid directly through PFMS. Disputed amounts are held in Court escrow under Section 77 without stopping highway construction.">
+    <!-- SLIDE 11: Fair Compensation Assessment & DBT -->
+    <div class="slide-card" data-slide="11" data-notes="Fair compensation is the constitutional pillar of land acquisition. In NLAMS, the statutory compensation formula is 100% automated: Base Market Value, rural multiplier under Section 26, mandatory 100% Solatium under Section 30(1), and 12% additional interest under Section 30(3). Every rupee is linked to Aadhaar and paid directly through PFMS. Disputed amounts are held in Court escrow under Section 77 without stopping highway construction.">
       <div class="slide-eyebrow"><i class="fa-solid fa-indian-rupee-sign"></i> Financial Transparency</div>
       <h2 class="slide-heading">
         Direct Benefit Transfer (DBT) &amp; 100% Solatium Engine
@@ -769,73 +854,143 @@
       </div>
     </div>
 
-    <!-- SLIDE 9: Executive MIS Analytics & AI Risk Radar -->
-    <div class="slide-card" data-slide="9" data-notes="For leadership and policymakers, NLAMS provides high-level executive decision support. Our AI Risk Radar evaluates past litigation frequency and objection patterns to forecast project delays before they occur. It also generates ready-to-table Parliamentary Question responses for Lok Sabha and Rajya Sabha with a single click, and exports signed PDF briefs.">
-      <div class="slide-eyebrow"><i class="fa-solid fa-chart-pie"></i> Decision Support</div>
+    <!-- SLIDE 12: Implementation, Testing & Code Quality -->
+    <div class="slide-card" data-slide="12" data-notes="We have placed paramount emphasis on engineering rigor and test automation. Our Jest and Supertest test suite exercises authentication, RFCTLARR workflow transitions, mathematical solatium accuracy, and deadline extensions. Security is hardened with Helmet, CORS whitelist policies, and rate limiters.">
+      <div class="slide-eyebrow"><i class="fa-solid fa-flask"></i> Quality &amp; Verification</div>
       <h2 class="slide-heading">
-        Executive MIS Analytics, AI Risk Radar &amp; Tech Stack
-        <a href="reports.html" target="_blank" class="action-link"><i class="fa-solid fa-file-pdf"></i> Open MIS Reports</a>
+        Implementation, Testing &amp; Code Quality Metrics
+        <a href="reports.html" target="_blank" class="action-link"><i class="fa-solid fa-vial-circle-check"></i> View Verification Stats</a>
       </h2>
 
       <div class="grid-2">
         <div class="feature-card">
-          <h3 style="color: var(--gold-bright);"><i class="fa-solid fa-brain"></i> Decision Support &amp; AI Delay Radar</h3>
+          <h3 style="color: var(--cyan-bright);"><i class="fa-solid fa-flask-vial"></i> Automated Test Suite (Jest &amp; Supertest)</h3>
           <ul>
-            <li><strong>Predictive Delay Forecaster:</strong> Analyzes citizen objection density, court litigation history, and district clearance speeds to assign a risk score.</li>
-            <li><strong>State Compliance Heatmap:</strong> Compares statutory cycle times across Tamil Nadu, Andhra Pradesh, Maharashtra, Karnataka, etc.</li>
-            <li><strong>Parliamentary Q&amp;A Generator:</strong> Generates ready-to-table responses for Starred/Unstarred Lok Sabha and Rajya Sabha questions.</li>
-            <li><strong>One-Click Export:</strong> Download official executive PDF summaries and raw CSV datasets.</li>
+            <li><code>tests/auth.test.js</code>: Validates JWT token generation, expiration, role enforcement, and invalid credential rejections.</li>
+            <li><code>tests/workflow.test.js</code>: Asserts 6-stage RFCTLARR lifecycle transitions, prerequisite checks, and e-Office green-noting entries.</li>
+            <li><code>tests/compensation.test.js</code>: Verifies exact arithmetic precision of rural multipliers, mandatory 100% Solatium, and PFMS disbursement.</li>
+            <li><code>tests/deadlines.test.js</code>: Tests Section 25 countdown alerts, warning phase triggers, and statutory extension procedures.</li>
           </ul>
         </div>
 
-        <div class="feature-card">
-          <h3 style="color: var(--cyan-bright);"><i class="fa-solid fa-layer-group"></i> Modern, Lightweight Tech Stack</h3>
+        <div class="feature-card success">
+          <h3 style="color: var(--emerald-bright);"><i class="fa-solid fa-shield-virus"></i> Security &amp; Architectural Quality</h3>
           <ul>
-            <li><strong>Frontend Core:</strong> Semantic HTML5, Custom Design System (Vanilla CSS3), ES6+ JavaScript.</li>
-            <li><strong>Mapping Engine:</strong> Leaflet.js with OpenStreetMap Carto &amp; ESRI World Imagery satellite layers.</li>
-            <li><strong>Data Visualization:</strong> Chart.js for real-time statutory funnels, compensation donuts, and timeline trackers.</li>
-            <li><strong>Cloud &amp; Security:</strong> Fully aligned with NIC Cloud (MeghRaj) guidelines, SHA-256 cryptographic audit logs, and zero heavy dependencies.</li>
+            <li><strong>Security Hardening:</strong> Configured Helmet headers, strict CORS, express-rate-limit, and parameterized database queries.</li>
+            <li><strong>Cryptographic Auditability:</strong> Tamper-evident SHA-256 seals verify document authenticity at every approval stage.</li>
+            <li><strong>OpenAPI 3.0 Conformance:</strong> Fully documented REST API endpoints with request and response schemas.</li>
+            <li><strong>Zero Frontend Dependencies:</strong> Pure Vanilla JavaScript and CSS ensuring zero vulnerability drift and lightweight execution.</li>
           </ul>
         </div>
       </div>
     </div>
 
-    <!-- SLIDE 10: 100% Requirements Compliance & Live Links -->
-    <div class="slide-card" data-slide="10" data-notes="To conclude, we have verified and fulfilled 100% of the requirements set out in Problem Statement 26016. Every module is fully interactive and live on GitHub Pages. We have solved the federal divide, eliminated Section 25 lapses, brought sub-meter cadastral accuracy, and secured fair farmer compensation. Thank you, and we invite your questions and are ready for the live system demonstration.">
-      <div class="slide-eyebrow"><i class="fa-solid fa-circle-check" style="color: var(--emerald-bright);"></i> 100% Fulfilled</div>
+    <!-- SLIDE 13: Live Demonstration Interfaces -->
+    <div class="slide-card" data-slide="13" data-notes="Here is an overview of the live interfaces available for demonstration. The review committee can interact with each module: the citizen portal for Khasra lookup, the executive dashboard for corridor tracking, the cadastral GIS map for boundary demarcation, the workflow engine for digital signing, and the compensation calculator for PFMS disbursals.">
+      <div class="slide-eyebrow"><i class="fa-solid fa-display"></i> Interactive Walkthrough</div>
       <h2 class="slide-heading">
-        Requirements Compliance Matrix &amp; Live Demo
-        <a href="https://mohan-das457.github.io/National-Land-Acquisition-Management-System/" target="_blank" class="action-link" style="color: var(--emerald-bright); border-color: var(--emerald-bright); background: rgba(16,185,129,0.1);"><i class="fa-solid fa-globe"></i> Open Live GitHub Pages</a>
+        Live System Demonstration &amp; Interface Walkthrough
+        <a href="unified-platform.html" target="_blank" class="action-link"><i class="fa-solid fa-window-restore"></i> Open Master Platform</a>
+      </h2>
+
+      <div class="grid-6-funnel">
+        <div class="feature-card highlight">
+          <h3 style="color: var(--saffron-bright);"><i class="fa-solid fa-magnifying-glass"></i> Public Citizen Portal</h3>
+          <p style="font-size: 13px; color: #cbd5e1; margin: 0;">Landing page (<code>index.html</code>) with privacy-masked Khasra / Patta lookup and federal role gateway.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3 style="color: var(--gold-bright);"><i class="fa-solid fa-gauge-high"></i> Executive Dashboard</h3>
+          <p style="font-size: 13px; color: #cbd5e1; margin: 0;">Donezo-design dashboard (<code>dashboard.html</code>) showing corridor metrics, budget burn, and delay radar.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3 style="color: var(--cyan-bright);"><i class="fa-solid fa-earth-asia"></i> Cadastral GIS Engine</h3>
+          <p style="font-size: 13px; color: #cbd5e1; margin: 0;">Interactive map (<code>gis-map.html</code>) with true parcel polygons, 60m ROW buffers, and surveyor DGPS tools.</p>
+        </div>
+
+        <div class="feature-card success">
+          <h3 style="color: var(--emerald-bright);"><i class="fa-solid fa-pen-nib"></i> e-Office &amp; e-Sign</h3>
+          <p style="font-size: 13px; color: #cbd5e1; margin: 0;">Statutory workflow engine (<code>workflow.html</code>) with authentic green-noting sheets and DSC signatures.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3 style="color: var(--saffron-bright);"><i class="fa-solid fa-coins"></i> Compensation Ledger</h3>
+          <p style="font-size: 13px; color: #cbd5e1; margin: 0;">Award calculator (<code>compensation.html</code>) with 100% Solatium formulas and PFMS bank payout tracking.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3 style="color: var(--gold-bright);"><i class="fa-solid fa-book"></i> Interactive Swagger</h3>
+          <p style="font-size: 13px; color: #cbd5e1; margin: 0;">OpenAPI 3.0 portal (<code>/api/docs</code>) for live REST API execution and schema inspection.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 14: Future Scope & National Rollout Roadmap -->
+    <div class="slide-card" data-slide="14" data-notes="Looking ahead, our architecture provides a scalable foundation for national deployment. Phase 1 integrates live webhooks into the PM GatiShakti National Master Plan. Phase 2 introduces drone photogrammetry to detect right-of-way encroachments automatically. Phase 3 incorporates an immutable blockchain ledger for land ownership claims.">
+      <div class="slide-eyebrow"><i class="fa-solid fa-rocket"></i> Future Horizons</div>
+      <h2 class="slide-heading">
+        Future Scope &amp; National Integration Roadmap
+        <a href="reports.html" target="_blank" class="action-link"><i class="fa-solid fa-cloud-arrow-up"></i> View Roadmap</a>
+      </h2>
+
+      <div class="grid-2">
+        <div class="feature-card">
+          <h3 style="color: var(--gold-bright);"><i class="fa-solid fa-code-branch"></i> Near-Term Technical Enhancements</h3>
+          <ul>
+            <li><strong>PM GatiShakti Webhooks:</strong> Bi-directional API synchronisation with the National Master Plan (NMP) 500+ geospatial layers.</li>
+            <li><strong>Automated Drone Photogrammetry:</strong> Computer vision pipeline to process drone orthophotos and automatically detect boundary encroachments.</li>
+            <li><strong>Blockchain Audit Trail:</strong> Hyperledger Fabric integration for an immutable, decentralized ledger of title transfers and compensation payouts.</li>
+            <li><strong>Offline Mobile Surveyor App:</strong> Progressive Web App (PWA) with background sync for rural field surveyors operating in low-connectivity areas.</li>
+          </ul>
+        </div>
+
+        <div class="feature-card success">
+          <h3 style="color: var(--emerald-bright);"><i class="fa-solid fa-globe"></i> Nationwide Scalability &amp; Institutional Impact</h3>
+          <ul>
+            <li><strong>All-India 28 State Rollout:</strong> Ready-to-deploy adapters for all state revenue registries (AnyRoR, BanglarBhumi, Dharitree).</li>
+            <li><strong>Multi-Lingual Citizen Interface:</strong> Support for 22 scheduled Indian languages with automated audio readout for rural landholders.</li>
+            <li><strong>AI Judicial Dispute Predictor:</strong> Natural language processing model trained on High Court and Supreme Court land acquisition precedents.</li>
+            <li><strong>Quantified National Savings:</strong> Estimated reduction of project approval cycle times by 65%, saving thousands of crores in public capital.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 15: Conclusion & Q&A -->
+    <div class="slide-card" data-slide="15" data-notes="In conclusion, we have engineered and validated a complete, statutory-compliant full-stack National Land Acquisition and Management System. We have eliminated Section 25 project lapses, brought sub-meter cadastral clarity to road alignments, ensured fair compensation via PFMS, and delivered a production-ready system. Thank you for your time, and we are ready for questions and the live demonstration.">
+      <div class="slide-eyebrow"><i class="fa-solid fa-circle-check" style="color: var(--emerald-bright);"></i> Conclusion &amp; Defense</div>
+      <h2 class="slide-heading">
+        Conclusion &amp; Technical Defense / Q&amp;A
+        <a href="https://mohan-das457.github.io/National-Land-Acquisition-Management-System/" target="_blank" class="action-link" style="color: var(--emerald-bright); border-color: var(--emerald-bright);"><i class="fa-solid fa-globe"></i> Open Live App</a>
       </h2>
 
       <div class="grid-2">
         <div class="feature-card success">
-          <h3 style="color: var(--emerald-bright);"><i class="fa-solid fa-list-check"></i> Problem Statement #26016 Compliance</h3>
+          <h3 style="color: var(--emerald-bright);"><i class="fa-solid fa-clipboard-check"></i> Key Deliverables &amp; Achievements</h3>
           <ul>
-            <li>✔ <strong>End-to-End Digital Lifecycle:</strong> Proposal to Sec 38 Possession (100%)</li>
-            <li>✔ <strong>Sub-Meter Cadastral GIS:</strong> Real TN CPRR &amp; AP Amaravati plots (100%)</li>
-            <li>✔ <strong>e-Office Scrutiny &amp; Approvals:</strong> Green-Noting + DSC e-Sign (100%)</li>
-            <li>✔ <strong>Compensation &amp; DBT:</strong> 100% Solatium + PFMS Bank Ledger (100%)</li>
-            <li>✔ <strong>Statutory Lapse Alarms:</strong> Section 25 12-month countdowns (100%)</li>
-            <li>✔ <strong>Federal Role Governance:</strong> 4 dynamic personas with real-time UI adapt (100%)</li>
-            <li>✔ <strong>Field Surveyor DGPS Tool:</strong> Mobile boundary marker with acre calc (100%)</li>
-            <li>✔ <strong>Secure Document Vault:</strong> Gazette notifications &amp; SHA-256 audit trail (100%)</li>
+            <li>✔ <strong>Complete Statutory Lifecycle:</strong> All 6 stages of RFCTLARR Act 2013 fully digitized and operational.</li>
+            <li>✔ <strong>Section 25 Statutory Safeguard:</strong> Active 12-month countdown radar eliminates catastrophic multi-crore acquisition lapses.</li>
+            <li>✔ <strong>Sub-Meter Spatial Accuracy:</strong> Replaced ambiguous point markers with verified cadastral polygons and satellite overlays.</li>
+            <li>✔ <strong>Direct Benefit Transfer:</strong> Automated 100% Solatium and PFMS direct transfers guarantee justice for landholders.</li>
+            <li>✔ <strong>Full-Stack Architecture:</strong> Node.js + SQLite/MySQL architecture with 100% test coverage and OpenAPI documentation.</li>
+            <li>✔ <strong>Production Ready:</strong> Hosted on GitHub Pages and locally verified on port 3000.</li>
           </ul>
         </div>
 
         <div class="feature-card highlight">
-          <h3 style="color: var(--saffron-bright);"><i class="fa-solid fa-link"></i> Live Review Links &amp; Deliverables</h3>
+          <h3 style="color: var(--saffron-bright);"><i class="fa-solid fa-link"></i> Project Links &amp; Resources</h3>
           <ul>
-            <li>🌐 <strong>Live Hosted Application (GitHub Pages):</strong>
+            <li>🌐 <strong>Live Hosted Application:</strong>
               <br><a href="https://mohan-das457.github.io/National-Land-Acquisition-Management-System/" target="_blank" style="color: #38bdf8; word-break: break-all;">https://mohan-das457.github.io/National-Land-Acquisition-Management-System/</a>
             </li>
             <li>💻 <strong>GitHub Source Code Repository:</strong>
               <br><a href="https://github.com/Mohan-das457/National-Land-Acquisition-Management-System" target="_blank" style="color: #38bdf8; word-break: break-all;">https://github.com/Mohan-das457/National-Land-Acquisition-Management-System</a>
             </li>
-            <li>📊 <strong>Download PowerPoint Presentation:</strong>
-              <br><a href="NLAMS_Project_Review_Presentation.pptx" download style="color: #ea580c; font-weight: 600;"><i class="fa-solid fa-download"></i> NLAMS_Project_Review_Presentation.pptx</a>
+            <li>📊 <strong>Download PowerPoint Deck (.pptx):</strong>
+              <br><a href="NLAMS_Project_Review_Presentation.pptx" download style="color: #ff7a00; font-weight: 700;"><i class="fa-solid fa-download"></i> NLAMS_Project_Review_Presentation.pptx</a>
             </li>
-            <li>✨ <strong>Interactive Demo Flow:</strong> 3-Minute Live Demo ready for review panel!</li>
+            <li>✨ <strong>Thank You!</strong> We are ready for your questions and the live system demonstration.</li>
           </ul>
         </div>
       </div>
@@ -845,9 +1000,9 @@
 
   <!-- Speaker Notes Drawer -->
   <aside class="speaker-notes-panel" id="speakerNotesPanel">
-    <div class="speaker-notes-title"><i class="fa-solid fa-bullhorn"></i> Speaker Script &amp; Reviewer Defense (Slide <span id="notesSlideNum">1</span>/10)</div>
+    <div class="speaker-notes-title"><i class="fa-solid fa-bullhorn"></i> Speaker Script &amp; Reviewer Defense (Slide <span id="notesSlideNum">1</span>/15)</div>
     <div class="speaker-notes-text" id="speakerNotesText">
-      Respected review panel, welcome to the official presentation for Problem Statement 26016...
+      Respected members of the review committee, welcome to the final technical presentation...
     </div>
   </aside>
 
@@ -857,7 +1012,7 @@
       <button class="nav-arrow-btn" onclick="prevSlide()" title="Previous Slide (Left Arrow)"><i class="fa-solid fa-chevron-left"></i></button>
       <button class="nav-arrow-btn" onclick="nextSlide()" title="Next Slide (Right Arrow)"><i class="fa-solid fa-chevron-right"></i></button>
       <span style="font-size: 13px; font-weight: 600; color: var(--text-muted); margin-left: 8px;">
-        Slide <span id="currentSlideNum" style="color: #fff; font-weight: 800;">1</span> of 10
+        Slide <span id="currentSlideNum" style="color: #fff; font-weight: 800;">1</span> of 15
       </span>
     </div>
 
@@ -874,7 +1029,7 @@
 
   <script>
     let currentSlide = 1;
-    const totalSlides = 10;
+    const totalSlides = 15;
     let timerSeconds = 0;
     let timerInterval = null;
 

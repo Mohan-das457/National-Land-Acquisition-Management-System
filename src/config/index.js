@@ -16,7 +16,7 @@ module.exports = {
   },
 
   jwt: {
-    secret: process.env.JWT_SECRET || 'nlams_sih_secure_jwt_secret_dev_key_2026',
+    secret: process.env.JWT_SECRET || 'nlams_secure_jwt_secret_dev_key_2026',
     expiresIn: process.env.JWT_EXPIRES_IN || '24h'
   },
 

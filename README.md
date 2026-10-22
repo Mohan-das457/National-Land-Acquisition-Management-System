@@ -1,13 +1,13 @@
 # 🏛️ NLAMS — National Land Acquisition & Management System
-### PRITHVI-SETU 360 · Smart India Hackathon 2026 · Problem Statement #26016
+### PRITHVI-SETU 360 · Technical Project Review & Comprehensive Defense
 
-[![SIH 2026](https://img.shields.io/badge/SIH-2026%20Finalist-ff9900?style=flat-square&logo=data:image/svg+xml;base64,)](https://www.sih.gov.in/)
+[![Status](https://img.shields.io/badge/Project%20Review-Ready-ff9900?style=flat-square)]()
 [![Node.js](https://img.shields.io/badge/Node.js-v26-green?style=flat-square&logo=nodedotjs)](https://nodejs.org/)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 [![Tests](https://img.shields.io/badge/Tests-13%20Passed-success?style=flat-square)]()
 
-> **SANDBOX / HACKATHON PROTOTYPE — NOT PRODUCTION GOVERNMENT SOFTWARE.**
-> All land records, compensation figures, Aadhaar references, survey numbers, and officer names in this codebase are **fully synthetic, anonymised demo data** generated for SIH 2026 evaluation. They do not represent real government records, real people, or real land acquisitions.
+> **TECHNICAL PROJECT PROTOTYPE — NOT PRODUCTION GOVERNMENT SOFTWARE.**
+> All land records, compensation figures, Aadhaar references, survey numbers, and officer names in this codebase are **fully synthetic, anonymised demo data** generated for technical project review evaluation. They do not represent real government records, real people, or real land acquisitions.
 
 ---
 
@@ -42,9 +42,9 @@ Ministry: Ministry of Land Resources (DoLR), Government of India
 | Compensation disbursements without audit trail | ACID PFMS DBT sandbox adapter with immutable `audit_logs` table |
 | No role-based jurisdiction enforcement | Server-side RBAC: Central / State / CALA / Surveyor / Citizen with JWT httpOnly cookies |
 
-This prototype is part of **PRITHVI-SETU 360** — a triple-problem-statement command suite that also addresses:
-- 🌾 **Kisan-Setu** (SIH #26033) — Farmer D2C agri market linkage
-- ⛰️ **Drishti-NER** (SIH #26049) — NER landslide early warning with IoT sensors
+This prototype is part of **PRITHVI-SETU 360** — an integrated multi-domain command suite that also addresses:
+- 🌾 **Kisan-Setu** — Farmer D2C agri market linkage & procurement
+- ⛰️ **Drishti-NER** — NER landslide early warning with IoT sensors
 
 ---
 
@@ -173,7 +173,7 @@ npm run dev
 
 All passwords: **`Password@123`**
 
-> These accounts are seeded automatically from `src/db/seed.js`. They are synthetic personas for SIH 2026 evaluation only.
+> These accounts are seeded automatically from `src/db/seed.js`. They are synthetic personas for project evaluation only.
 
 | Role | Email | Jurisdiction |
 |---|---|---|
@@ -306,8 +306,8 @@ Tests use the SQLite adaptive engine automatically (no MySQL required).
 | Swagger API docs | ✅ Complete | `/api/docs` |
 | Automated test suite | ✅ Complete | 13/13 passing |
 | MySQL + SQLite adaptive engine | ✅ Complete | Zero-config SQLite fallback |
-| Kisan-Setu Farmer D2C | ✅ Complete | Separate module (SIH #26033) |
-| Drishti-NER Landslide AI | ✅ Complete | Separate module (SIH #26049) |
+| Kisan-Setu Farmer D2C | ✅ Complete | Separate module |
+| Drishti-NER Landslide AI | ✅ Complete | Separate module |
 | README & documentation | ✅ Complete | This file |
 
 ---
@@ -399,8 +399,8 @@ land-acquisition-system/
 ├── compensation.html          # RFCTLARR calculator + PFMS DBT
 ├── documents.html             # Document vault + SHA-256
 ├── reports.html               # MIS reports + live API stats
-├── farmer-d2c.html            # Kisan-Setu D2C portal (SIH #26033)
-├── landslide-ner.html         # Drishti-NER AI dashboard (SIH #26049)
+├── farmer-d2c.html            # Kisan-Setu D2C portal
+├── landslide-ner.html         # Drishti-NER AI dashboard
 ├── unified-platform.html      # PRITHVI-SETU 360 command suite
 ├── cadastral-data.js          # Synthetic CPRR + Amaravati parcel dataset
 ├── package.json
@@ -410,18 +410,18 @@ land-acquisition-system/
 
 ---
 
-## 🏆 Hackathon Context
+## 🏆 Project Review Context
 
 | Field | Value |
 |---|---|
-| Event | Smart India Hackathon (SIH) 2026 — Grand Finale |
-| Problem Statement | #26016 — National Land Acquisition & Management System |
-| Ministry | Ministry of Land Resources (DoLR), Government of India |
-| Theme | Smart Governance |
-| Team | Mohan-das457 |
+| Review Type | Technical Project Review & Comprehensive Defense |
+| Domain | National Land Acquisition & Management System (NLAMS) |
+| Ministry Alignment | Ministry of Land Resources (DoLR), Government of India |
+| Theme | Smart Governance & Spatial Informatics |
+| Team | Mohan & Team |
 | Branch | `feature/fullstack-nlams-upgrade` |
 
-### Scoring Areas Addressed
+### Key Review Dimensions Addressed
 - ✅ **Completeness**: Full-stack end-to-end implementation (not a mockup)
 - ✅ **Innovation**: RFCTLARR statutory calculator, Section 25 live countdown, GeoJSON export
 - ✅ **Security**: JWT, RBAC, parameterized queries, SHA-256 document hashing, audit logs
@@ -433,4 +433,4 @@ land-acquisition-system/
 
 ---
 
-> **Disclaimer**: This is a hackathon prototype. All data, credentials, and government integrations shown are simulated for demonstration purposes. PFMS, DigiLocker, and DSC integrations are sandbox stubs only. Do not use in production without formal security audit and government approval.
+> **Disclaimer**: This is a technical project demonstration prototype. All data, credentials, and government integrations shown are simulated for academic and technical evaluation purposes. PFMS, DigiLocker, and DSC integrations are sandbox stubs only.

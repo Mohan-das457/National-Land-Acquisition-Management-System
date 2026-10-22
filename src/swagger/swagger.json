@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "NLAMS — National Land Acquisition & Management System API",
-    "description": "Comprehensive REST API for the National Land Acquisition & Management System compliant with the RFCTLARR Act 2013 and PM GatiShakti standards. Built for Smart India Hackathon (SIH 2026), Problem Statement #26016.",
+    "description": "Comprehensive REST API for the National Land Acquisition & Management System compliant with the RFCTLARR Act 2013 and PM GatiShakti standards. Enterprise Full-Stack Platform for National Infrastructure Projects.",
     "version": "3.0.0",
     "contact": {
       "name": "Department of Land Resources (DoLR), MoRD",

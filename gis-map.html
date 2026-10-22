@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PRITHVI-SETU 360 – Unified Tri-Layer GIS Command Map | SIH 2026</title>
+  <title>PRITHVI-SETU 360 – Unified Tri-Layer GIS Command Map</title>
   <meta name="description" content="High-precision cadastral land parcel GIS map for Tamil Nadu (Chennai Peripheral Ring Road) and Andhra Pradesh (Amaravati Capital Region) with Patta / Webland 1B records and 60m RoW corridor."/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
@@ -157,7 +157,7 @@
       <div class="sidebar-logo-icon" style="background:linear-gradient(135deg,#ff9900,#138808);font-size:14px;">P</div>
       <div class="sidebar-logo-text">
         <div class="sidebar-logo-title" style="font-size:13px;letter-spacing:0.3px;">PRITHVI-SETU 360</div>
-        <div class="sidebar-logo-sub">Unified GIS Grid · SIH 2026</div>
+        <div class="sidebar-logo-sub">Unified GIS Grid · v3.0</div>
       </div>
     </div>
 
@@ -176,7 +176,7 @@
         <span class="nav-item-icon">🏛️</span> Unified Portal
       </a>
       <a href="farmer-d2c.html" class="nav-item" style="color:#34d399;">
-        <span class="nav-item-icon">🌾</span> Farmer D2C (SIH26033)
+        <span class="nav-item-icon">🌾</span> Farmer D2C (Agri Hubs)
       </a>
       <a href="landslide-ner.html" class="nav-item" style="color:#f87171;">
         <span class="nav-item-icon">⛰️</span> Landslide AI (NER)
@@ -230,7 +230,7 @@
     <div class="sidebar-footer">
       <div class="sidebar-footer-links">
         <a href="index.html" class="sidebar-footer-link">← Home</a>
-        <span class="sidebar-footer-link" style="margin-left:auto;">v3.0 · SIH 2026</span>
+        <span class="sidebar-footer-link" style="margin-left:auto;">v3.0 Production</span>
       </div>
     </div>
   </aside>
@@ -311,7 +311,7 @@
         <button class="corridor-btn" id="btnCorridorMH" onclick="switchCorridor('MH')">⚡ Maharashtra (NE-4 / Samruddhi)</button>
         <button class="corridor-btn" id="btnCorridorWB" onclick="switchCorridor('WB')">🌾 West Bengal (Kolkata Freight)</button>
         <button class="corridor-btn" id="btnCorridorAS" onclick="switchCorridor('AS')">🌿 Assam &amp; NE (Guwahati)</button>
-        <button class="corridor-btn" id="btnCorridorAgri" onclick="switchCorridor('agri')" style="background:rgba(16,185,129,0.2); border-color:#10b981; color:#34d399;">🌾 Kisan-Setu Agri Hubs (SIH26033)</button>
+        <button class="corridor-btn" id="btnCorridorAgri" onclick="switchCorridor('agri')" style="background:rgba(16,185,129,0.2); border-color:#10b981; color:#34d399;">🌾 Kisan-Setu Agri Hubs</button>
         <button class="corridor-btn" id="btnCorridorLandslide" onclick="switchCorridor('ner_landslide')" style="background:rgba(239,68,68,0.2); border-color:#ef4444; color:#f87171;">⛰️ NER Landslide Geo-Hazards</button>
       </div>
 
@@ -799,7 +799,7 @@ function renderAgriMarkers() {
       <div style="font-family:'Inter',sans-serif;min-width:240px;color:#f0f4ff;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;border-bottom:1px solid rgba(16,185,129,0.3);padding-bottom:4px;">
           <strong style="color:#34d399;font-size:13px;">🌾 ${ag.name}</strong>
-          <span style="background:rgba(16,185,129,0.2);color:#34d399;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700;">SIH26033</span>
+          <span style="background:rgba(16,185,129,0.2);color:#34d399;font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700;">AGRI-HUB</span>
         </div>
         <div style="font-size:11px;color:#cbd5e1;margin-bottom:3px;"><strong>Farmer:</strong> ${ag.farmer}</div>
         <div style="font-size:11px;color:#34d399;margin-bottom:3px;">✔ ${ag.patta}</div>
@@ -1150,7 +1150,7 @@ async function exportGeoJSON() {
       };
     }
     // Append disclaimer metadata
-    geojson._disclaimer = '[DEMO] Synthetic cadastral data for SIH 2026 evaluation. Not authoritative government survey data.';
+    geojson._disclaimer = '[DEMO] Synthetic cadastral data for academic & technical project review evaluation. Not authoritative government survey data.';
     geojson._corridor = currentRegion || 'ALL';
     geojson._exportedAt = new Date().toISOString();
 
@@ -1198,7 +1198,7 @@ async function exportParcelCSV() {
                      'total_area_ha','acquired_area_ha','land_classification',
                      'disbursement_status','total_award_amount'];
     const csvLines = [
-      '# NLAMS Parcel Register Export — DEMO SYNTHETIC DATA — SIH 2026',
+      '# NLAMS Parcel Register Export — DEMO SYNTHETIC DATA — PROJECT REVIEW',
       '# Privacy: Bank account and Aadhaar fields omitted. For official use only.',
       `# Corridor: ${currentRegion || 'All'} | Exported: ${new Date().toISOString()}`,
       headers.join(','),

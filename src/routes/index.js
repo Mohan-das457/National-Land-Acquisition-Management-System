@@ -26,7 +26,7 @@ router.get('/health', async (req, res) => {
     status: 'ok',
     timestamp: new Date().toISOString(),
     service: 'NLAMS Backend API',
-    version: '3.0.0-sih2026',
+    version: '3.0.0-production',
     database: {
       engine,
       status: dbStatus

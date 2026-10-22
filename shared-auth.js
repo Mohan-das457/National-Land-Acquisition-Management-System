@@ -495,7 +495,7 @@ function injectRoleBar() {
         <span>🌐</span> Unified Grid
       </a>
 
-      <a href="farmer-d2c.html" onclick="handleCrossAppNav(event, 'kisan', 'farmer-d2c.html')" class="btn btn-outline btn-sm" style="display:inline-flex;align-items:center;gap:6px;background:rgba(16,185,129,0.15);border-color:#10b981;color:#34d399;font-weight:700;padding:6px 10px;text-decoration:none;border-radius:6px;" title="Launch SIH26033: Farmer Direct-to-Consumer Platform & MSP Mandi E-Gate">
+      <a href="farmer-d2c.html" onclick="handleCrossAppNav(event, 'kisan', 'farmer-d2c.html')" class="btn btn-outline btn-sm" style="display:inline-flex;align-items:center;gap:6px;background:rgba(16,185,129,0.15);border-color:#10b981;color:#34d399;font-weight:700;padding:6px 10px;text-decoration:none;border-radius:6px;" title="Farmer Direct-to-Consumer Platform & MSP Mandi E-Gate">
         <span>🌾</span> Farmer D2C
       </a>
 
@@ -503,7 +503,7 @@ function injectRoleBar() {
         <span>⛰️</span> Landslide AI
       </a>
 
-      <a href="presentation.html" onclick="handleCrossAppNav(event, 'deck', 'presentation.html')" class="btn btn-outline btn-sm" style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg, rgba(255,122,0,0.25), rgba(255,174,0,0.15));border-color:#ff7a00;color:#ff9e00;font-weight:700;padding:6px 12px;text-decoration:none;border-radius:6px;box-shadow:0 2px 8px rgba(255,122,0,0.2);" title="Launch SIH Grand Finale Review Presentation Deck">
+      <a href="presentation.html" onclick="handleCrossAppNav(event, 'deck', 'presentation.html')" class="btn btn-outline btn-sm" style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg, rgba(255,122,0,0.25), rgba(255,174,0,0.15));border-color:#ff7a00;color:#ff9e00;font-weight:700;padding:6px 12px;text-decoration:none;border-radius:6px;box-shadow:0 2px 8px rgba(255,122,0,0.2);" title="Launch Technical Project Review Presentation Deck">
         <span>📽️</span> Review Deck
       </a>
 
@@ -514,7 +514,7 @@ function injectRoleBar() {
       <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);padding:4px 10px;border-radius:8px;">
         <span style="font-size:11px;color:#a8b4cc;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Persona:</span>
         <select id="nlamsRoleSelect" onchange="switchRole(this.value)" style="background:transparent;border:none;color:#f0f4ff;font-size:12px;font-weight:700;cursor:pointer;outline:none;font-family:'Inter',sans-serif;">
-          <optgroup label="SIH 2026 Unified Stakeholders">
+          <optgroup label="Unified Platform Stakeholders">
             <option value="farmer" style="background:#0d1120;color:#34d399;" ${currentRole.id==='farmer'?'selected':''}>🌾 Ramu Gowda (Verified Landowner &amp; Farmer)</option>
             <option value="disaster_ner" style="background:#0d1120;color:#f87171;" ${currentRole.id==='disaster_ner'?'selected':''}>🚨 Dr. Anurag Phukan (Disaster Warning Officer, NER)</option>
             <option value="central" style="background:#0d1120;color:#f0f4ff;" ${currentRole.id==='central'?'selected':''}>🏛️ Central Ministry (DoLR/MoRD National HQ)</option>
@@ -631,7 +631,7 @@ const EXPLAINER_TABS = {
       </div>
 
       <div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:10px;padding:14px;">
-        <div style="font-weight:700;color:#22c55e;margin-bottom:6px;">✅ With NLAMS (Our Solution for SIH #26016)</div>
+        <div style="font-weight:700;color:#22c55e;margin-bottom:6px;">✅ With NLAMS (Our Full-Stack Solution)</div>
         <ul style="margin:0;padding-left:18px;font-size:12.5px;color:#a8b4cc;display:flex;flex-direction:column;gap:6px;">
           <li><strong>Single Source of Truth</strong>: Digitized end-to-end lifecycle from proposal to physical possession.</li>
           <li><strong>Automated Section 25 Alarms</strong>: Real-time countdown timers warn CALAs before the statutory 12-month lapse period expires.</li>
